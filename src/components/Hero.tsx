@@ -18,6 +18,7 @@ function AnimatedNumber({ target, prefix = '', suffix = '', decimals = 0, durati
       if (progress >= 1) {
         setCurrent(target);
         clearInterval(timer);
+        
       }
     }, 16);
     return () => clearInterval(timer);
