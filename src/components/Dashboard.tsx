@@ -29,17 +29,17 @@ const datasets: Record<string, { v: number; t: number }[]> = {
 };
 
 const portfolioData = [
-  { name: 'Hisse Senedi', value: 42, color: '#6366F1' },
-  { name: 'Döviz', value: 28, color: '#059669' },
-  { name: 'Altın', value: 18, color: '#D97706' },
-  { name: 'Kripto', value: 12, color: '#94A3B8' },
+  { name: 'Hisse Senedi', value: 42, color: '#4F46E5' },
+  { name: 'Döviz', value: 28, color: '#0D9488' },
+  { name: 'Altın', value: 18, color: '#B45309' },
+  { name: 'Kripto', value: 12, color: '#64748B' },
 ];
 
 const recentTransactions = [
-  { type: 'buy', asset: 'THYAO', amount: '150 adet', value: '₺43.110', time: '2 dk önce', change: '+2.4%' },
-  { type: 'sell', asset: 'AKBNK', amount: '90 adet', value: '₺4.882', time: '18 dk önce', change: '-0.8%' },
-  { type: 'buy', asset: 'ALTIN', amount: '10 gr', value: '₺32.470', time: '1 sa önce', change: '+1.2%' },
-  { type: 'buy', asset: 'EUR/TRY', amount: '2.500 €', value: '₺87.950', time: '3 sa önce', change: '+0.4%' },
+  { type: 'buy', asset: 'THYAO', amount: '150 adet', value: '₺43.110', time: '2 dk önce' },
+  { type: 'sell', asset: 'AKBNK', amount: '90 adet', value: '₺4.882', time: '18 dk önce' },
+  { type: 'buy', asset: 'ALTIN', amount: '10 gr', value: '₺32.470', time: '1 sa önce' },
+  { type: 'buy', asset: 'EUR/TRY', amount: '2.500 €', value: '₺87.950', time: '3 sa önce' },
 ];
 
 const barData = [
@@ -51,11 +51,14 @@ const barData = [
   { name: 'Haz', gelir: 19800, gider: 9800 },
 ];
 
+const cardClass = 'bg-white border border-black/[0.04] rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6';
+const tooltipClass = 'bg-white rounded-2xl px-4 py-3 text-sm shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-black/[0.04]';
+
 function CustomTooltip({ active, payload }: { active?: boolean; payload?: { value: number }[] }) {
   if (active && payload?.length) {
     return (
-      <div className="bg-white rounded-lg px-3 py-2 text-sm shadow-soft-lg border border-[var(--border-subtle)]">
-        <div className="font-semibold" style={{ color: 'var(--ink-900)' }}>₺{payload[0].value.toLocaleString('tr-TR')}</div>
+      <div className={tooltipClass}>
+        <div className="font-bold tracking-tight text-slate-900">₺{payload[0].value.toLocaleString('tr-TR')}</div>
       </div>
     );
   }
@@ -72,9 +75,10 @@ export function Dashboard() {
   const firstVal = data[0]?.v ?? 1;
   const change = ((lastVal - firstVal) / firstVal) * 100;
   const isPositive = change >= 0;
+  const lineColor = isPositive ? '#4F46E5' : '#DC2626';
 
   return (
-    <section id="dashboard" className="py-24 relative bg-white">
+    <section id="dashboard" className="py-24 relative bg-slate-50">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           ref={ref}
@@ -84,10 +88,10 @@ export function Dashboard() {
           className="text-center mb-12"
         >
           <div className="badge badge-brand mb-4 mx-auto w-fit">Platform Önizleme</div>
-          <h2 className="text-responsive-section font-bold mb-4" style={{ color: 'var(--ink-900)' }}>
+          <h2 className="text-responsive-section font-bold tracking-tight text-slate-900 mb-4">
             Tüm finansal verileriniz tek ekranda
           </h2>
-          <p className="text-lg" style={{ color: 'var(--ink-500)' }}>
+          <p className="text-lg text-slate-500">
             Gerçek zamanlı, net raporlama.
           </p>
         </motion.div>
@@ -98,12 +102,12 @@ export function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="lg:col-span-2 card p-6"
+            className={`lg:col-span-2 ${cardClass}`}
           >
             <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
               <div>
-                <p className="text-sm mb-1" style={{ color: 'var(--ink-500)' }}>Portföy Değeri</p>
-                <h3 className="text-4xl font-bold font-mono" style={{ color: 'var(--ink-900)' }}>
+                <p className="text-sm mb-1 text-slate-500">Portföy Değeri</p>
+                <h3 className="text-4xl font-bold tracking-tight font-mono text-slate-900">
                   ₺{lastVal.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}
                 </h3>
                 <div className="flex items-center gap-2 mt-2">
@@ -115,21 +119,20 @@ export function Dashboard() {
                   <span className="text-sm font-semibold" style={{ color: isPositive ? 'var(--success)' : 'var(--danger)' }}>
                     {isPositive ? '+' : ''}{change.toFixed(2)}%
                   </span>
-                  <span className="text-sm" style={{ color: 'var(--ink-500)' }}>seçili dönemde</span>
+                  <span className="text-sm text-slate-500">seçili dönemde</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-1 p-1 rounded-xl bg-[var(--bg-subtle)]">
+              <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100">
                 {periods.map((p) => (
                   <button
                     key={p}
                     onClick={() => setActivePeriod(p)}
-                    className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200"
-                    style={{
-                      background: activePeriod === p ? 'white' : 'transparent',
-                      color: activePeriod === p ? 'var(--ink-900)' : 'var(--ink-500)',
-                      boxShadow: activePeriod === p ? '0 1px 3px rgba(15,23,42,0.1)' : 'none',
-                    }}
+                    className={
+                      activePeriod === p
+                        ? 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 bg-white shadow-sm text-slate-900'
+                        : 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 text-slate-500 hover:text-slate-700'
+                    }
                   >
                     {p}
                   </button>
@@ -142,8 +145,8 @@ export function Dashboard() {
                 <AreaChart data={data} margin={{ top: 16, right: 4, bottom: 4, left: 4 }}>
                   <defs>
                     <linearGradient id="dashGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={isPositive ? '#6366F1' : '#DC2626'} stopOpacity={0.25} />
-                      <stop offset="95%" stopColor={isPositive ? '#6366F1' : '#DC2626'} stopOpacity={0} />
+                      <stop offset="5%" stopColor={lineColor} stopOpacity={0.25} />
+                      <stop offset="95%" stopColor={lineColor} stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <XAxis dataKey="t" hide />
@@ -152,11 +155,11 @@ export function Dashboard() {
                   <Area
                     type="monotone"
                     dataKey="v"
-                    stroke={isPositive ? '#6366F1' : '#DC2626'}
-                    strokeWidth={2}
+                    stroke={lineColor}
+                    strokeWidth={2.5}
                     fill="url(#dashGrad)"
                     dot={false}
-                    activeDot={{ r: 4, fill: isPositive ? '#6366F1' : '#DC2626', stroke: 'white', strokeWidth: 2 }}
+                    activeDot={{ r: 4, fill: lineColor, stroke: 'white', strokeWidth: 2 }}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -168,9 +171,9 @@ export function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="card p-6"
+            className={cardClass}
           >
-            <h4 className="font-semibold mb-4" style={{ color: 'var(--ink-900)' }}>Dağılım</h4>
+            <h4 className="font-semibold tracking-tight text-slate-900 mb-4">Dağılım</h4>
             <div style={{ width: '100%', height: 160, overflow: 'hidden' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
@@ -196,9 +199,9 @@ export function Dashboard() {
                 <div key={item.name} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: item.color }} />
-                    <span className="text-sm" style={{ color: 'var(--ink-500)' }}>{item.name}</span>
+                    <span className="text-sm text-slate-500">{item.name}</span>
                   </div>
-                  <span className="text-sm font-semibold" style={{ color: 'var(--ink-900)' }}>{item.value}%</span>
+                  <span className="text-sm font-semibold tracking-tight text-slate-900">{item.value}%</span>
                 </div>
               ))}
             </div>
@@ -209,35 +212,35 @@ export function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="card p-6"
+            className={cardClass}
           >
             <div className="flex items-center justify-between mb-5">
-              <h4 className="font-semibold" style={{ color: 'var(--ink-900)' }}>Son İşlemler</h4>
+              <h4 className="font-semibold tracking-tight text-slate-900">Son İşlemler</h4>
               <button className="text-xs flex items-center gap-1 font-medium" style={{ color: 'var(--brand-hover)' }}>
                 Tümü <ArrowUpRight size={12} />
               </button>
             </div>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col divide-y divide-slate-100">
               {recentTransactions.map((tx, i) => (
-                <div key={i} className="flex items-center justify-between py-2 border-b border-[var(--border-subtle)] last:border-0">
+                <div key={i} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                   <div className="flex items-center gap-3">
-                    <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold"
-                      style={{
-                        background: tx.type === 'buy' ? 'var(--success-tint)' : 'var(--danger-tint)',
-                        color: tx.type === 'buy' ? 'var(--success)' : 'var(--danger)',
-                      }}
+                    <span
+                      className={
+                        tx.type === 'buy'
+                          ? 'bg-emerald-50 text-emerald-700 font-medium px-2.5 py-1 rounded-md text-xs'
+                          : 'bg-rose-50 text-rose-700 font-medium px-2.5 py-1 rounded-md text-xs'
+                      }
                     >
                       {tx.type === 'buy' ? 'AL' : 'SAT'}
-                    </div>
+                    </span>
                     <div>
-                      <div className="text-sm font-medium" style={{ color: 'var(--ink-900)' }}>{tx.asset}</div>
-                      <div className="text-xs" style={{ color: 'var(--ink-500)' }}>{tx.amount}</div>
+                      <div className="text-sm font-medium text-slate-900">{tx.asset}</div>
+                      <div className="text-xs text-slate-400">{tx.amount}</div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm font-medium" style={{ color: 'var(--ink-900)' }}>{tx.value}</div>
-                    <div className="text-xs" style={{ color: 'var(--ink-500)' }}>{tx.time}</div>
+                    <div className="text-sm font-medium tracking-tight text-slate-900">{tx.value}</div>
+                    <div className="text-xs text-slate-400">{tx.time}</div>
                   </div>
                 </div>
               ))}
@@ -249,21 +252,21 @@ export function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="lg:col-span-2 card p-6"
+            className={`lg:col-span-2 ${cardClass}`}
           >
             <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
               <div>
-                <h4 className="font-semibold" style={{ color: 'var(--ink-900)' }}>Gelir & Gider Analizi</h4>
-                <p className="text-sm mt-1" style={{ color: 'var(--ink-500)' }}>Son 6 ay</p>
+                <h4 className="font-semibold tracking-tight text-slate-900">Gelir & Gider Analizi</h4>
+                <p className="text-sm mt-1 text-slate-500">Son 6 ay</p>
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ background: 'var(--brand)' }} />
-                  <span className="text-xs" style={{ color: 'var(--ink-500)' }}>Gelir</span>
+                  <div className="w-3 h-3 rounded-full" style={{ background: '#4F46E5' }} />
+                  <span className="text-xs text-slate-500">Gelir</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ background: 'var(--ink-300, #CBD5E1)' }} />
-                  <span className="text-xs" style={{ color: 'var(--ink-500)' }}>Gider</span>
+                  <div className="w-3 h-3 rounded-full bg-slate-200" />
+                  <span className="text-xs text-slate-500">Gider</span>
                 </div>
               </div>
             </div>
@@ -273,23 +276,23 @@ export function Dashboard() {
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94A3B8', fontSize: 12 }} />
                   <YAxis hide />
                   <Tooltip
-                    cursor={{ fill: 'rgba(99,102,241,0.06)', stroke: 'none', strokeWidth: 0 }}
+                    cursor={{ fill: 'rgba(79,70,229,0.06)', stroke: 'none', strokeWidth: 0 }}
                     wrapperStyle={{ background: 'transparent', border: 'none', boxShadow: 'none', outline: 'none' }}
                     content={({ active, payload, label }) => {
                       if (active && payload?.length) {
                         return (
-                          <div className="bg-white rounded-lg px-4 py-3 text-sm shadow-soft-lg border border-[var(--border-subtle)]">
-                            <div className="font-semibold mb-2" style={{ color: 'var(--ink-900)' }}>{label}</div>
-                            <div style={{ color: 'var(--brand-hover)' }}>Gelir: ₺{payload[0]?.value?.toLocaleString('tr-TR')}</div>
-                            <div style={{ color: 'var(--ink-500)' }}>Gider: ₺{payload[1]?.value?.toLocaleString('tr-TR')}</div>
+                          <div className={tooltipClass}>
+                            <div className="font-semibold mb-2 text-slate-900">{label}</div>
+                            <div className="text-[#4F46E5]">Gelir: ₺{payload[0]?.value?.toLocaleString('tr-TR')}</div>
+                            <div className="text-slate-500">Gider: ₺{payload[1]?.value?.toLocaleString('tr-TR')}</div>
                           </div>
                         );
                       }
                       return null;
                     }}
                   />
-                  <Bar dataKey="gelir" fill="#6366F1" radius={[6, 6, 0, 0]} />
-                  <Bar dataKey="gider" fill="#CBD5E1" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="gelir" fill="#4F46E5" radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="gider" fill="#E2E8F0" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

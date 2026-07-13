@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, ShieldCheck, Zap, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Logo } from '../components/Logo';
-import loginScreenMockup from '@/assets/app-mockups/login-screen.webp';
+import macbookMockup from '@/assets/app-mockups/macbook-transparent.webp';
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 18 },
@@ -21,6 +21,11 @@ export function LoginPage() {
     background: focused === field ? 'var(--brand-tint)' : 'white',
     border: `1px solid ${focused === field ? '#A5B4FC' : 'var(--border-subtle)'}`,
   });
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    window.location.href = 'https://finance-fineria.vercel.app';
+  };
 
   return (
     <div className="min-h-screen flex bg-white">
@@ -72,7 +77,7 @@ export function LoginPage() {
             <div className="flex-1 h-px bg-[var(--border-subtle)]" />
           </motion.div>
 
-          <motion.form {...fadeUp(0.15)} className="flex flex-col gap-4" onSubmit={e => e.preventDefault()}>
+          <motion.form {...fadeUp(0.15)} className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <div>
               <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--ink-500)' }}>E-posta</label>
               <div className="relative">
@@ -132,12 +137,22 @@ export function LoginPage() {
       </div>
 
       {/* Right: Product showcase */}
-      <div className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center bg-[var(--bg-subtle)] border-l border-[var(--border-subtle)]">
-        <div className="absolute -inset-24 rounded-full opacity-70" style={{ background: 'radial-gradient(ellipse, #EEF2FF 0%, transparent 65%)' }} />
+      <div className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center bg-[var(--bg-subtle)] border-l border-[var(--border-subtle)] px-10">
+        <div className="absolute -inset-24 rounded-full opacity-80" style={{ background: 'radial-gradient(ellipse, #E0E7FF 0%, transparent 60%)' }} />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 60% 45% at 50% 42%, rgba(99,102,241,0.14) 0%, transparent 70%)' }} />
 
         <div className="relative z-10 flex flex-col items-center">
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
-            <img src={loginScreenMockup} alt="Fineria giriş ekranı" className="w-[320px] h-auto drop-shadow-2xl" />
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }} className="relative">
+            <img
+              src={macbookMockup}
+              alt="Fineria uygulama ekranı"
+              className="w-full max-w-[560px] h-auto relative z-10"
+              style={{ filter: 'drop-shadow(0 25px 20px rgba(30,27,75,0.18)) drop-shadow(0 45px 60px rgba(30,27,75,0.22))' }}
+            />
+            <div
+              className="absolute left-1/2 -translate-x-1/2 rounded-full blur-2xl"
+              style={{ bottom: '-8px', width: '72%', height: '28px', background: 'radial-gradient(ellipse, rgba(30,27,75,0.28) 0%, transparent 75%)' }}
+            />
           </motion.div>
 
           <motion.div

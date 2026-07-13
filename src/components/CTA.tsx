@@ -2,12 +2,7 @@ import { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
-import { AppMockupImage } from './AppMockupImage';
-import ctaHandMockup from '@/assets/app-mockups/cta-hand.svg';
-
-// Crop tight around the phone + hand + forearm — the source canvas has a
-// large empty margin above the hand that would otherwise read as sparse.
-const ctaCrop = { left: 0, top: 310, width: 1080, height: 790 };
+import ctaHandMockup from '@/assets/app-mockups/cta-hand-mockup.webp';
 
 const trustItems = ['BDDK lisanslı altyapı', '30 gün ücretsiz deneme', 'İstediğiniz zaman iptal', 'Türkçe canlı destek'];
 
@@ -30,6 +25,19 @@ export function CTA() {
             className="absolute inset-0 pointer-events-none opacity-50"
             style={{ background: 'radial-gradient(ellipse 60% 60% at 20% 10%, rgba(99,102,241,0.35) 0%, transparent 70%)' }}
           />
+
+          <div className="relative hidden lg:flex items-end justify-center min-h-[420px] overflow-hidden">
+            <div
+              className="absolute -inset-10 rounded-full opacity-40"
+              style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.5) 0%, transparent 65%)' }}
+            />
+            <img
+              src={ctaHandMockup}
+              alt="Fineria uygulamasını kullanan bir yatırımcı"
+              className="relative w-[420px] xl:w-[480px] h-auto -mb-8"
+              style={{ filter: 'drop-shadow(0 25px 20px rgba(0,0,0,0.35)) drop-shadow(0 45px 55px rgba(0,0,0,0.3))' }}
+            />
+          </div>
 
           <div className="relative z-10 py-16 px-8 md:px-12 flex flex-col justify-center">
             <h2 className="font-bold text-white mb-4" style={{ fontSize: 'clamp(1.9rem, 3.6vw, 2.75rem)', lineHeight: 1.15 }}>
@@ -63,14 +71,6 @@ export function CTA() {
                 </span>
               ))}
             </div>
-          </div>
-
-          <div className="relative hidden lg:flex items-center justify-center min-h-[420px] overflow-hidden">
-            <div
-              className="absolute -inset-10 rounded-full opacity-40"
-              style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.5) 0%, transparent 65%)' }}
-            />
-            <AppMockupImage src={ctaHandMockup} crop={ctaCrop} width={620} className="relative" />
           </div>
         </motion.div>
       </div>

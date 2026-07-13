@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, CheckCircle2, BarChart3, BrainCircuit, ShieldCheck, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Logo } from '../components/Logo';
-import loginScreenMockup from '@/assets/app-mockups/login-screen.webp';
+import macbookMockup from '@/assets/app-mockups/macbook-transparent.webp';
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 18 },
@@ -32,6 +32,11 @@ export function RegisterPage() {
     border: `1px solid ${focused === field ? '#A5B4FC' : 'var(--border-subtle)'}`,
   });
 
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    window.location.href = 'https://finance-fineria.vercel.app';
+  };
+
   return (
     <div className="min-h-screen flex bg-white">
       {/* Left: Form */}
@@ -54,7 +59,7 @@ export function RegisterPage() {
             </p>
           </motion.div>
 
-          <motion.form {...fadeUp(0.12)} className="flex flex-col gap-3.5" onSubmit={e => e.preventDefault()}>
+          <motion.form {...fadeUp(0.12)} className="flex flex-col gap-3.5" onSubmit={handleSubmit}>
             <div>
               <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--ink-500)' }}>Ad Soyad</label>
               <div className="relative">
@@ -164,19 +169,29 @@ export function RegisterPage() {
 
       {/* Right: Product showcase */}
       <div className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center bg-[var(--bg-subtle)] border-l border-[var(--border-subtle)] px-10">
-        <div className="absolute -inset-24 rounded-full opacity-70" style={{ background: 'radial-gradient(ellipse, #EEF2FF 0%, transparent 65%)' }} />
+        <div className="absolute -inset-24 rounded-full opacity-80" style={{ background: 'radial-gradient(ellipse, #E0E7FF 0%, transparent 60%)' }} />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 60% 45% at 50% 38%, rgba(99,102,241,0.14) 0%, transparent 70%)' }} />
 
-        <div className="relative z-10 flex items-center gap-10">
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
-            <img src={loginScreenMockup} alt="Fineria giriş ekranı" className="w-[300px] h-auto drop-shadow-2xl" />
+        <div className="relative z-10 flex flex-col items-center gap-8 max-w-[520px]">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }} className="relative">
+            <img
+              src={macbookMockup}
+              alt="Fineria uygulama ekranı"
+              className="w-full h-auto relative z-10"
+              style={{ filter: 'drop-shadow(0 25px 20px rgba(30,27,75,0.18)) drop-shadow(0 45px 60px rgba(30,27,75,0.22))' }}
+            />
+            <div
+              className="absolute left-1/2 -translate-x-1/2 rounded-full blur-2xl"
+              style={{ bottom: '-8px', width: '72%', height: '28px', background: 'radial-gradient(ellipse, rgba(30,27,75,0.28) 0%, transparent 75%)' }}
+            />
           </motion.div>
 
-          <div className="flex flex-col gap-5 max-w-[220px]">
+          <div className="flex flex-col gap-5 w-full">
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 0.5 }} className="card p-4">
               <div className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--brand-hover)' }}>
                 Ücretsiz planda neler var?
               </div>
-              <div className="flex flex-col gap-2.5">
+              <div className="flex flex-wrap gap-x-5 gap-y-2.5">
                 {freeFeatures.map((f, i) => (
                   <div key={i} className="flex items-center gap-2.5">
                     <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'var(--success-tint)' }}>
@@ -188,7 +203,7 @@ export function RegisterPage() {
               </div>
             </motion.div>
 
-            <div className="grid grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-4 gap-2.5">
               {benefits.map((b, i) => (
                 <motion.div
                   key={i}

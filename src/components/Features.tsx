@@ -1,139 +1,172 @@
-import { motion } from 'framer-motion';
-import { useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 import {
-  LineChart, BrainCircuit, ShieldCheck, Zap, BellRing, Globe2,
-  RefreshCw, Smartphone, Headset,
+  BrainCircuit, LineChart, ShieldCheck, BellRing, Smartphone, Headset, Globe2,
+  ChevronLeft, ChevronRight,
 } from 'lucide-react';
 
 const features = [
-  {
-    icon: LineChart,
-    title: 'Gerçek Zamanlı Piyasa Verisi',
-    description: 'Tüm piyasaları tek ekrandan, gecikmesiz izleyin.',
-    tone: 'brand' as const,
-  },
-  {
-    icon: BrainCircuit,
-    title: 'Veri Destekli Tahminleme',
-    description: 'Karmaşık verileri değil, net sonuçları görün.',
-    tone: 'brand' as const,
-    badge: 'Yeni',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Kurumsal Düzeyde Güvenlik',
-    description: 'BDDK lisanslı, 256-bit şifreli altyapı.',
-    tone: 'success' as const,
-  },
-  {
-    icon: Zap,
-    title: 'Hızlı İşlem Altyapısı',
-    description: 'Fırsatları kaçırmayın, anında işlem yapın.',
-    tone: 'brand' as const,
-  },
-  {
-    icon: BellRing,
-    title: 'Akıllı Fiyat Bildirimleri',
-    description: 'Piyasayı takip etmeyin, size haber versin.',
-    tone: 'brand' as const,
-  },
-  {
-    icon: Globe2,
-    title: 'Geniş Piyasa Erişimi',
-    description: 'BIST, döviz ve kripto — tek hesapta.',
-    tone: 'brand' as const,
-  },
-  {
-    icon: RefreshCw,
-    title: 'Otomatik Portföy Dengeleme',
-    description: 'Portföyünüz kendini otomatik dengeler.',
-    tone: 'brand' as const,
-  },
-  {
-    icon: Smartphone,
-    title: 'Mobil Öncelikli Deneyim',
-    description: 'Portföyünüzü dilediğiniz yerden yönetin.',
-    tone: 'brand' as const,
-  },
-  {
-    icon: Headset,
-    title: '7/24 Türkçe Destek',
-    description: 'Sorularınıza her zaman anında yanıt.',
-    tone: 'success' as const,
-  },
+  { icon: BrainCircuit, title: 'Veri Destekli Tahminleme', desc: 'Karmaşık verileri değil, net sonuçları görün. Yapay zeka modelleri piyasayı sizin için okur.' },
+  { icon: LineChart, title: 'Gerçek Zamanlı Piyasa Verisi', desc: 'Tüm piyasaları tek ekrandan, gecikmesiz izleyin.' },
+  { icon: ShieldCheck, title: 'Kurumsal Düzeyde Güvenlik', desc: 'BDDK lisanslı, uçtan uca şifreli altyapı.' },
+  { icon: BellRing, title: 'Akıllı Bildirimler', desc: 'Piyasayı takip etmeyin, size haber versin.' },
+  { icon: Smartphone, title: 'Mobil Öncelikli Deneyim', desc: 'Portföyünüzü dilediğiniz yerden yönetin.' },
+  { icon: Headset, title: '7/24 Türkçe Destek', desc: 'Sorularınıza her zaman anında yanıt.' },
+  { icon: Globe2, title: 'Geniş Piyasa Erişimi', desc: 'BIST, döviz ve kripto — tek hesapta.' },
 ];
 
-const toneStyles = {
-  brand: { bg: 'var(--brand-tint)', fg: 'var(--brand-hover)' },
-  success: { bg: 'var(--success-tint)', fg: 'var(--success)' },
-};
+const CARD_WIDTH = 340;
+const GAP = 32;
+const STEP = CARD_WIDTH + GAP;
+const COUNT = features.length;
 
-function FeatureCard({ feature, index }: { feature: typeof features[0]; index: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-50px' });
-  const tone = toneStyles[feature.tone];
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: (index % 3) * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="card card-hover relative p-6"
-    >
-      <div
-        className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
-        style={{ background: tone.bg }}
-      >
-        <feature.icon size={20} style={{ color: tone.fg }} />
-      </div>
-
-      {feature.badge && (
-        <span
-          className="absolute top-5 right-5 text-xs font-semibold px-2 py-0.5 rounded-full"
-          style={{ background: 'var(--brand-tint)', color: 'var(--brand-hover)' }}
-        >
-          {feature.badge}
-        </span>
-      )}
-
-      <h3 className="font-semibold text-lg mb-2" style={{ color: 'var(--ink-900)' }}>
-        {feature.title}
-      </h3>
-      <p className="text-sm leading-relaxed" style={{ color: 'var(--ink-500)' }}>
-        {feature.description}
-      </p>
-    </motion.div>
-  );
+function mod(n: number, m: number) {
+  return ((n % m) + m) % m;
 }
 
 export function Features() {
   const titleRef = useRef(null);
-  const isInView = useInView(titleRef, { once: true });
+  const isTitleInView = useInView(titleRef, { once: true });
+  const sectionRef = useRef(null);
+  const isSectionInView = useInView(sectionRef, { once: true, margin: '-100px' });
+
+  const [active, setActive] = useState(0);
+
+  const goPrev = useCallback(() => setActive((a) => mod(a - 1, COUNT)), []);
+  const goNext = useCallback(() => setActive((a) => mod(a + 1, COUNT)), []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') goPrev();
+      if (e.key === 'ArrowRight') goNext();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [goPrev, goNext]);
 
   return (
-    <section id="ozellikler" className="py-24 relative bg-white">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="ozellikler" className="relative py-28 overflow-hidden bg-[#050505]">
+      <div className="absolute bottom-0 left-0 w-full h-[30%] bg-gradient-to-t from-[#111827] via-[#111827]/50 to-transparent pointer-events-none" />
+
+      <div className="relative max-w-7xl mx-auto px-6">
         <motion.div
           ref={titleRef}
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          animate={isTitleInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="badge badge-brand mb-4 mx-auto w-fit">Özellikler</div>
-          <h2 className="text-responsive-section font-bold mb-4" style={{ color: 'var(--ink-900)' }}>
+          <div
+            className="mb-4 mx-auto w-fit text-xs font-semibold px-3 py-1.5 rounded-full"
+            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#A5B4FC' }}
+          >
+            Özellikler
+          </div>
+          <h2
+            className="font-extrabold mb-4 tracking-tight leading-[1.05] bg-clip-text text-transparent bg-gradient-to-r from-gray-600 via-gray-400 to-gray-200"
+            style={{ fontSize: 'clamp(2.1rem, 4vw, 3.1rem)' }}
+          >
             Yatırım kararlarınızı destekleyen araçlar
           </h2>
-          <p className="text-lg max-w-2xl mx-auto" style={{ color: 'var(--ink-500)' }}>
+          <p className="text-lg max-w-2xl mx-auto text-gray-400 font-light">
             Yatırım kararlarınızı kolaylaştıran araçlar.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <motion.div
+          ref={sectionRef}
+          initial={{ opacity: 0 }}
+          animate={isSectionInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="relative flex items-center justify-center"
+        >
+          <button
+            type="button"
+            onClick={goPrev}
+            aria-label="Önceki özellik"
+            className="absolute left-0 sm:left-2 lg:-left-4 z-20 w-12 h-12 rounded-full flex items-center justify-center backdrop-blur-xl transition-colors duration-300"
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+          >
+            <ChevronLeft size={20} className="text-white/70" />
+          </button>
+
+          <div className="relative w-full h-[400px] flex items-center justify-center" style={{ perspective: 1200 }}>
+            {features.map((feature, i) => {
+              let offset = i - active;
+              if (offset > COUNT / 2) offset -= COUNT;
+              if (offset < -COUNT / 2) offset += COUNT;
+
+              const isActive = offset === 0;
+              const abs = Math.abs(offset);
+              const visible = abs <= 1;
+
+              return (
+                <motion.div
+                  key={feature.title}
+                  className="absolute rounded-3xl p-8 flex flex-col bg-white/5 backdrop-blur-xl [-webkit-backdrop-filter:blur(24px)] border border-white/10"
+                  style={{
+                    width: CARD_WIDTH,
+                    height: 360,
+                    marginLeft: -CARD_WIDTH / 2,
+                    marginTop: -180,
+                    left: '50%',
+                    top: '50%',
+                    boxShadow: isActive
+                      ? 'inset 0 0 20px rgba(255,255,255,0.03), 0 4px 30px rgba(0,0,0,0.1), 0 30px 60px -20px rgba(79,70,229,0.4)'
+                      : 'inset 0 0 20px rgba(255,255,255,0.03), 0 4px 30px rgba(0,0,0,0.1)',
+                    cursor: isActive ? 'default' : 'pointer',
+                  }}
+                  animate={{
+                    x: offset * STEP,
+                    scale: isActive ? 1 : 0.82,
+                    opacity: visible ? (isActive ? 1 : 0.45) : 0,
+                    zIndex: isActive ? 10 : 5 - abs,
+                    pointerEvents: visible ? 'auto' : 'none',
+                  }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  onClick={() => !isActive && setActive(i)}
+                >
+                  <feature.icon size={26} strokeWidth={1.25} className="text-white/40 mb-6" />
+
+                  <h3 className="font-semibold text-xl mb-3 tracking-tight text-white">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-gray-400 font-light">
+                    {feature.desc}
+                  </p>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            onClick={goNext}
+            aria-label="Sonraki özellik"
+            className="absolute right-0 sm:right-2 lg:-right-4 z-20 w-12 h-12 rounded-full flex items-center justify-center backdrop-blur-xl transition-colors duration-300"
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+          >
+            <ChevronRight size={20} className="text-white/70" />
+          </button>
+        </motion.div>
+
+        <div className="flex items-center justify-center gap-2 mt-10">
           {features.map((feature, i) => (
-            <FeatureCard key={feature.title} feature={feature} index={i} />
+            <button
+              key={feature.title}
+              type="button"
+              onClick={() => setActive(i)}
+              aria-label={`${feature.title} göster`}
+              className="h-1.5 rounded-full transition-all duration-300"
+              style={{
+                width: i === active ? 22 : 6,
+                background: i === active ? '#A5B4FC' : 'rgba(255,255,255,0.15)',
+              }}
+            />
           ))}
         </div>
       </div>
