@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import './index.css';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { GuestRoute } from './components/GuestRoute';
 import { Home } from './pages/Home';
 import { FeaturesPage } from './pages/FeaturesPage';
 import { MarketsPage } from './pages/MarketsPage';
@@ -11,16 +13,35 @@ import { PricingPage } from './pages/PricingPage';
 import { AboutPage } from './pages/AboutPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { AccountPage } from './pages/AccountPage';
 import { useAuthStore } from './stores/authStore';
 
 const authRoutes = ['/giris', '/kayit'];
 
 function AuthBootstrap({ children }: { children: ReactNode }) {
   const hydrate = useAuthStore((s) => s.hydrate);
+  const reconcileFromStorage = useAuthStore((s) => s.reconcileFromStorage);
 
   useEffect(() => {
     void hydrate();
-  }, [hydrate]);
+
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        reconcileFromStorage();
+      }
+    };
+
+    const onPopState = () => {
+      reconcileFromStorage();
+    };
+
+    window.addEventListener('pageshow', onPageShow);
+    window.addEventListener('popstate', onPopState);
+    return () => {
+      window.removeEventListener('pageshow', onPageShow);
+      window.removeEventListener('popstate', onPopState);
+    };
+  }, [hydrate, reconcileFromStorage]);
 
   return children;
 }
@@ -40,8 +61,30 @@ function Layout() {
           <Route path="/tahminleme" element={<PredictionPage />} />
           <Route path="/fiyatlar" element={<PricingPage />} />
           <Route path="/hakkimizda" element={<AboutPage />} />
-          <Route path="/giris" element={<LoginPage />} />
-          <Route path="/kayit" element={<RegisterPage />} />
+          <Route
+            path="/hesabim"
+            element={
+              <ProtectedRoute>
+                <AccountPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/giris"
+            element={
+              <GuestRoute>
+                <LoginPage />
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/kayit"
+            element={
+              <GuestRoute>
+                <RegisterPage />
+              </GuestRoute>
+            }
+          />
           <Route path="*" element={<Home />} />
         </Routes>
       </main>
