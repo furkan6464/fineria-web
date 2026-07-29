@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ArrowRight } from 'lucide-react';
+import { Menu, X, ArrowRight, LogOut } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { Logo } from './Logo';
+import { useAuthStore } from '@/stores/authStore';
 
 const navItems = [
   { label: 'Ana Sayfa', href: '/' },
@@ -16,7 +17,11 @@ const navItems = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const location = useLocation();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 12);
@@ -27,6 +32,17 @@ export function Navbar() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    try {
+      await logout();
+    } finally {
+      setLoggingOut(false);
+      setMobileOpen(false);
+    }
+  };
 
   return (
     <>
@@ -65,13 +81,33 @@ export function Navbar() {
 
           {/* CTA */}
           <div className="hidden lg:flex items-center gap-3">
-            <Link to="/giris" className="text-sm font-semibold px-4 py-2.5" style={{ color: 'var(--ink-900)' }}>
-              Giriş Yap
-            </Link>
-            <Link to="/kayit" className="btn-primary text-sm !py-2.5 !px-5 flex items-center gap-2">
-              Hesap Aç
-              <ArrowRight size={16} />
-            </Link>
+            {isAuthenticated && user ? (
+              <>
+                <span className="text-sm font-semibold px-2" style={{ color: 'var(--ink-900)' }}>
+                  @{user.handle}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  disabled={loggingOut}
+                  className="text-sm font-semibold px-4 py-2.5 flex items-center gap-2 rounded-xl border border-[var(--border-subtle)] hover:bg-[var(--bg-subtle)] transition-colors disabled:opacity-70"
+                  style={{ color: 'var(--ink-900)' }}
+                >
+                  <LogOut size={15} />
+                  {loggingOut ? 'Çıkış...' : 'Çıkış Yap'}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/giris" className="text-sm font-semibold px-4 py-2.5" style={{ color: 'var(--ink-900)' }}>
+                  Giriş Yap
+                </Link>
+                <Link to="/kayit" className="btn-primary text-sm !py-2.5 !px-5 flex items-center gap-2">
+                  Hesap Aç
+                  <ArrowRight size={16} />
+                </Link>
+              </>
+            )}
           </div>
 
           <button
@@ -106,8 +142,26 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="mt-4 pt-4 border-t border-[var(--border-subtle)] flex flex-col gap-3">
-                <Link to="/giris" onClick={() => setMobileOpen(false)} className="btn-secondary text-sm text-center">Giriş Yap</Link>
-                <Link to="/kayit" onClick={() => setMobileOpen(false)} className="btn-primary text-sm text-center">Hesap Aç</Link>
+                {isAuthenticated && user ? (
+                  <>
+                    <div className="text-sm font-semibold px-1" style={{ color: 'var(--ink-900)' }}>
+                      @{user.handle}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      disabled={loggingOut}
+                      className="btn-secondary text-sm text-center disabled:opacity-70"
+                    >
+                      {loggingOut ? 'Çıkış...' : 'Çıkış Yap'}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/giris" onClick={() => setMobileOpen(false)} className="btn-secondary text-sm text-center">Giriş Yap</Link>
+                    <Link to="/kayit" onClick={() => setMobileOpen(false)} className="btn-primary text-sm text-center">Hesap Aç</Link>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>

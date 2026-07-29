@@ -1,3 +1,4 @@
+import { useEffect, type ReactNode } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import './index.css';
 import { Navbar } from './components/Navbar';
@@ -10,8 +11,19 @@ import { PricingPage } from './pages/PricingPage';
 import { AboutPage } from './pages/AboutPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { useAuthStore } from './stores/authStore';
 
 const authRoutes = ['/giris', '/kayit'];
+
+function AuthBootstrap({ children }: { children: ReactNode }) {
+  const hydrate = useAuthStore((s) => s.hydrate);
+
+  useEffect(() => {
+    void hydrate();
+  }, [hydrate]);
+
+  return children;
+}
 
 function Layout() {
   const location = useLocation();
@@ -41,7 +53,9 @@ function Layout() {
 function App() {
   return (
     <BrowserRouter>
-      <Layout />
+      <AuthBootstrap>
+        <Layout />
+      </AuthBootstrap>
     </BrowserRouter>
   );
 }

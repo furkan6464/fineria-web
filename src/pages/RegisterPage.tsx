@@ -1,9 +1,17 @@
 import { useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, CheckCircle2, BarChart3, BrainCircuit, ShieldCheck, Sparkles } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, CheckCircle2, BarChart3, BrainCircuit, ShieldCheck, Sparkles, Loader2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Logo } from '../components/Logo';
 import macbookMockup from '@/assets/app-mockups/macbook-transparent.webp';
+import { isApiError } from '@/lib/api';
+import {
+  authService,
+  validateEmail,
+  validateHandle,
+  validatePassword,
+  validatePasswordConfirmation,
+} from '@/services/authService';
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 18 },
@@ -20,21 +28,94 @@ const benefits = [
 
 const freeFeatures = ['Sınırsız portföy takibi', 'Anlık fiyat bildirimleri', 'Temel analizler', 'Mobil uygulama erişimi'];
 
+type FieldErrors = {
+  handle?: string;
+  email?: string;
+  password?: string;
+  confirm?: string;
+  terms?: string;
+};
+
 export function RegisterPage() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [focused, setFocused] = useState<string | null>(null);
   const [accepted, setAccepted] = useState(false);
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' });
+  const [form, setForm] = useState({ handle: '', email: '', password: '', confirm: '' });
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [formError, setFormError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const inputStyle = (field: string) => ({
+  const inputStyle = (field: string, hasError?: boolean) => ({
     background: focused === field ? 'var(--brand-tint)' : 'white',
-    border: `1px solid ${focused === field ? '#A5B4FC' : 'var(--border-subtle)'}`,
+    border: `1px solid ${hasError ? '#F87171' : focused === field ? '#A5B4FC' : 'var(--border-subtle)'}`,
   });
 
-  const handleSubmit = (e: FormEvent) => {
+  const clearFieldError = (field: keyof FieldErrors) => {
+    setFieldErrors((prev) => {
+      if (!prev[field]) return prev;
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    window.location.href = 'https://finance-fineria.vercel.app';
+    setFormError(null);
+
+    const handleError = validateHandle(form.handle);
+    const emailError = validateEmail(form.email);
+    const passwordError = validatePassword(form.password);
+    const confirmError = validatePasswordConfirmation(form.password, form.confirm);
+    const termsError = accepted ? null : 'Devam etmek için kullanım koşullarını kabul etmelisiniz.';
+
+    setFieldErrors({
+      handle: handleError ?? undefined,
+      email: emailError ?? undefined,
+      password: passwordError ?? undefined,
+      confirm: confirmError ?? undefined,
+      terms: termsError ?? undefined,
+    });
+
+    if (handleError || emailError || passwordError || confirmError || termsError) return;
+
+    setLoading(true);
+    try {
+      await authService.register({
+        handle: form.handle,
+        email: form.email,
+        password: form.password,
+      });
+      navigate('/giris', {
+        replace: true,
+        state: {
+          registered: true,
+          message: 'Kayıt başarılı. Giriş yapabilirsiniz.',
+        },
+      });
+    } catch (error) {
+      if (isApiError(error)) {
+        if (error.code === 'EMAIL_ALREADY_EXISTS') {
+          setFieldErrors((prev) => ({ ...prev, email: error.message || 'Bu e-posta zaten kayıtlı.' }));
+        } else if (error.code === 'HANDLE_ALREADY_EXISTS') {
+          setFieldErrors((prev) => ({ ...prev, handle: error.message || 'Bu kullanıcı adı alınmış.' }));
+        } else if (error.code === 'TOO_MANY_REQUESTS' || error.status === 429) {
+          setFormError(error.message || 'Çok fazla deneme yapıldı. Lütfen sonra tekrar deneyin.');
+        } else if (error.code === 'VALIDATION_ERROR' || error.status === 400) {
+          setFormError(error.message || 'Girilen bilgiler geçersiz.');
+        } else if (error.code === 'NETWORK_ERROR') {
+          setFormError(error.message);
+        } else {
+          setFormError(error.message || 'Kayıt tamamlanamadı. Lütfen tekrar deneyin.');
+        }
+      } else {
+        setFormError('Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,22 +140,40 @@ export function RegisterPage() {
             </p>
           </motion.div>
 
-          <motion.form {...fadeUp(0.12)} className="flex flex-col gap-3.5" onSubmit={handleSubmit}>
+          {formError && (
+            <div
+              className="mb-4 rounded-xl px-3.5 py-3 text-sm"
+              style={{ background: '#FEF2F2', color: '#B91C1C' }}
+              role="alert"
+            >
+              {formError}
+            </div>
+          )}
+
+          <motion.form {...fadeUp(0.12)} className="flex flex-col gap-3.5" onSubmit={handleSubmit} noValidate>
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--ink-500)' }}>Ad Soyad</label>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--ink-500)' }}>Kullanıcı Adı</label>
               <div className="relative">
-                <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: focused === 'name' ? 'var(--brand-hover)' : 'var(--ink-400)' }} />
+                <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: focused === 'handle' ? 'var(--brand-hover)' : 'var(--ink-400)' }} />
                 <input
                   type="text"
-                  value={form.name}
-                  onChange={e => setForm({ ...form, name: e.target.value })}
-                  onFocus={() => setFocused('name')}
+                  value={form.handle}
+                  onChange={e => {
+                    setForm({ ...form, handle: e.target.value });
+                    clearFieldError('handle');
+                  }}
+                  onFocus={() => setFocused('handle')}
                   onBlur={() => setFocused(null)}
-                  placeholder="Adınız Soyadınız"
+                  placeholder="kullanici_adi"
+                  autoComplete="username"
+                  disabled={loading}
                   className="w-full pl-10 pr-4 py-3 rounded-xl text-sm outline-none transition-all duration-200"
-                  style={{ ...inputStyle('name'), color: 'var(--ink-900)' }}
+                  style={{ ...inputStyle('handle', !!fieldErrors.handle), color: 'var(--ink-900)' }}
                 />
               </div>
+              {fieldErrors.handle && (
+                <p className="mt-1.5 text-xs" style={{ color: '#B91C1C' }}>{fieldErrors.handle}</p>
+              )}
             </div>
 
             <div>
@@ -84,14 +183,22 @@ export function RegisterPage() {
                 <input
                   type="email"
                   value={form.email}
-                  onChange={e => setForm({ ...form, email: e.target.value })}
+                  onChange={e => {
+                    setForm({ ...form, email: e.target.value });
+                    clearFieldError('email');
+                  }}
                   onFocus={() => setFocused('email')}
                   onBlur={() => setFocused(null)}
                   placeholder="ornek@fineria.com"
+                  autoComplete="email"
+                  disabled={loading}
                   className="w-full pl-10 pr-4 py-3 rounded-xl text-sm outline-none transition-all duration-200"
-                  style={{ ...inputStyle('email'), color: 'var(--ink-900)' }}
+                  style={{ ...inputStyle('email', !!fieldErrors.email), color: 'var(--ink-900)' }}
                 />
               </div>
+              {fieldErrors.email && (
+                <p className="mt-1.5 text-xs" style={{ color: '#B91C1C' }}>{fieldErrors.email}</p>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -102,17 +209,25 @@ export function RegisterPage() {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={form.password}
-                    onChange={e => setForm({ ...form, password: e.target.value })}
+                    onChange={e => {
+                      setForm({ ...form, password: e.target.value });
+                      clearFieldError('password');
+                    }}
                     onFocus={() => setFocused('password')}
                     onBlur={() => setFocused(null)}
                     placeholder="••••••••"
+                    autoComplete="new-password"
+                    disabled={loading}
                     className="w-full pl-10 pr-9 py-3 rounded-xl text-sm outline-none transition-all duration-200"
-                    style={{ ...inputStyle('password'), color: 'var(--ink-900)' }}
+                    style={{ ...inputStyle('password', !!fieldErrors.password), color: 'var(--ink-900)' }}
                   />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--ink-400)' }}>
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--ink-400)' }} aria-label={showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'}>
                     {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
                 </div>
+                {fieldErrors.password && (
+                  <p className="mt-1.5 text-xs" style={{ color: '#B91C1C' }}>{fieldErrors.password}</p>
+                )}
               </div>
               <div>
                 <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--ink-500)' }}>Tekrar</label>
@@ -121,42 +236,68 @@ export function RegisterPage() {
                   <input
                     type={showConfirm ? 'text' : 'password'}
                     value={form.confirm}
-                    onChange={e => setForm({ ...form, confirm: e.target.value })}
+                    onChange={e => {
+                      setForm({ ...form, confirm: e.target.value });
+                      clearFieldError('confirm');
+                    }}
                     onFocus={() => setFocused('confirm')}
                     onBlur={() => setFocused(null)}
                     placeholder="••••••••"
+                    autoComplete="new-password"
+                    disabled={loading}
                     className="w-full pl-10 pr-9 py-3 rounded-xl text-sm outline-none transition-all duration-200"
-                    style={{ ...inputStyle('confirm'), color: 'var(--ink-900)' }}
+                    style={{ ...inputStyle('confirm', !!fieldErrors.confirm), color: 'var(--ink-900)' }}
                   />
-                  <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--ink-400)' }}>
+                  <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--ink-400)' }} aria-label={showConfirm ? 'Şifreyi gizle' : 'Şifreyi göster'}>
                     {showConfirm ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
                 </div>
+                {fieldErrors.confirm && (
+                  <p className="mt-1.5 text-xs" style={{ color: '#B91C1C' }}>{fieldErrors.confirm}</p>
+                )}
               </div>
             </div>
 
             <label className="flex items-start gap-3 cursor-pointer select-none">
               <div
-                onClick={() => setAccepted(!accepted)}
+                onClick={() => {
+                  if (loading) return;
+                  setAccepted(!accepted);
+                  clearFieldError('terms');
+                }}
                 className="mt-0.5 rounded flex items-center justify-center flex-shrink-0 transition-all duration-200"
                 style={{
                   width: 18,
                   height: 18,
                   background: accepted ? 'var(--brand)' : 'white',
-                  border: `1px solid ${accepted ? 'var(--brand)' : 'var(--border-strong)'}`,
+                  border: `1px solid ${fieldErrors.terms ? '#F87171' : accepted ? 'var(--brand)' : 'var(--border-strong)'}`,
                 }}
+                role="checkbox"
+                aria-checked={accepted}
               >
                 {accepted && <CheckCircle2 size={11} color="white" />}
               </div>
               <span className="text-xs leading-relaxed" style={{ color: 'var(--ink-500)' }}>
-                <Link to="#" style={{ color: 'var(--brand-hover)' }}>Kullanım Koşulları</Link>'nı ve{' '}
-                <Link to="#" style={{ color: 'var(--brand-hover)' }}>Gizlilik Politikası</Link>'nı okudum, kabul ediyorum.
+                <span style={{ color: 'var(--brand-hover)' }}>Kullanım Koşulları</span>'nı ve{' '}
+                <span style={{ color: 'var(--brand-hover)' }}>Gizlilik Politikası</span>'nı okudum, kabul ediyorum.
               </span>
             </label>
+            {fieldErrors.terms && (
+              <p className="-mt-2 text-xs" style={{ color: '#B91C1C' }}>{fieldErrors.terms}</p>
+            )}
 
-            <button type="submit" className="btn-primary w-full flex items-center justify-center gap-2 mt-1">
-              Ücretsiz Başla
-              <ArrowRight size={17} />
+            <button type="submit" disabled={loading} className="btn-primary w-full flex items-center justify-center gap-2 mt-1 disabled:opacity-70">
+              {loading ? (
+                <>
+                  <Loader2 size={17} className="animate-spin" />
+                  Kaydediliyor...
+                </>
+              ) : (
+                <>
+                  Ücretsiz Başla
+                  <ArrowRight size={17} />
+                </>
+              )}
             </button>
           </motion.form>
 
