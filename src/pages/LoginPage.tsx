@@ -14,6 +14,29 @@ const fadeUp = (delay = 0) => ({
   transition: { delay, duration: 0.5, ease: 'easeOut' as const },
 });
 
+function isSafeInternalPath(path: string): boolean {
+  return path.startsWith('/') && !path.startsWith('//') && !path.includes('://');
+}
+
+function getPostLoginPath(state: unknown): string {
+  if (!state || typeof state !== 'object') return '/hesabim';
+
+  const from = (state as { from?: unknown }).from;
+
+  if (typeof from === 'string' && isSafeInternalPath(from)) {
+    return from;
+  }
+
+  if (from && typeof from === 'object' && 'pathname' in from) {
+    const pathname = (from as { pathname: unknown }).pathname;
+    if (typeof pathname === 'string' && isSafeInternalPath(pathname)) {
+      return pathname;
+    }
+  }
+
+  return '/hesabim';
+}
+
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -66,7 +89,7 @@ export function LoginPage() {
           email: response.data.email,
         },
       });
-      navigate('/', { replace: true });
+      navigate(getPostLoginPath(location.state), { replace: true });
     } catch (error) {
       if (isApiError(error)) {
         if (error.code === 'INVALID_CREDENTIALS' || error.status === 401) {

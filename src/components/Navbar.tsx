@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight, LogOut } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from './Logo';
 import { useAuthStore } from '@/stores/authStore';
 
@@ -19,6 +19,7 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
@@ -37,7 +38,11 @@ export function Navbar() {
     if (loggingOut) return;
     setLoggingOut(true);
     try {
-      await logout();
+      // clearAuth runs synchronously at the start of logout(); navigate
+      // immediately so history moves before the network round-trip.
+      const logoutPromise = logout();
+      navigate('/', { replace: true });
+      await logoutPromise;
     } finally {
       setLoggingOut(false);
       setMobileOpen(false);
@@ -86,6 +91,13 @@ export function Navbar() {
                 <span className="text-sm font-semibold px-2" style={{ color: 'var(--ink-900)' }}>
                   @{user.handle}
                 </span>
+                <Link
+                  to="/hesabim"
+                  className="text-sm font-semibold px-4 py-2.5 rounded-xl border border-[var(--border-subtle)] hover:bg-[var(--bg-subtle)] transition-colors"
+                  style={{ color: location.pathname === '/hesabim' ? 'var(--brand-hover)' : 'var(--ink-900)' }}
+                >
+                  Hesabım
+                </Link>
                 <button
                   type="button"
                   onClick={handleLogout}
@@ -147,6 +159,14 @@ export function Navbar() {
                     <div className="text-sm font-semibold px-1" style={{ color: 'var(--ink-900)' }}>
                       @{user.handle}
                     </div>
+                    <Link
+                      to="/hesabim"
+                      onClick={() => setMobileOpen(false)}
+                      className="btn-secondary text-sm text-center"
+                      style={{ color: location.pathname === '/hesabim' ? 'var(--brand-hover)' : undefined }}
+                    >
+                      Hesabım
+                    </Link>
                     <button
                       type="button"
                       onClick={handleLogout}

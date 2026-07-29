@@ -45,6 +45,15 @@ function isExpired(expiresAtUtc: string): boolean {
   return expiresAt <= Date.now();
 }
 
+function getValidStoredSession(): StoredAuthSession | null {
+  const stored = readStorage();
+  if (!stored || isExpired(stored.expiresAtUtc)) {
+    if (stored) writeStorage(null);
+    return null;
+  }
+  return stored;
+}
+
 interface AuthState {
   accessToken: string | null;
   expiresAtUtc: string | null;
@@ -53,9 +62,13 @@ interface AuthState {
   isHydrated: boolean;
   setSession: (session: StoredAuthSession) => void;
   clearAuth: () => void;
+  /** Sync memory with localStorage after bfcache / history traversal. */
+  reconcileFromStorage: () => void;
   hydrate: () => Promise<void>;
   logout: () => Promise<void>;
 }
+
+let hydrateInFlight: Promise<void> | null = null;
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   accessToken: null,
@@ -84,59 +97,99 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
   },
 
-  hydrate: async () => {
-    const stored = readStorage();
+  reconcileFromStorage: () => {
+    const stored = getValidStoredSession();
 
-    if (!stored || isExpired(stored.expiresAtUtc)) {
-      writeStorage(null);
-      set({
-        accessToken: null,
-        expiresAtUtc: null,
-        user: null,
-        isAuthenticated: false,
-        isHydrated: true,
-      });
+    if (!stored) {
+      const { accessToken, user, isAuthenticated, isHydrated } = get();
+      if (accessToken || user || isAuthenticated) {
+        get().clearAuth();
+      }
+      if (!isHydrated) {
+        set({ isHydrated: true });
+      }
       return;
     }
 
-    set({
-      accessToken: stored.accessToken,
-      expiresAtUtc: stored.expiresAtUtc,
-      user: stored.user,
-      isAuthenticated: true,
-    });
+    const { accessToken, isAuthenticated, isHydrated, user } = get();
+    const memoryMatches =
+      isHydrated &&
+      isAuthenticated &&
+      accessToken === stored.accessToken &&
+      user?.id === stored.user.id;
 
-    try {
-      const me = await authService.me(stored.accessToken);
-      const user: AuthUser = {
-        id: me.id,
-        handle: me.username || stored.user.handle,
-        email: me.email || stored.user.email,
-      };
-      const nextSession: StoredAuthSession = {
+    if (memoryMatches) {
+      return;
+    }
+
+    // Hide protected UI until /me validation finishes.
+    set({ isHydrated: false });
+    void get().hydrate();
+  },
+
+  hydrate: async () => {
+    if (hydrateInFlight) return hydrateInFlight;
+
+    hydrateInFlight = (async () => {
+      const stored = getValidStoredSession();
+
+      if (!stored) {
+        writeStorage(null);
+        set({
+          accessToken: null,
+          expiresAtUtc: null,
+          user: null,
+          isAuthenticated: false,
+          isHydrated: true,
+        });
+        return;
+      }
+
+      set({
         accessToken: stored.accessToken,
         expiresAtUtc: stored.expiresAtUtc,
-        user,
-      };
-      writeStorage(nextSession);
-      set({
-        accessToken: nextSession.accessToken,
-        expiresAtUtc: nextSession.expiresAtUtc,
-        user,
+        user: stored.user,
         isAuthenticated: true,
-        isHydrated: true,
       });
-    } catch (error) {
-      if (isApiError(error) && (error.status === 401 || error.code === 'UNAUTHORIZED')) {
-        get().clearAuth();
+
+      try {
+        const me = await authService.me(stored.accessToken);
+        const user: AuthUser = {
+          id: me.id,
+          handle: me.username || stored.user.handle,
+          email: me.email || stored.user.email,
+        };
+        const nextSession: StoredAuthSession = {
+          accessToken: stored.accessToken,
+          expiresAtUtc: stored.expiresAtUtc,
+          user,
+        };
+        writeStorage(nextSession);
+        set({
+          accessToken: nextSession.accessToken,
+          expiresAtUtc: nextSession.expiresAtUtc,
+          user,
+          isAuthenticated: true,
+          isHydrated: true,
+        });
+      } catch (error) {
+        if (isApiError(error) && (error.status === 401 || error.code === 'UNAUTHORIZED')) {
+          get().clearAuth();
+        }
+        set({ isHydrated: true });
       }
-      set({ isHydrated: true });
-    }
+    })().finally(() => {
+      hydrateInFlight = null;
+    });
+
+    return hydrateInFlight;
   },
 
   logout: async () => {
     const token = get().accessToken;
+    // Clear client session synchronously before any navigation or await.
     get().clearAuth();
+    set({ isHydrated: true });
     if (token) {
       await authService.logout(token);
     }
