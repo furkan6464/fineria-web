@@ -15,27 +15,36 @@ interface Crop {
 interface AppMockupImageProps {
   src: string;
   label?: string;
+  /** Üst sınır genişlik; dar ekranda kapsayıcıya göre küçülür. */
   width?: number;
   crop?: Crop;
   className?: string;
 }
 
-export function AppMockupImage({ src, label, width = 300, crop = DEFAULT_CROP, className = '' }: AppMockupImageProps) {
-  const scale = width / crop.width;
-  const height = width * (crop.height / crop.width);
-  const imgWidth = REF_WIDTH * scale;
-  const imgHeight = REF_HEIGHT * scale;
-
+export function AppMockupImage({
+  src,
+  label,
+  width = 300,
+  crop = DEFAULT_CROP,
+  className = '',
+}: AppMockupImageProps) {
   return (
-    <div className={`overflow-hidden ${className}`} style={{ width, height }}>
+    <div
+      className={`overflow-hidden ${className}`}
+      style={{
+        width: '100%',
+        maxWidth: width,
+        aspectRatio: `${crop.width} / ${crop.height}`,
+      }}
+    >
       <img
         src={src}
         alt={label ?? 'Fineria uygulama ekranı'}
         style={{
-          width: imgWidth,
-          height: imgHeight,
+          width: `${(REF_WIDTH / crop.width) * 100}%`,
+          height: `${(REF_HEIGHT / crop.height) * 100}%`,
           maxWidth: 'none',
-          transform: `translate(${-crop.left * scale}px, ${-crop.top * scale}px)`,
+          transform: `translate(${-(crop.left / REF_WIDTH) * 100}%, ${-(crop.top / REF_HEIGHT) * 100}%)`,
         }}
       />
     </div>

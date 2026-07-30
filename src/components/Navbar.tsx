@@ -32,7 +32,18 @@ export function Navbar() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    setMobileOpen(false);
   }, [location.pathname]);
+
+  // Menü açıkken arka planın kaymasını engelle.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [mobileOpen]);
 
   const handleLogout = async () => {
     if (loggingOut) return;
@@ -52,11 +63,12 @@ export function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'py-3 bg-white/90 backdrop-blur-md border-b border-[var(--border-subtle)]' : 'py-5 bg-white/0'}`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || mobileOpen ? 'py-3 bg-white/95 backdrop-blur-md border-b border-[var(--border-subtle)]' : 'py-4 bg-white/0 sm:py-5'}`}
       >
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <Link to="/">
-            <Logo size={34} showText={true} />
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-6">
+          <Link to="/" onClick={() => setMobileOpen(false)}>
+            <Logo size={30} showText={true} className="sm:hidden" />
+            <Logo size={34} showText={true} className="hidden sm:flex" />
           </Link>
 
           {/* Desktop Nav */}
@@ -139,9 +151,9 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-[64px] z-40 lg:hidden bg-white border-b border-[var(--border-subtle)] shadow-soft-lg"
+            className="fixed inset-x-0 top-[60px] z-40 max-h-[calc(100dvh-60px)] overflow-y-auto overscroll-contain border-b border-[var(--border-subtle)] bg-white shadow-soft-lg lg:hidden"
           >
-            <div className="px-6 py-6 flex flex-col gap-1">
+            <div className="flex flex-col gap-1 px-5 py-5 sm:px-6 sm:py-6">
               {navItems.map((item) => (
                 <Link
                   key={item.href}

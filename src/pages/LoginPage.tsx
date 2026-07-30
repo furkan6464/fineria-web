@@ -1,12 +1,14 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, ArrowRight, ShieldCheck, Zap, TrendingUp, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from '../components/Logo';
-import macbookMockup from '@/assets/app-mockups/macbook-transparent.webp';
+import { DeviceShowcase } from '../components/DeviceShowcase';
 import { isApiError } from '@/lib/api';
 import { authService, validateEmail, validateLoginPassword } from '@/services/authService';
 import { useAuthStore } from '@/stores/authStore';
+
+const AUTH_FORMS_ENABLED = false;
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 18 },
@@ -60,12 +62,14 @@ export function LoginPage() {
   }, [location.pathname, location.state, navigate]);
 
   const inputStyle = (field: string, hasError?: boolean) => ({
-    background: focused === field ? 'var(--brand-tint)' : 'white',
-    border: `1px solid ${hasError ? '#F87171' : focused === field ? '#A5B4FC' : 'var(--border-subtle)'}`,
+    background: focused === field ? 'rgba(99,102,241,0.10)' : 'rgba(255,255,255,0.04)',
+    border: `1px solid ${hasError ? 'rgba(248,113,113,0.65)' : focused === field ? 'rgba(129,140,248,0.65)' : 'rgba(255,255,255,0.10)'}`,
+    color: '#F1F5F9',
   });
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!AUTH_FORMS_ENABLED) return;
     setFormError(null);
     setSuccessMessage(null);
 
@@ -112,23 +116,39 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-white">
+    <div className="min-h-screen flex bg-[#050508]">
       {/* Left: Form */}
-      <div className="w-full lg:w-[46%] flex flex-col justify-center px-8 md:px-16 xl:px-20 py-12 relative z-10">
+      <div className="relative z-10 flex w-full flex-col justify-center px-6 py-10 sm:px-8 sm:py-12 md:px-16 lg:w-[46%] xl:px-20">
         <motion.div {...fadeUp(0)} className="mb-10">
           <Link to="/">
-            <Logo size={34} showText />
+            <Logo size={34} showText textColor="#F8FAFC" />
           </Link>
         </motion.div>
 
-        <div className="max-w-[360px]">
+        <div className="w-full max-w-[360px]">
           <motion.div {...fadeUp(0.05)}>
-            <h1 className="font-extrabold mb-1" style={{ fontSize: '1.75rem', letterSpacing: '-0.02em', color: 'var(--ink-900)' }}>
+            <h1 className="font-extrabold mb-1 text-white" style={{ fontSize: '1.75rem', letterSpacing: '-0.02em' }}>
               Hoş geldiniz
             </h1>
-            <p className="text-sm mb-7" style={{ color: 'var(--ink-500)' }}>
-              Hesabınıza giriş yapın ve yatırımlarınızı yönetin.
+            <p className="mb-5 text-sm text-gray-400">
+              Giriş altyapısı hazırlanıyor.
             </p>
+          </motion.div>
+
+          <motion.div
+            {...fadeUp(0.08)}
+            className="mb-5 flex items-start gap-3 rounded-xl border border-indigo-400/20 bg-indigo-400/[0.08] px-4 py-3.5"
+            role="status"
+          >
+            <div className="mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-indigo-400/10 text-indigo-300">
+              <Lock size={14} />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-indigo-200">Çok yakında erişime açılacak</p>
+              <p className="mt-0.5 text-xs leading-relaxed text-gray-400">
+                E-posta ile giriş ve hesap işlemleri şu anda kullanıma kapalıdır.
+              </p>
+            </div>
           </motion.div>
 
           <motion.div {...fadeUp(0.1)} className="flex gap-3 mb-5">
@@ -136,8 +156,7 @@ export function LoginPage() {
               type="button"
               disabled
               title="Yakında"
-              className="flex-1 flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-subtle)] opacity-50 cursor-not-allowed"
-              style={{ color: 'var(--ink-900)' }}
+              className="flex-1 flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl text-sm font-medium border border-white/10 text-gray-300 opacity-50 cursor-not-allowed"
             >
               <svg width="17" height="17" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -151,8 +170,7 @@ export function LoginPage() {
               type="button"
               disabled
               title="Yakında"
-              className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-subtle)] opacity-50 cursor-not-allowed"
-              style={{ color: 'var(--ink-900)' }}
+              className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-medium border border-white/10 text-gray-300 opacity-50 cursor-not-allowed"
             >
               <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
@@ -162,15 +180,15 @@ export function LoginPage() {
           </motion.div>
 
           <motion.div {...fadeUp(0.12)} className="flex items-center gap-3 mb-5">
-            <div className="flex-1 h-px bg-[var(--border-subtle)]" />
-            <span className="text-xs" style={{ color: 'var(--ink-400)' }}>ya da e-posta ile</span>
-            <div className="flex-1 h-px bg-[var(--border-subtle)]" />
+            <div className="flex-1 h-px bg-white/10" />
+            <span className="text-xs text-gray-500">ya da e-posta ile</span>
+            <div className="flex-1 h-px bg-white/10" />
           </motion.div>
 
           {successMessage && (
             <div
               className="mb-4 rounded-xl px-3.5 py-3 text-sm"
-              style={{ background: 'var(--success-tint)', color: 'var(--success)' }}
+              style={{ background: 'rgba(16,185,129,0.12)', color: '#6EE7B7' }}
               role="status"
             >
               {successMessage}
@@ -180,18 +198,24 @@ export function LoginPage() {
           {formError && (
             <div
               className="mb-4 rounded-xl px-3.5 py-3 text-sm"
-              style={{ background: '#FEF2F2', color: '#B91C1C' }}
+              style={{ background: 'rgba(248,113,113,0.12)', color: '#FCA5A5' }}
               role="alert"
             >
               {formError}
             </div>
           )}
 
-          <motion.form {...fadeUp(0.15)} className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
+          <motion.form
+            {...fadeUp(0.15)}
+            className="pointer-events-none flex cursor-not-allowed select-none flex-col gap-4 opacity-45 grayscale-[0.2]"
+            onSubmit={handleSubmit}
+            aria-disabled="true"
+            noValidate
+          >
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--ink-500)' }}>E-posta</label>
+              <label className="block text-xs font-medium mb-1.5 text-gray-400">E-posta</label>
               <div className="relative">
-                <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: focused === 'email' ? 'var(--brand-hover)' : 'var(--ink-400)' }} />
+                <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: focused === 'email' ? '#A5B4FC' : '#64748B' }} />
                 <input
                   type="email"
                   value={email}
@@ -203,25 +227,25 @@ export function LoginPage() {
                   onBlur={() => setFocused(null)}
                   placeholder="ornek@fineria.com"
                   autoComplete="email"
-                  disabled={loading}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl text-sm outline-none transition-all duration-200"
-                  style={{ ...inputStyle('email', !!fieldErrors.email), color: 'var(--ink-900)' }}
+                  disabled={!AUTH_FORMS_ENABLED || loading}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl text-sm outline-none transition-all duration-200 placeholder:text-gray-600"
+                  style={inputStyle('email', !!fieldErrors.email)}
                 />
               </div>
               {fieldErrors.email && (
-                <p className="mt-1.5 text-xs" style={{ color: '#B91C1C' }}>{fieldErrors.email}</p>
+                <p className="mt-1.5 text-xs" style={{ color: '#FCA5A5' }}>{fieldErrors.email}</p>
               )}
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-medium" style={{ color: 'var(--ink-500)' }}>Şifre</label>
-                <span className="text-xs font-medium opacity-60 cursor-not-allowed" style={{ color: 'var(--brand-hover)' }} title="Yakında">
+                <label className="text-xs font-medium text-gray-400">Şifre</label>
+                <span className="text-xs font-medium opacity-60 cursor-not-allowed text-indigo-300" title="Yakında">
                   Şifremi unuttum · Yakında
                 </span>
               </div>
               <div className="relative">
-                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: focused === 'password' ? 'var(--brand-hover)' : 'var(--ink-400)' }} />
+                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: focused === 'password' ? '#A5B4FC' : '#64748B' }} />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
@@ -233,26 +257,30 @@ export function LoginPage() {
                   onBlur={() => setFocused(null)}
                   placeholder="••••••••"
                   autoComplete="current-password"
-                  disabled={loading}
-                  className="w-full pl-10 pr-11 py-3 rounded-xl text-sm outline-none transition-all duration-200"
-                  style={{ ...inputStyle('password', !!fieldErrors.password), color: 'var(--ink-900)' }}
+                  disabled={!AUTH_FORMS_ENABLED || loading}
+                  className="w-full pl-10 pr-11 py-3 rounded-xl text-sm outline-none transition-all duration-200 placeholder:text-gray-600"
+                  style={inputStyle('password', !!fieldErrors.password)}
                 />
                 <button
                   type="button"
+                  disabled={!AUTH_FORMS_ENABLED}
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2"
-                  style={{ color: 'var(--ink-400)' }}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 cursor-not-allowed text-gray-500"
                   aria-label={showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'}
                 >
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
               {fieldErrors.password && (
-                <p className="mt-1.5 text-xs" style={{ color: '#B91C1C' }}>{fieldErrors.password}</p>
+                <p className="mt-1.5 text-xs" style={{ color: '#FCA5A5' }}>{fieldErrors.password}</p>
               )}
             </div>
 
-            <button type="submit" disabled={loading} className="btn-primary w-full flex items-center justify-center gap-2 mt-1 disabled:opacity-70">
+            <button
+              type="submit"
+              disabled={!AUTH_FORMS_ENABLED || loading}
+              className="btn-primary mt-1 flex w-full cursor-not-allowed items-center justify-center gap-2 disabled:opacity-50"
+            >
               {loading ? (
                 <>
                   <Loader2 size={17} className="animate-spin" />
@@ -260,57 +288,23 @@ export function LoginPage() {
                 </>
               ) : (
                 <>
-                  Giriş Yap
-                  <ArrowRight size={17} />
+                  Giriş Yap · Yakında
+                  <Lock size={15} />
                 </>
               )}
             </button>
           </motion.form>
 
-          <motion.p {...fadeUp(0.3)} className="text-center text-sm mt-6" style={{ color: 'var(--ink-500)' }}>
+          <motion.p {...fadeUp(0.3)} className="text-center text-sm mt-6 text-gray-400">
             Hesabın yok mu?{' '}
-            <Link to="/kayit" className="font-semibold" style={{ color: 'var(--brand-hover)' }}>Üye ol →</Link>
+            <Link to="/kayit" className="font-semibold text-indigo-300">Üye ol →</Link>
           </motion.p>
         </div>
       </div>
 
       {/* Right: Product showcase */}
-      <div className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center bg-[var(--bg-subtle)] border-l border-[var(--border-subtle)] px-10">
-        <div className="absolute -inset-24 rounded-full opacity-80" style={{ background: 'radial-gradient(ellipse, #E0E7FF 0%, transparent 60%)' }} />
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 60% 45% at 50% 42%, rgba(99,102,241,0.14) 0%, transparent 70%)' }} />
-
-        <div className="relative z-10 flex flex-col items-center">
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }} className="relative">
-            <img
-              src={macbookMockup}
-              alt="Fineria uygulama ekranı"
-              className="w-full max-w-[560px] h-auto relative z-10"
-              style={{ filter: 'drop-shadow(0 25px 20px rgba(30,27,75,0.18)) drop-shadow(0 45px 60px rgba(30,27,75,0.22))' }}
-            />
-            <div
-              className="absolute left-1/2 -translate-x-1/2 rounded-full blur-2xl"
-              style={{ bottom: '-8px', width: '72%', height: '28px', background: 'radial-gradient(ellipse, rgba(30,27,75,0.28) 0%, transparent 75%)' }}
-            />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-            className="flex items-center justify-center gap-5 mt-8"
-          >
-            {([
-              [ShieldCheck, 'BDDK Lisanslı'],
-              [Zap, '256-bit Şifreleme'],
-              [TrendingUp, 'Gerçek Zamanlı'],
-            ] as const).map(([Icon, label], i) => (
-              <div key={i} className="flex items-center gap-1.5 text-xs font-medium" style={{ color: 'var(--ink-500)' }}>
-                <Icon size={13} style={{ color: 'var(--brand-hover)' }} />
-                {label}
-              </div>
-            ))}
-          </motion.div>
-        </div>
+      <div className="hidden lg:flex flex-1 border-l border-white/10">
+        <DeviceShowcase />
       </div>
     </div>
   );

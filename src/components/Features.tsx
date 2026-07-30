@@ -8,20 +8,42 @@ import {
 const features = [
   { icon: BrainCircuit, title: 'Veri Destekli Tahminleme', desc: 'Karmaşık verileri değil, net sonuçları görün. Yapay zeka modelleri piyasayı sizin için okur.' },
   { icon: LineChart, title: 'Gerçek Zamanlı Piyasa Verisi', desc: 'Tüm piyasaları tek ekrandan, gecikmesiz izleyin.' },
-  { icon: ShieldCheck, title: 'Kurumsal Düzeyde Güvenlik', desc: 'BDDK lisanslı, uçtan uca şifreli altyapı.' },
+  { icon: ShieldCheck, title: 'Modern Güvenlik', desc: 'Şifreli iletişim ve iki faktörlü kimlik doğrulama.' },
   { icon: BellRing, title: 'Akıllı Bildirimler', desc: 'Piyasayı takip etmeyin, size haber versin.' },
   { icon: Smartphone, title: 'Mobil Öncelikli Deneyim', desc: 'Portföyünüzü dilediğiniz yerden yönetin.' },
   { icon: Headset, title: '7/24 Türkçe Destek', desc: 'Sorularınıza her zaman anında yanıt.' },
   { icon: Globe2, title: 'Geniş Piyasa Erişimi', desc: 'BIST, döviz ve kripto — tek hesapta.' },
 ];
 
-const CARD_WIDTH = 340;
-const GAP = 32;
-const STEP = CARD_WIDTH + GAP;
+const MAX_CARD_WIDTH = 340;
 const COUNT = features.length;
 
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
+}
+
+/** Kapsayıcı genişliğini izleyerek kart ölçüsünü dar ekranlara uyarlar. */
+function useCarouselMetrics() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(MAX_CARD_WIDTH);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const update = () => {
+      // Oklar için iki yanda ~56px pay bırakılır.
+      const available = el.clientWidth - 112;
+      setWidth(Math.max(220, Math.min(MAX_CARD_WIDTH, available)));
+    };
+
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return { containerRef, cardWidth: width, step: width + 32 };
 }
 
 export function Features() {
@@ -29,6 +51,7 @@ export function Features() {
   const isTitleInView = useInView(titleRef, { once: true });
   const sectionRef = useRef(null);
   const isSectionInView = useInView(sectionRef, { once: true, margin: '-100px' });
+  const { containerRef, cardWidth, step } = useCarouselMetrics();
 
   const [active, setActive] = useState(0);
 
@@ -45,16 +68,16 @@ export function Features() {
   }, [goPrev, goNext]);
 
   return (
-    <section id="ozellikler" className="relative py-28 overflow-hidden bg-[#050505]">
+    <section id="ozellikler" className="relative overflow-hidden bg-[#050505] py-20 sm:py-24 lg:py-28">
       <div className="absolute bottom-0 left-0 w-full h-[30%] bg-gradient-to-t from-[#111827] via-[#111827]/50 to-transparent pointer-events-none" />
 
-      <div className="relative max-w-7xl mx-auto px-6">
+      <div className="relative max-w-7xl mx-auto px-5 sm:px-6">
         <motion.div
           ref={titleRef}
           initial={{ opacity: 0, y: 20 }}
           animate={isTitleInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="mb-12 text-center sm:mb-16"
         >
           <div
             className="mb-4 mx-auto w-fit text-xs font-semibold px-3 py-1.5 rounded-full"
@@ -68,7 +91,7 @@ export function Features() {
           >
             Yatırım kararlarınızı destekleyen araçlar
           </h2>
-          <p className="text-lg max-w-2xl mx-auto text-gray-400 font-light">
+          <p className="mx-auto max-w-2xl text-base font-light text-gray-400 sm:text-lg">
             Yatırım kararlarınızı kolaylaştıran araçlar.
           </p>
         </motion.div>
@@ -84,7 +107,7 @@ export function Features() {
             type="button"
             onClick={goPrev}
             aria-label="Önceki özellik"
-            className="absolute left-0 sm:left-2 lg:-left-4 z-20 w-12 h-12 rounded-full flex items-center justify-center backdrop-blur-xl transition-colors duration-300"
+            className="absolute left-0 z-20 flex h-10 w-10 items-center justify-center rounded-full backdrop-blur-xl transition-colors duration-300 sm:h-12 sm:w-12 lg:-left-4"
             style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
             onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
@@ -92,7 +115,11 @@ export function Features() {
             <ChevronLeft size={20} className="text-white/70" />
           </button>
 
-          <div className="relative w-full h-[400px] flex items-center justify-center" style={{ perspective: 1200 }}>
+          <div
+            ref={containerRef}
+            className="relative flex h-[400px] w-full items-center justify-center"
+            style={{ perspective: 1200 }}
+          >
             {features.map((feature, i) => {
               let offset = i - active;
               if (offset > COUNT / 2) offset -= COUNT;
@@ -105,11 +132,11 @@ export function Features() {
               return (
                 <motion.div
                   key={feature.title}
-                  className="absolute rounded-3xl p-8 flex flex-col bg-white/5 backdrop-blur-xl [-webkit-backdrop-filter:blur(24px)] border border-white/10"
+                  className="absolute flex flex-col rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl [-webkit-backdrop-filter:blur(24px)] sm:p-8"
                   style={{
-                    width: CARD_WIDTH,
+                    width: cardWidth,
                     height: 360,
-                    marginLeft: -CARD_WIDTH / 2,
+                    marginLeft: -cardWidth / 2,
                     marginTop: -180,
                     left: '50%',
                     top: '50%',
@@ -119,7 +146,7 @@ export function Features() {
                     cursor: isActive ? 'default' : 'pointer',
                   }}
                   animate={{
-                    x: offset * STEP,
+                    x: offset * step,
                     scale: isActive ? 1 : 0.82,
                     opacity: visible ? (isActive ? 1 : 0.45) : 0,
                     zIndex: isActive ? 10 : 5 - abs,
@@ -145,7 +172,7 @@ export function Features() {
             type="button"
             onClick={goNext}
             aria-label="Sonraki özellik"
-            className="absolute right-0 sm:right-2 lg:-right-4 z-20 w-12 h-12 rounded-full flex items-center justify-center backdrop-blur-xl transition-colors duration-300"
+            className="absolute right-0 z-20 flex h-10 w-10 items-center justify-center rounded-full backdrop-blur-xl transition-colors duration-300 sm:h-12 sm:w-12 lg:-right-4"
             style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
             onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}

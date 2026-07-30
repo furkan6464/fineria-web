@@ -219,13 +219,66 @@ body {
 
 /* Responsive typography */
 .text-responsive-hero {
-  font-size: clamp(2.5rem, 5.4vw, 4.25rem);
+  font-size: clamp(2.1rem, 5.4vw, 4.25rem);
   line-height: 1.08;
   letter-spacing: -0.03em;
 }
 
 .text-responsive-section {
-  font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+  font-size: clamp(1.6rem, 3.4vw, 2.75rem);
   line-height: 1.15;
   letter-spacing: -0.02em;
+}
+
+/* Yatay taşmaya karşı genel koruma */
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+/* Yatay kaydırma şeritlerinde kaydırma çubuğunu gizler */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .btn-primary,
+  .btn-secondary {
+    padding: 12px 20px;
+    font-size: 14.5px;
+  }
+
+  .badge {
+    padding: 5px 12px;
+    font-size: 11.5px;
+  }
+
+  .card {
+    border-radius: 1rem;
+  }
+}
+
+/* Dokunmatik cihazlarda mavi vurgu kutusunu kaldırır */
+@media (hover: none) {
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .ticker-content {
+    animation: none;
+  }
 }

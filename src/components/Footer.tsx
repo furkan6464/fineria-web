@@ -1,5 +1,4 @@
 import { Logo } from './Logo';
-import { ShieldCheck, Lock, FileCheck2 } from 'lucide-react';
 
 import type { CSSProperties } from 'react';
 
@@ -46,29 +45,13 @@ const footerLinks = {
   ],
   Kurumsal: [
     { label: 'Hakkımızda', href: '/hakkimizda' },
-    { label: 'Kariyer', href: '#' },
-    { label: 'Basın Odası', href: '#' },
     { label: 'İletişim', href: '#' },
-  ],
-  Kaynaklar: [
-    { label: 'Yardım Merkezi', href: '#' },
-    { label: 'Ücret Tarifesi', href: '#' },
-    { label: 'Sistem Durumu', href: '#' },
-    { label: 'API Dokümantasyonu', href: '#' },
   ],
   Yasal: [
     { label: 'Gizlilik Politikası', href: '#' },
     { label: 'Kullanım Koşulları', href: '#' },
-    { label: 'KVKK Aydınlatma Metni', href: '#' },
-    { label: 'Risk Bildirim Formu', href: '#' },
   ],
 };
-
-const trustBadges = [
-  { icon: ShieldCheck, label: 'BDDK Lisanslı', desc: 'Bankacılık Düzenleme ve Denetleme Kurumu gözetiminde faaliyet gösterir' },
-  { icon: Lock, label: '256-bit Şifreleme', desc: 'Banka düzeyinde uçtan uca veri güvenliği' },
-  { icon: FileCheck2, label: 'KVKK Uyumlu', desc: 'Kişisel verileriniz mevzuata tam uyumlu şekilde işlenir' },
-];
 
 const socials = [
   { icon: LinkedinIcon, label: 'LinkedIn', href: '#' },
@@ -78,30 +61,14 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer className="pt-20 pb-10 bg-[var(--bg-subtle)] border-t border-[var(--border-subtle)]">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Trust strip */}
-        <div className="grid sm:grid-cols-3 gap-6 pb-14 mb-14 border-b border-[var(--border-subtle)]">
-          {trustBadges.map((item) => (
-            <div key={item.label} className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white border border-[var(--border-subtle)] flex items-center justify-center flex-shrink-0">
-                <item.icon size={18} style={{ color: 'var(--brand-hover)' }} />
-              </div>
-              <div>
-                <div className="text-sm font-semibold" style={{ color: 'var(--ink-900)' }}>{item.label}</div>
-                <div className="text-xs mt-0.5 leading-relaxed" style={{ color: 'var(--ink-500)' }}>{item.desc}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Top row */}
-        <div className="grid lg:grid-cols-6 gap-12 mb-16">
-          <div className="lg:col-span-2">
+    <footer className="border-t border-[var(--border-subtle)] bg-[var(--bg-subtle)] pb-10 pt-14 sm:pt-20">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6">
+        <div className="mb-12 grid grid-cols-2 gap-8 sm:gap-10 lg:mb-16 lg:grid-cols-5 lg:gap-12">
+          <div className="col-span-2 lg:col-span-2">
             <Logo size={34} showText={true} className="mb-4" />
             <p className="text-sm leading-relaxed mb-6 max-w-xs" style={{ color: 'var(--ink-500)' }}>
-              Fineria, bireysel ve kurumsal yatırımcıların portföylerini tek bir platformdan
-              yönetmesini sağlayan lisanslı bir finansal teknoloji şirketidir.
+              Fineria, bireysel yatırımcıların portföylerini tek bir platformdan
+              takip etmesini sağlayan bir finansal teknoloji girişimidir.
             </p>
             <div className="flex gap-2">
               {socials.map((s) => (
@@ -139,20 +106,19 @@ export function Footer() {
 
         <div className="section-divider mb-8" />
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex flex-col items-center justify-between gap-3 text-center md:flex-row md:gap-4 md:text-left">
           <p className="text-sm" style={{ color: 'var(--ink-500)' }}>
-            © 2026 Fineria Finansal Teknolojiler A.Ş. Tüm hakları saklıdır.
+            © 2026 Fineria. Tüm hakları saklıdır.
           </p>
-          <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--ink-500)' }}>
-            <div className="w-2 h-2 rounded-full" style={{ background: 'var(--success)' }} />
-            Tüm sistemler çalışıyor
-          </div>
+          <p className="text-xs" style={{ color: 'var(--ink-400)' }}>
+            App Store ve Google Play · Yakında
+          </p>
         </div>
 
-        <p className="mt-6 text-xs text-center leading-relaxed max-w-3xl mx-auto" style={{ color: 'var(--ink-400)' }}>
-          Fineria Finansal Teknolojiler A.Ş., Bankacılık Düzenleme ve Denetleme Kurumu (BDDK) tarafından
-          lisanslandırılmış olup sermaye piyasası faaliyetleri SPK denetimi altındadır. Yatırım
-          işlemleri risk içerir; geçmiş performans gelecekteki sonuçların garantisi değildir.
+        <p className="mx-auto mt-6 max-w-3xl text-center text-xs leading-relaxed" style={{ color: 'var(--ink-400)' }}>
+          Fineria bir yatırım tavsiyesi platformu değildir. Platformda yer alan içerikler
+          bilgilendirme amaçlıdır; yatırım kararlarınızın sorumluluğu size aittir.
+          Geçmiş performans gelecekteki sonuçların garantisi değildir.
         </p>
       </div>
     </footer>

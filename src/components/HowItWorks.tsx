@@ -8,7 +8,7 @@ const steps = [
     icon: UserPlus,
     title: 'Hesabınızı açın',
     description: 'Kimliğinizi birkaç adımda onaylayın.',
-    detail: '~2 dakika sürer',
+    detail: 'Dakikalar sürer',
   },
   {
     icon: SlidersHorizontal,
@@ -18,15 +18,15 @@ const steps = [
   },
   {
     icon: TrendingUp,
-    title: 'İlk yatırımınızı yapın',
-    description: 'Tek tıkla yatırımınızı başlatın.',
-    detail: 'Minimum ₺100',
+    title: 'Portföyünüzü ekleyin',
+    description: 'Takip etmek istediğiniz varlıkları seçin.',
+    detail: 'Tek ekrandan',
   },
   {
     icon: LineChart,
     title: 'Portföyünüzü takip edin',
     description: 'Yatırımınızı anlık olarak izleyin.',
-    detail: 'Aylık raporlama',
+    detail: 'Web ve yakında mobil',
   },
 ];
 
@@ -35,20 +35,20 @@ export function HowItWorks() {
   const isInView = useInView(ref, { once: true });
 
   return (
-    <section id="nasil-calisir" className="py-24 relative bg-[var(--bg-subtle)]">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="nasil-calisir" className="relative bg-[var(--bg-subtle)] py-16 sm:py-20 lg:py-24">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6">
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="mb-12 text-center sm:mb-16"
         >
           <div className="badge badge-brand mb-4 mx-auto w-fit">Nasıl Çalışır</div>
           <h2 className="text-responsive-section font-bold mb-4" style={{ color: 'var(--ink-900)' }}>
             Dört adımda yatırıma başlayın
           </h2>
-          <p className="text-lg max-w-xl mx-auto" style={{ color: 'var(--ink-500)' }}>
+          <p className="mx-auto max-w-xl text-base sm:text-lg" style={{ color: 'var(--ink-500)' }}>
             Hesap açılışından ilk yatırımınıza kadar tüm süreç dijital ve şeffaftır.
           </p>
         </motion.div>

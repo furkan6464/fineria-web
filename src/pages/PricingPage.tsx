@@ -93,11 +93,11 @@ const tableRows = [
 ];
 
 const faqs = [
-  { q: 'Ücretsiz plan ne kadar süre geçerli?', a: 'Süresiz. Temel özellikler her zaman ücretsiz kalır.' },
-  { q: 'Tahminleme motoru nasıl çalışır?', a: 'Geçmiş verileri analiz ederek olası fiyat yönünü gösterir.' },
-  { q: 'Verilerim güvende mi?', a: 'Evet. BDDK lisanslı, banka düzeyinde güvenli bir altyapı kullanıyoruz.' },
-  { q: 'B2B API nasıl çalışır?', a: 'Bankalar ve aracı kurumlarla kolayca entegre olur.' },
-  { q: '30 günlük deneme sonrası ne olur?', a: 'Pro plan ücretli hale geçer. İstediğiniz zaman iptal edebilirsiniz.' },
+  { q: 'Ücretsiz plan ne kadar süre geçerli?', a: 'Temel özellikler erken erişim döneminde ücretsiz sunulur.' },
+  { q: 'Tahminleme motoru nasıl çalışır?', a: 'Geçmiş verileri analiz ederek olası fiyat yönüne dair bir görünüm sunar. Yatırım tavsiyesi değildir.' },
+  { q: 'Verilerim güvende mi?', a: 'Şifreli iletişim ve hesap koruma adımları kullanıyoruz. Ürün geliştirme sürecinde güvenlik uygulamalarını sürekli güçlendiriyoruz.' },
+  { q: 'Mobil uygulama ne zaman gelecek?', a: 'App Store ve Google Play sürümleri yakında yayınlanacak.' },
+  { q: 'Planı istediğim zaman iptal edebilir miyim?', a: 'Evet. Ücretli planlarda istediğiniz zaman iptal edebilirsiniz.' },
 ];
 
 function TableCell({ val }: { val: boolean | string }) {
@@ -200,8 +200,8 @@ export function PricingPage() {
   return (
     <div className="pt-24">
       {/* Hero */}
-      <section className="py-20 relative bg-white">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="py-14 sm:py-20 relative bg-white">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6">
           <motion.div
             ref={heroRef}
             initial={{ opacity: 0, y: 20 }}
@@ -216,8 +216,8 @@ export function PricingPage() {
             <h1 className="text-responsive-hero font-extrabold mb-5" style={{ color: 'var(--ink-900)' }}>
               Hedeflerinize uygun esnek planlar
             </h1>
-            <p className="text-xl leading-relaxed" style={{ color: 'var(--ink-500)' }}>
-              Gizli ücret yok · İstediğinizde iptal edin · 30 gün ücretsiz deneyin
+            <p className="text-lg leading-relaxed sm:text-xl" style={{ color: 'var(--ink-500)' }}>
+              Gizli ücret yok · Erken erişim açık · Mobil uygulama yakında
             </p>
           </motion.div>
         </div>
@@ -225,7 +225,7 @@ export function PricingPage() {
 
       {/* Pricing cards */}
       <section className="py-16 relative bg-white">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6">
           <div className="grid md:grid-cols-3 gap-6 items-stretch">
             {tiers.map((tier, i) => (
               <PricingCard key={tier.id} tier={tier} i={i} />
@@ -259,8 +259,8 @@ export function PricingPage() {
       </section>
 
       {/* Comparison table */}
-      <section className="py-20 relative bg-[var(--bg-subtle)]">
-        <div className="max-w-5xl mx-auto px-6">
+      <section className="py-14 sm:py-20 relative bg-[var(--bg-subtle)]">
+        <div className="max-w-5xl mx-auto px-5 sm:px-6">
           <div className="text-center mb-12">
             <h2 className="text-responsive-section font-bold" style={{ color: 'var(--ink-900)' }}>Plan karşılaştırması</h2>
           </div>
@@ -300,8 +300,8 @@ export function PricingPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 relative bg-white">
-        <div className="max-w-3xl mx-auto px-6">
+      <section className="py-14 sm:py-20 relative bg-white">
+        <div className="max-w-3xl mx-auto px-5 sm:px-6">
           <motion.div
             ref={faqRef}
             initial={{ opacity: 0, y: 20 }}

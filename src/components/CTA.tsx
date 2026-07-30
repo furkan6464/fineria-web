@@ -4,15 +4,15 @@ import { useInView } from 'framer-motion';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import ctaHandMockup from '@/assets/app-mockups/cta-hand-mockup.webp';
 
-const trustItems = ['BDDK lisanslı altyapı', '30 gün ücretsiz deneme', 'İstediğiniz zaman iptal', 'Türkçe canlı destek'];
+const trustItems = ['Erken erişim açık', 'Mobil uygulama yakında', 'Türkçe arayüz', 'Ücretsiz hesap'];
 
 export function CTA() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
   return (
-    <section className="py-24 relative bg-white">
-      <div className="max-w-6xl mx-auto px-6">
+    <section className="relative bg-white py-16 sm:py-20 lg:py-24">
+      <div className="max-w-6xl mx-auto px-5 sm:px-6">
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 24 }}
@@ -39,31 +39,31 @@ export function CTA() {
             />
           </div>
 
-          <div className="relative z-10 py-16 px-8 md:px-12 flex flex-col justify-center">
-            <h2 className="font-bold text-white mb-4" style={{ fontSize: 'clamp(1.9rem, 3.6vw, 2.75rem)', lineHeight: 1.15 }}>
-              Yatırıma başlamak için
+          <div className="relative z-10 flex flex-col justify-center px-6 py-12 sm:px-8 sm:py-16 md:px-12">
+            <h2 className="mb-4 font-bold text-white" style={{ fontSize: 'clamp(1.75rem, 3.6vw, 2.75rem)', lineHeight: 1.15 }}>
+              Erken erişime
               <br />
-              bugün bir hesap açın
+              bugün katılın
             </h2>
-            <p className="text-lg mb-8 max-w-md" style={{ color: '#CBD5E1' }}>
-              Kredi kartı gerekmez, kurulum gerekmez. Birkaç dakika içinde ilk
-              yatırımınızı yapabilirsiniz.
+            <p className="mb-8 max-w-md text-base sm:text-lg" style={{ color: '#CBD5E1' }}>
+              Platformu şimdi keşfedin. Mobil uygulama App Store ve Google Play'de
+              çok yakında.
             </p>
 
-            <div className="flex flex-wrap items-center gap-4">
-              <a href="/kayit" className="btn-primary text-base flex items-center gap-2 py-4 px-8">
+            <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+              <a href="/kayit" className="btn-primary flex items-center gap-2 px-8 py-4 text-base">
                 Ücretsiz Hesap Aç
                 <ArrowRight size={20} />
               </a>
               <a
-                href="#demo"
-                className="text-base font-semibold py-4 px-8 rounded-xl border border-white/20 text-white hover:bg-white/5 transition-colors"
+                href="/giris"
+                className="rounded-xl border border-white/20 px-8 py-4 text-center text-base font-semibold text-white transition-colors hover:bg-white/5"
               >
-                Demo Talep Et
+                Giriş Yap
               </a>
             </div>
 
-            <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm" style={{ color: '#94A3B8' }}>
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm sm:mt-10" style={{ color: '#94A3B8' }}>
               {trustItems.map((item) => (
                 <span key={item} className="flex items-center gap-1.5">
                   <CheckCircle2 size={14} style={{ color: 'var(--success)' }} />

@@ -8,7 +8,7 @@ const capabilities = [
   { icon: BrainCircuit, title: 'AI Portföy Yöneticisi', desc: 'Portföyünüz için akıllı öneriler.' },
   { icon: LayoutDashboard, title: 'Profesyonel Dashboard', desc: 'Tüm araçlar tek ekranda.' },
   { icon: Radar, title: 'Gerçek Zamanlı Analiz', desc: 'Piyasa verileri, gecikmesiz.' },
-  { icon: ShieldCheck, title: 'BDDK Lisanslı Altyapı', desc: 'Denetimli ve güvenli bir platform.' },
+  { icon: ShieldCheck, title: 'Güvenli Altyapı', desc: 'Şifreli iletişim ve hesap koruması.' },
 ];
 
 export function PlatformShowcase() {
@@ -16,9 +16,9 @@ export function PlatformShowcase() {
   const isInView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <section className="py-24 relative bg-[var(--bg-subtle)] overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+    <section className="relative overflow-hidden bg-[var(--bg-subtle)] py-16 sm:py-20 lg:py-24">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <motion.div
             ref={ref}
             initial={{ opacity: 0, x: -30 }}
@@ -37,9 +37,9 @@ export function PlatformShowcase() {
                 loop
                 muted
                 playsInline
-                className="w-auto block rounded-[2rem] shadow-soft-xl"
+                className="block w-auto rounded-[1.5rem] shadow-soft-xl sm:rounded-[2rem]"
                 style={{
-                  height: 'min(560px, 60vw)',
+                  height: 'clamp(340px, 62vw, 560px)',
                   maxWidth: '100%',
                 }}
               />
@@ -56,11 +56,11 @@ export function PlatformShowcase() {
             <h2 className="text-responsive-section font-bold mb-5" style={{ color: 'var(--ink-900)' }}>
               Kurumsal araçlar, sade bir deneyimde
             </h2>
-            <p className="text-lg mb-9 leading-relaxed" style={{ color: 'var(--ink-500)' }}>
+            <p className="mb-8 text-base leading-relaxed sm:text-lg lg:mb-9" style={{ color: 'var(--ink-500)' }}>
               Piyasa verilerini anlamlı sonuçlara dönüştürür.
             </p>
 
-            <div className="grid sm:grid-cols-2 gap-5">
+            <div className="grid gap-5 sm:grid-cols-2">
               {capabilities.map((item) => (
                 <div key={item.title} className="flex gap-3">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'white' }}>

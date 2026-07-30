@@ -80,8 +80,8 @@ export function FeaturesPage() {
 
   return (
     <div className="pt-24">
-      <section className="py-20 relative bg-white">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="relative bg-white py-14 sm:py-20">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6">
           <motion.div
             ref={heroRef}
             initial={{ opacity: 0, y: 20 }}

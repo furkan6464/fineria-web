@@ -24,7 +24,7 @@ export function AccountPage() {
           aria-hidden
         />
 
-        <div className="relative max-w-3xl mx-auto px-6">
+        <div className="relative mx-auto max-w-3xl px-5 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -50,7 +50,7 @@ export function AccountPage() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.08, ease: 'easeOut' }}
-            className="rounded-2xl border border-[var(--border-subtle)] bg-white p-6 md:p-8"
+            className="rounded-2xl border border-[var(--border-subtle)] bg-white p-5 sm:p-6 md:p-8"
           >
             <h2 className="text-sm font-semibold uppercase tracking-wide mb-5" style={{ color: 'var(--ink-400)' }}>
               Profil Bilgileri

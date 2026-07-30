@@ -1,5 +1,6 @@
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './index.css';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -94,12 +95,27 @@ function Layout() {
 }
 
 function App() {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: 1,
+            refetchOnWindowFocus: false,
+            staleTime: 60_000,
+          },
+        },
+      }),
+  );
+
   return (
-    <BrowserRouter>
-      <AuthBootstrap>
-        <Layout />
-      </AuthBootstrap>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AuthBootstrap>
+          <Layout />
+        </AuthBootstrap>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 
