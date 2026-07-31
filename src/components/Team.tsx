@@ -232,7 +232,7 @@ function GuideCard({
 
 export function Team() {
   return (
-    <section className="relative overflow-hidden bg-[#07060b] py-16 sm:py-24 lg:py-32">
+    <section data-chrome="dark" className="relative overflow-hidden bg-[#07060b] py-16 sm:py-24 lg:py-32">
       <div
         className="pointer-events-none absolute inset-0"
         style={{

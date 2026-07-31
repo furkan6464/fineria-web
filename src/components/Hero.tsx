@@ -16,6 +16,7 @@ const itemVariants = {
 export function Hero() {
   return (
     <section
+      data-chrome="dark"
       className="relative overflow-hidden bg-[#05060a] pb-10 pt-[calc(6.5rem+env(safe-area-inset-top))] sm:pb-16 sm:pt-28 lg:min-h-[100svh] lg:pb-24 lg:pt-32"
       style={{ paddingBottom: 'max(2.5rem, env(safe-area-inset-bottom))' }}
     >

@@ -4,42 +4,78 @@ import { useLocation } from 'react-router-dom';
 const DARK = '#05060a';
 const LIGHT = '#FFFFFF';
 
-/** Paths whose first viewport is dark — match system status/home bar. */
-const DARK_CHROME_PATHS = new Set(['/', '/ozellikler']);
+function applyChrome(dark: boolean) {
+  const color = dark ? DARK : LIGHT;
+
+  document.documentElement.style.backgroundColor = color;
+  document.body.style.backgroundColor = color;
+
+  let meta = document.querySelector('meta[name="theme-color"]');
+  if (!meta) {
+    meta = document.createElement('meta');
+    meta.setAttribute('name', 'theme-color');
+    document.head.appendChild(meta);
+  }
+  meta.setAttribute('content', color);
+
+  let apple = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+  if (!apple) {
+    apple = document.createElement('meta');
+    apple.setAttribute('name', 'apple-mobile-web-app-status-bar-style');
+    document.head.appendChild(apple);
+  }
+  apple.setAttribute('content', dark ? 'black-translucent' : 'default');
+}
+
+/** Dark band still covers the strip under the status / nav area. */
+function isDarkUnderStatusBar() {
+  const probeY = 56; // roughly under the clock / top of content
+  const sections = document.querySelectorAll<HTMLElement>('[data-chrome="dark"]');
+  for (const section of sections) {
+    const r = section.getBoundingClientRect();
+    if (r.top <= probeY && r.bottom > probeY) return true;
+  }
+  return false;
+}
 
 /**
- * Keeps mobile status bar + overscroll chrome aligned with dark sections
- * so the clock/home area doesn't sit on a white strip.
+ * Syncs mobile status-bar color with the section under the clock.
+ * Dark hero → black; white content → white.
  */
 export function ThemeChrome() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    const dark = DARK_CHROME_PATHS.has(pathname);
-    const color = dark ? DARK : LIGHT;
+    let frame = 0;
+    let lastDark: boolean | null = null;
 
-    document.documentElement.style.backgroundColor = color;
-    document.body.style.backgroundColor = color;
+    const sync = () => {
+      frame = 0;
+      const dark = isDarkUnderStatusBar();
+      if (dark === lastDark) return;
+      lastDark = dark;
+      applyChrome(dark);
+    };
 
-    let meta = document.querySelector('meta[name="theme-color"]');
-    if (!meta) {
-      meta = document.createElement('meta');
-      meta.setAttribute('name', 'theme-color');
-      document.head.appendChild(meta);
-    }
-    meta.setAttribute('content', color);
+    const onScrollOrResize = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(sync);
+    };
 
-    let apple = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
-    if (!apple) {
-      apple = document.createElement('meta');
-      apple.setAttribute('name', 'apple-mobile-web-app-status-bar-style');
-      document.head.appendChild(apple);
-    }
-    apple.setAttribute('content', dark ? 'black-translucent' : 'default');
+    applyChrome(pathname === '/' || pathname === '/ozellikler');
+    lastDark = pathname === '/' || pathname === '/ozellikler';
+
+    const boot = window.setTimeout(sync, 80);
+
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize);
 
     return () => {
-      document.documentElement.style.backgroundColor = LIGHT;
-      document.body.style.backgroundColor = LIGHT;
+      window.clearTimeout(boot);
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScrollOrResize);
+      window.removeEventListener('resize', onScrollOrResize);
+      applyChrome(false);
     };
   }, [pathname]);
 

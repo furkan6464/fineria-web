@@ -123,7 +123,7 @@ export function FeaturesPage() {
   return (
     <div className="overflow-hidden pt-24">
       {/* Hero */}
-      <section className="relative bg-[#05060a] pb-16 pt-[calc(3.5rem+env(safe-area-inset-top))] sm:pb-20 sm:pt-20">
+      <section data-chrome="dark" className="relative bg-[#05060a] pb-16 pt-[calc(3.5rem+env(safe-area-inset-top))] sm:pb-20 sm:pt-20">
         <div
           className="pointer-events-none absolute inset-0"
           style={{

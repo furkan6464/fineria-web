@@ -109,7 +109,7 @@ export function Features() {
   }, [goPrev, goNext]);
 
   return (
-    <section id="ozellikler" className="relative overflow-hidden bg-[#050505] py-20 sm:py-24 lg:py-28">
+    <section id="ozellikler" data-chrome="dark" className="relative overflow-hidden bg-[#050505] py-20 sm:py-24 lg:py-28">
       <div className="absolute bottom-0 left-0 w-full h-[30%] bg-gradient-to-t from-[#111827] via-[#111827]/50 to-transparent pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto px-5 sm:px-6">
