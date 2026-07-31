@@ -6,6 +6,7 @@ import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { GuestRoute } from './components/GuestRoute';
+import { ThemeChrome } from './components/ThemeChrome';
 import { useAuthStore } from './stores/authStore';
 
 const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })));
@@ -133,6 +134,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AuthBootstrap>
+          <ThemeChrome />
           <Layout />
         </AuthBootstrap>
       </BrowserRouter>

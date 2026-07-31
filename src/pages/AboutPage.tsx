@@ -15,9 +15,9 @@ const values = [
 
 const timeline = [
   { phase: 'Faz 1', title: 'Temel Platform', desc: 'Portföy takibi ve temel arayüz.', done: true },
-  { phase: 'Faz 2', title: 'Tahminleme', desc: 'Veriye dayalı tahmin araçları.', done: false },
-  { phase: 'Faz 3', title: 'Mobil Uygulama', desc: 'App Store ve Google Play sürümleri.', done: false },
-  { phase: 'Faz 4', title: 'B2B API', desc: 'Kurumsal ortaklıklar ve entegrasyon.', done: false },
+  { phase: 'Faz 2', title: 'Tahminleme', desc: 'Veriye dayalı tahmin araçları.', done: true },
+  { phase: 'Faz 3', title: 'Mobil Uygulama', desc: 'App Store ve Google Play sürümleri.', done: true },
+  { phase: 'Faz 4', title: 'Yasal izinler ve lansman', desc: 'Gerekli yasal izinlerin alınması ve piyasaya çıkış.', done: false },
 ];
 
 export function AboutPage() {

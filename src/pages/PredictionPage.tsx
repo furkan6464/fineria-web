@@ -33,36 +33,24 @@ import {
 const SIGNAL_CARDS = [
   {
     key: 'al',
-    label: 'AL',
-    subtitle: 'Yükseliş görünümü',
-    desc: 'Model, fiyatın yukarı yönlü hareket ihtimalini daha yüksek görür. Güven skoru ve göstergelerle birlikte okuyun.',
-    icon: TrendingUp,
-    color: '#059669',
-    bg: '#ECFDF5',
-    border: '#A7F3D0',
-    bar: '78%',
+    label: 'Al',
+    meaning: 'Yükseliş',
+    desc: 'Yukarı yön ihtimali öne çıkar. Güven skoru ve göstergelerle birlikte okuyun.',
+    tone: 'up' as const,
   },
   {
     key: 'tut',
-    label: 'TUT',
-    subtitle: 'Yatay / nötr',
-    desc: 'Belirgin bir yön baskın değil. Beklemek veya mevcut pozisyonu korumak için daha dengeli bir çıktı.',
-    icon: Minus,
-    color: '#64748B',
-    bg: '#F8FAFC',
-    border: '#E2E8F0',
-    bar: '50%',
+    label: 'Tut',
+    meaning: 'Nötr',
+    desc: 'Belirgin bir yön yok. Beklemek veya pozisyonu korumak daha dengeli bir okuma.',
+    tone: 'flat' as const,
   },
   {
     key: 'sat',
-    label: 'SAT',
-    subtitle: 'Düşüş görünümü',
-    desc: 'Model, aşağı yön ihtimalini öne çıkarır. Bu bir tavsiye değil; veriye dayalı bir yön sinyalidir.',
-    icon: TrendingDown,
-    color: '#DC2626',
-    bg: '#FEF2F2',
-    border: '#FECACA',
-    bar: '72%',
+    label: 'Sat',
+    meaning: 'Düşüş',
+    desc: 'Aşağı yön ihtimali öne çıkar. Yatırım tavsiyesi değil; veriye dayalı görünüm.',
+    tone: 'down' as const,
   },
 ] as const;
 
@@ -146,57 +134,38 @@ function HowItWorks() {
         </p>
       </div>
 
-      <div className="mb-8 grid gap-4 sm:mb-10 sm:grid-cols-3">
-        {SIGNAL_CARDS.map((card, i) => (
-          <motion.article
-            key={card.key}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={{ delay: i * 0.08, duration: 0.5 }}
-            className="relative overflow-hidden rounded-3xl border p-6"
-            style={{ background: card.bg, borderColor: card.border }}
-          >
-            <div className="mb-5 flex items-center justify-between">
-              <div
-                className="flex h-12 w-12 items-center justify-center rounded-2xl"
-                style={{ background: 'white', color: card.color, boxShadow: '0 1px 0 rgba(0,0,0,0.04)' }}
-              >
-                <card.icon size={22} strokeWidth={2} />
+      <div className="mb-8 overflow-hidden rounded-2xl border border-[var(--border-subtle)] sm:mb-10">
+        {SIGNAL_CARDS.map((card, i) => {
+          const toneColor =
+            card.tone === 'up' ? 'var(--success)' : card.tone === 'down' ? 'var(--danger)' : 'var(--ink-500)';
+          return (
+            <motion.article
+              key={card.key}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ delay: i * 0.06, duration: 0.4 }}
+              className={`flex flex-col gap-3 px-5 py-5 sm:flex-row sm:items-start sm:gap-8 sm:px-6 sm:py-6 ${
+                i < SIGNAL_CARDS.length - 1 ? 'border-b border-[var(--border-subtle)]' : ''
+              }`}
+            >
+              <div className="flex min-w-[7.5rem] items-baseline gap-3 sm:flex-col sm:gap-1">
+                <span
+                  className="font-mono text-2xl font-bold tracking-tight sm:text-[1.75rem]"
+                  style={{ color: toneColor }}
+                >
+                  {card.label}
+                </span>
+                <span className="text-xs font-medium" style={{ color: 'var(--ink-400)' }}>
+                  {card.meaning}
+                </span>
               </div>
-              <span className="font-mono text-[11px] font-semibold uppercase tracking-wider" style={{ color: card.color }}>
-                sinyal
-              </span>
-            </div>
-
-            <div className="text-3xl font-extrabold tracking-tight" style={{ color: card.color }}>
-              {card.label}
-            </div>
-            <div className="mt-1 text-sm font-medium" style={{ color: 'var(--ink-700)' }}>
-              {card.subtitle}
-            </div>
-            <p className="mt-3 text-sm leading-relaxed" style={{ color: 'var(--ink-500)' }}>
-              {card.desc}
-            </p>
-
-            <div className="mt-5">
-              <div className="mb-1.5 flex justify-between text-[10px] font-medium uppercase tracking-wide" style={{ color: 'var(--ink-400)' }}>
-                <span>Örnek güven</span>
-                <span style={{ color: card.color }}>{card.bar}</span>
-              </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-black/[0.06]">
-                <motion.div
-                  className="h-full rounded-full"
-                  style={{ background: card.color }}
-                  initial={{ width: 0 }}
-                  whileInView={{ width: card.bar }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.9, delay: 0.2 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                />
-              </div>
-            </div>
-          </motion.article>
-        ))}
+              <p className="max-w-xl text-sm leading-relaxed sm:pt-1" style={{ color: 'var(--ink-500)' }}>
+                {card.desc}
+              </p>
+            </motion.article>
+          );
+        })}
       </div>
 
       <div className="mb-5 sm:mb-6">

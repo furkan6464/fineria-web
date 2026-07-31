@@ -1,13 +1,7 @@
-﻿import { lazy, Suspense } from 'react';
+﻿import { HeroPhonesDesktop } from '@/components/HeroPhonesDesktop';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { AppMockupImage } from '@/components/AppMockupImage';
-import anaSayfa from '@/assets/app-mockups/ana-sayfa.svg';
-
-const HeroPhonesDesktop = lazy(() =>
-  import('@/components/HeroPhonesDesktop').then((m) => ({ default: m.HeroPhonesDesktop })),
-);
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -21,7 +15,10 @@ const itemVariants = {
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[#05060a] pb-10 pt-[6.5rem] sm:pb-16 sm:pt-28 lg:min-h-[100svh] lg:pb-24 lg:pt-32">
+    <section
+      className="relative overflow-hidden bg-[#05060a] pb-10 pt-[calc(6.5rem+env(safe-area-inset-top))] sm:pb-16 sm:pt-28 lg:min-h-[100svh] lg:pb-24 lg:pt-32"
+      style={{ paddingBottom: 'max(2.5rem, env(safe-area-inset-bottom))' }}
+    >
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         <div
           className="absolute inset-0 hidden opacity-[0.3] sm:block"
@@ -106,32 +103,19 @@ export function Hero() {
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.75, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-full max-w-[340px] sm:max-w-[480px] lg:max-w-none"
+          className="relative w-full max-w-[380px] sm:max-w-[480px] lg:max-w-none"
         >
           <div
             className="pointer-events-none absolute left-1/2 top-[45%] h-[55%] w-[75%] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-80 blur-3xl"
             style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.28), transparent 65%)' }}
             aria-hidden
           />
-
-          <div className="relative mx-auto flex justify-center sm:hidden">
-            <div className="relative z-10 w-[62%] max-w-[220px]">
-              <div className="overflow-hidden rounded-[1.55rem] shadow-[0_28px_50px_-12px_rgba(0,0,0,0.9)] ring-1 ring-white/15">
-                <AppMockupImage src={anaSayfa} label="Fineria Finance ana ekran" width={220} />
-              </div>
-            </div>
-            <div
-              className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-16"
-              style={{ background: 'linear-gradient(to top, #05060a 10%, transparent)' }}
-              aria-hidden
-            />
-          </div>
-
-          <div className="hidden sm:block">
-            <Suspense fallback={<div className="mx-auto h-[420px] w-full max-w-[480px]" aria-hidden />}>
-              <HeroPhonesDesktop />
-            </Suspense>
-          </div>
+          <HeroPhonesDesktop />
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-12 sm:h-16"
+            style={{ background: 'linear-gradient(to top, #05060a 8%, transparent)' }}
+            aria-hidden
+          />
         </motion.div>
       </div>
 

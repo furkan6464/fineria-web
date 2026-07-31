@@ -269,9 +269,9 @@ export function Team() {
           </div>
 
           <h2 className="mx-auto mt-5 max-w-3xl text-[2rem] font-bold leading-[1.08] tracking-[-0.045em] text-white sm:mt-6 sm:text-[3.25rem]">
-            Fineria Finance'in arkasındaki
+            Fineria Finance'ın arkasındaki
             <span className="block bg-gradient-to-r from-violet-300 via-indigo-200 to-white bg-clip-text text-transparent">
-              insanlar.
+              ekip.
             </span>
           </h2>
 

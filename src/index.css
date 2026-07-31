@@ -34,19 +34,22 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: #05060a;
 }
 
 body {
   font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
-  background-color: var(--bg-page);
+  background-color: #05060a;
   color: var(--ink-700);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  min-height: 100dvh;
 }
 
 #root {
-  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: 100svh;
 }
 
 .font-mono {

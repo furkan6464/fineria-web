@@ -58,7 +58,8 @@ export function Navbar() {
   };
 
   const isHome = location.pathname === '/';
-  const onDarkHero = isHome && !scrolled && !mobileOpen;
+  const isDarkLanding = isHome || location.pathname === '/ozellikler';
+  const onDarkHero = isDarkLanding && !scrolled && !mobileOpen;
   const ink = onDarkHero ? 'rgba(255,255,255,0.78)' : 'var(--ink-700)';
   const inkStrong = onDarkHero ? '#fff' : 'var(--ink-900)';
   const active = onDarkHero ? '#A5B4FC' : 'var(--brand-hover)';
@@ -71,6 +72,13 @@ export function Navbar() {
             ? 'border-b border-[var(--border-subtle)] bg-white/95 py-3 backdrop-blur-md'
             : 'border-b border-transparent bg-transparent py-4 sm:py-5'
         }`}
+        style={
+          onDarkHero
+            ? { paddingTop: 'max(0px, env(safe-area-inset-top))' }
+            : scrolled || mobileOpen
+              ? { paddingTop: 'env(safe-area-inset-top)' }
+              : undefined
+        }
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-6">
           <Link to="/" onClick={() => setMobileOpen(false)}>
