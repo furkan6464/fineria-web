@@ -16,7 +16,7 @@ const screens = [
   { key: 'piyasalar', label: 'Piyasalar', src: piyasalarMockup },
   { key: 'tahminleme', label: 'Tahminleme', src: tahminlemeMockup },
   { key: 'tahminleme-2', label: 'Analiz Detayı', src: tahminleme2Mockup },
-  { key: 'yapay-zeka', label: 'Yapay Zeka', src: yapayZekaMockup },
+  { key: 'yapay-zeka', label: 'Analiz', src: yapayZekaMockup },
   { key: 'gundem', label: 'Gündem', src: gundemMockup },
   { key: 'haberler', label: 'Haberler', src: haberlerMockup },
 ];
@@ -65,20 +65,22 @@ export function MobileShowcase() {
           >
             <div className="relative w-[58%] max-w-[210px] flex-shrink-0 sm:w-auto sm:max-w-[260px] lg:max-w-[300px]">
               <div
-                className="absolute -inset-10 rounded-full opacity-70 -z-10 sm:-inset-14"
-                style={{ background: 'radial-gradient(ellipse, #F1F3FE 0%, transparent 65%)' }}
+                className="absolute -inset-10 -z-10 rounded-full opacity-70 blur-2xl sm:-inset-14"
+                style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.18) 0%, transparent 65%)' }}
               />
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={screens[active].key}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                >
-                  <AppMockupImage src={screens[active].src} label={screens[active].label} width={300} />
-                </motion.div>
-              </AnimatePresence>
+              <div className="light-sweep light-sweep-soft rounded-[1.4rem]">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={screens[active].key}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.28 }}
+                  >
+                    <AppMockupImage src={screens[active].src} label={screens[active].label} width={300} />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
             </div>
 
             <div className="flex min-w-0 flex-1 flex-col gap-0.5 pt-1 sm:max-w-[150px] sm:flex-none sm:gap-1 sm:pt-4">
@@ -106,12 +108,15 @@ export function MobileShowcase() {
             transition={{ duration: 0.6, ease: 'easeOut', delay: 0.15 }}
             className="order-1 lg:order-2"
           >
-            <div className="badge badge-brand mb-5 w-fit">Mobil Uygulama</div>
-            <h2 className="text-responsive-section font-bold mb-5" style={{ color: 'var(--ink-900)' }}>
-              Yatırımlarınız, çok yakında cebinizde
+            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: 'var(--brand-hover)' }}>
+              Mobil
+            </p>
+            <h2 className="text-responsive-section mb-5 font-bold" style={{ color: 'var(--ink-900)' }}>
+              Cebinde. Çok yakında.
             </h2>
             <p className="mb-8 text-base leading-relaxed sm:text-lg" style={{ color: 'var(--ink-500)' }}>
-              iOS ve Android uygulamaları geliştiriliyor. App Store ve Google Play'de yakında.
+              iOS ve Android uygulamaları hazırlanıyor. Aynı sade deneyim,
+              App Store ve Google Play’de.
             </p>
 
             <div className="flex flex-wrap items-center gap-3">

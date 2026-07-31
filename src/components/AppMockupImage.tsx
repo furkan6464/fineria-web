@@ -39,7 +39,10 @@ export function AppMockupImage({
     >
       <img
         src={src}
-        alt={label ?? 'Fineria uygulama ekranı'}
+        alt={label ?? 'Fineria Finance uygulama ekranı'}
+        loading="lazy"
+        decoding="async"
+        fetchPriority="low"
         style={{
           width: `${(REF_WIDTH / crop.width) * 100}%`,
           height: `${(REF_HEIGHT / crop.height) * 100}%`,

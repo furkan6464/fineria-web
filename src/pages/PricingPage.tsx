@@ -94,7 +94,7 @@ const tableRows = [
 
 const faqs = [
   { q: 'Ücretsiz plan ne kadar süre geçerli?', a: 'Temel özellikler erken erişim döneminde ücretsiz sunulur.' },
-  { q: 'Tahminleme motoru nasıl çalışır?', a: 'Geçmiş verileri analiz ederek olası fiyat yönüne dair bir görünüm sunar. Yatırım tavsiyesi değildir.' },
+  { q: 'Tahminleme motoru nasıl çalışır?', a: 'Fiyat geçmişi, teknik göstergeler, haber verileri ve sosyal akış birlikte işlenerek olası fiyat yönüne dair bir görünüm sunar. Yatırım tavsiyesi değildir.' },
   { q: 'Verilerim güvende mi?', a: 'Şifreli iletişim ve hesap koruma adımları kullanıyoruz. Ürün geliştirme sürecinde güvenlik uygulamalarını sürekli güçlendiriyoruz.' },
   { q: 'Mobil uygulama ne zaman gelecek?', a: 'App Store ve Google Play sürümleri yakında yayınlanacak.' },
   { q: 'Planı istediğim zaman iptal edebilir miyim?', a: 'Evet. Ücretli planlarda istediğiniz zaman iptal edebilirsiniz.' },

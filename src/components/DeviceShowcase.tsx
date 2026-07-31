@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { AppMockupImage } from './AppMockupImage';
 import macbookMockup from '@/assets/app-mockups/macbook-transparent.webp';
 import piyasalarMockup from '@/assets/app-mockups/piyasalar.svg';
@@ -13,7 +13,7 @@ interface DeviceShowcaseProps {
 
 export function DeviceShowcase({
   eyebrow = 'Çok yakında',
-  title = 'Fineria masaüstünde ve mobilde',
+  title = 'Fineria Finance masaüstünde ve mobilde',
   description = 'Web uygulaması yayına hazırlanıyor, iOS ve Android sürümleri çok yakında.',
   className = '',
 }: DeviceShowcaseProps) {
@@ -39,7 +39,7 @@ export function DeviceShowcase({
           style={{ bottom: '-6%' }}
         >
           <div className="overflow-hidden rounded-[1.6rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.9)] ring-1 ring-white/10">
-            <AppMockupImage src={piyasalarMockup} label="Fineria piyasalar ekranı" width={148} />
+            <AppMockupImage src={piyasalarMockup} label="Fineria Finance piyasalar ekranı" width={148} />
           </div>
         </motion.div>
 
@@ -51,7 +51,7 @@ export function DeviceShowcase({
           style={{ bottom: '-6%' }}
         >
           <div className="overflow-hidden rounded-[1.6rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.9)] ring-1 ring-white/10">
-            <AppMockupImage src={tahminlemeMockup} label="Fineria tahminleme ekranı" width={148} />
+            <AppMockupImage src={tahminlemeMockup} label="Fineria Finance tahminleme ekranı" width={148} />
           </div>
         </motion.div>
 
@@ -63,7 +63,7 @@ export function DeviceShowcase({
         >
           <img
             src={macbookMockup}
-            alt="Fineria masaüstü uygulaması"
+            alt="Fineria Finance masaüstü uygulaması"
             className="block h-auto w-full"
             style={{ filter: 'drop-shadow(0 30px 40px rgba(0,0,0,0.75))' }}
           />

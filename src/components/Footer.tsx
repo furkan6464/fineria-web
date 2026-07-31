@@ -67,7 +67,7 @@ export function Footer() {
           <div className="col-span-2 lg:col-span-2">
             <Logo size={34} showText={true} className="mb-4" />
             <p className="text-sm leading-relaxed mb-6 max-w-xs" style={{ color: 'var(--ink-500)' }}>
-              Fineria, bireysel yatırımcıların portföylerini tek bir platformdan
+              Fineria Finance, bireysel yatırımcıların portföylerini tek bir platformdan
               takip etmesini sağlayan bir finansal teknoloji girişimidir.
             </p>
             <div className="flex gap-2">
@@ -108,7 +108,7 @@ export function Footer() {
 
         <div className="flex flex-col items-center justify-between gap-3 text-center md:flex-row md:gap-4 md:text-left">
           <p className="text-sm" style={{ color: 'var(--ink-500)' }}>
-            © 2026 Fineria. Tüm hakları saklıdır.
+            © 2026 Fineria Finance. Tüm hakları saklıdır.
           </p>
           <p className="text-xs" style={{ color: 'var(--ink-400)' }}>
             App Store ve Google Play · Yakında
@@ -116,7 +116,7 @@ export function Footer() {
         </div>
 
         <p className="mx-auto mt-6 max-w-3xl text-center text-xs leading-relaxed" style={{ color: 'var(--ink-400)' }}>
-          Fineria bir yatırım tavsiyesi platformu değildir. Platformda yer alan içerikler
+          Fineria Finance bir yatırım tavsiyesi platformu değildir. Platformda yer alan içerikler
           bilgilendirme amaçlıdır; yatırım kararlarınızın sorumluluğu size aittir.
           Geçmiş performans gelecekteki sonuçların garantisi değildir.
         </p>

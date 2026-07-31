@@ -35,7 +35,6 @@ export function Navbar() {
     setMobileOpen(false);
   }, [location.pathname]);
 
-  // Menü açıkken arka planın kaymasını engelle.
   useEffect(() => {
     if (!mobileOpen) return;
     const previous = document.body.style.overflow;
@@ -49,8 +48,6 @@ export function Navbar() {
     if (loggingOut) return;
     setLoggingOut(true);
     try {
-      // clearAuth runs synchronously at the start of logout(); navigate
-      // immediately so history moves before the network round-trip.
       const logoutPromise = logout();
       navigate('/', { replace: true });
       await logoutPromise;
@@ -60,19 +57,28 @@ export function Navbar() {
     }
   };
 
+  const isHome = location.pathname === '/';
+  const onDarkHero = isHome && !scrolled && !mobileOpen;
+  const ink = onDarkHero ? 'rgba(255,255,255,0.78)' : 'var(--ink-700)';
+  const inkStrong = onDarkHero ? '#fff' : 'var(--ink-900)';
+  const active = onDarkHero ? '#A5B4FC' : 'var(--brand-hover)';
+
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || mobileOpen ? 'py-3 bg-white/95 backdrop-blur-md border-b border-[var(--border-subtle)]' : 'py-4 bg-white/0 sm:py-5'}`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled || mobileOpen
+            ? 'border-b border-[var(--border-subtle)] bg-white/95 py-3 backdrop-blur-md'
+            : 'border-b border-transparent bg-transparent py-4 sm:py-5'
+        }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-6">
           <Link to="/" onClick={() => setMobileOpen(false)}>
-            <Logo size={30} showText={true} className="sm:hidden" />
-            <Logo size={34} showText={true} className="hidden sm:flex" />
+            <Logo size={30} showText={true} className="sm:hidden" textColor={inkStrong} />
+            <Logo size={34} showText={true} className="hidden sm:flex" textColor={inkStrong} />
           </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden items-center gap-1 lg:flex">
             {navItems.map((item) => {
               const isActive = location.pathname === item.href;
               return (
@@ -80,14 +86,14 @@ export function Navbar() {
                   key={item.href}
                   to={item.href}
                   className="relative px-4 py-2 text-sm font-medium transition-colors duration-200"
-                  style={{ color: isActive ? 'var(--brand-hover)' : 'var(--ink-700)' }}
+                  style={{ color: isActive ? active : ink }}
                 >
                   {item.label}
                   {isActive && (
                     <motion.div
                       layoutId="nav-indicator"
                       className="absolute bottom-0 left-4 right-4 h-0.5 rounded-full"
-                      style={{ background: 'var(--brand)' }}
+                      style={{ background: onDarkHero ? '#A5B4FC' : 'var(--brand)' }}
                       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                     />
                   )}
@@ -96,17 +102,20 @@ export function Navbar() {
             })}
           </div>
 
-          {/* CTA */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden items-center gap-3 lg:flex">
             {isAuthenticated && user ? (
               <>
-                <span className="text-sm font-semibold px-2" style={{ color: 'var(--ink-900)' }}>
+                <span className="px-2 text-sm font-semibold" style={{ color: inkStrong }}>
                   @{user.handle}
                 </span>
                 <Link
                   to="/hesabim"
-                  className="text-sm font-semibold px-4 py-2.5 rounded-xl border border-[var(--border-subtle)] hover:bg-[var(--bg-subtle)] transition-colors"
-                  style={{ color: location.pathname === '/hesabim' ? 'var(--brand-hover)' : 'var(--ink-900)' }}
+                  className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+                    onDarkHero
+                      ? 'border border-white/15 hover:bg-white/10'
+                      : 'border border-[var(--border-subtle)] hover:bg-[var(--bg-subtle)]'
+                  }`}
+                  style={{ color: location.pathname === '/hesabim' ? active : inkStrong }}
                 >
                   Hesabım
                 </Link>
@@ -114,8 +123,12 @@ export function Navbar() {
                   type="button"
                   onClick={handleLogout}
                   disabled={loggingOut}
-                  className="text-sm font-semibold px-4 py-2.5 flex items-center gap-2 rounded-xl border border-[var(--border-subtle)] hover:bg-[var(--bg-subtle)] transition-colors disabled:opacity-70"
-                  style={{ color: 'var(--ink-900)' }}
+                  className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-70 ${
+                    onDarkHero
+                      ? 'border border-white/15 hover:bg-white/10'
+                      : 'border border-[var(--border-subtle)] hover:bg-[var(--bg-subtle)]'
+                  }`}
+                  style={{ color: inkStrong }}
                 >
                   <LogOut size={15} />
                   {loggingOut ? 'Çıkış...' : 'Çıkış Yap'}
@@ -123,10 +136,10 @@ export function Navbar() {
               </>
             ) : (
               <>
-                <Link to="/giris" className="text-sm font-semibold px-4 py-2.5" style={{ color: 'var(--ink-900)' }}>
+                <Link to="/giris" className="px-4 py-2.5 text-sm font-semibold" style={{ color: inkStrong }}>
                   Giriş Yap
                 </Link>
-                <Link to="/kayit" className="btn-primary text-sm !py-2.5 !px-5 flex items-center gap-2">
+                <Link to="/kayit" className="btn-primary flex items-center gap-2 !px-5 !py-2.5 text-sm">
                   Hesap Aç
                   <ArrowRight size={16} />
                 </Link>
@@ -136,7 +149,11 @@ export function Navbar() {
 
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 rounded-lg border border-[var(--border-subtle)] text-[var(--ink-900)]"
+            className={`rounded-lg p-2 lg:hidden ${
+              onDarkHero
+                ? 'border border-white/15 text-white'
+                : 'border border-[var(--border-subtle)] text-[var(--ink-900)]'
+            }`}
             aria-label="Menü"
           >
             {mobileOpen ? <X size={22} /> : <Menu size={22} />}
@@ -159,22 +176,22 @@ export function Navbar() {
                   key={item.href}
                   to={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className="block py-3 px-4 rounded-xl text-sm font-medium transition-colors hover:bg-[var(--bg-subtle)]"
+                  className="block rounded-xl px-4 py-3 text-sm font-medium transition-colors hover:bg-[var(--bg-subtle)]"
                   style={{ color: location.pathname === item.href ? 'var(--brand-hover)' : 'var(--ink-700)' }}
                 >
                   {item.label}
                 </Link>
               ))}
-              <div className="mt-4 pt-4 border-t border-[var(--border-subtle)] flex flex-col gap-3">
+              <div className="mt-4 flex flex-col gap-3 border-t border-[var(--border-subtle)] pt-4">
                 {isAuthenticated && user ? (
                   <>
-                    <div className="text-sm font-semibold px-1" style={{ color: 'var(--ink-900)' }}>
+                    <div className="px-1 text-sm font-semibold" style={{ color: 'var(--ink-900)' }}>
                       @{user.handle}
                     </div>
                     <Link
                       to="/hesabim"
                       onClick={() => setMobileOpen(false)}
-                      className="btn-secondary text-sm text-center"
+                      className="btn-secondary text-center text-sm"
                       style={{ color: location.pathname === '/hesabim' ? 'var(--brand-hover)' : undefined }}
                     >
                       Hesabım
@@ -183,15 +200,19 @@ export function Navbar() {
                       type="button"
                       onClick={handleLogout}
                       disabled={loggingOut}
-                      className="btn-secondary text-sm text-center disabled:opacity-70"
+                      className="btn-secondary text-center text-sm disabled:opacity-70"
                     >
                       {loggingOut ? 'Çıkış...' : 'Çıkış Yap'}
                     </button>
                   </>
                 ) : (
                   <>
-                    <Link to="/giris" onClick={() => setMobileOpen(false)} className="btn-secondary text-sm text-center">Giriş Yap</Link>
-                    <Link to="/kayit" onClick={() => setMobileOpen(false)} className="btn-primary text-sm text-center">Hesap Aç</Link>
+                    <Link to="/giris" onClick={() => setMobileOpen(false)} className="btn-secondary text-center text-sm">
+                      Giriş Yap
+                    </Link>
+                    <Link to="/kayit" onClick={() => setMobileOpen(false)} className="btn-primary text-center text-sm">
+                      Hesap Aç
+                    </Link>
                   </>
                 )}
               </div>

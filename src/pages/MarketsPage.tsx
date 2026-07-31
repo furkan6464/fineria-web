@@ -1,11 +1,10 @@
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import {
   ArrowRight,
   BellRing,
   Layers3,
   LineChart,
   Search,
-  Sparkles,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AppMockupImage } from '@/components/AppMockupImage';
@@ -19,7 +18,7 @@ const capabilities = [
     number: '01',
     title: 'Aradığınızı anında bulun',
     description:
-      'BIST, kripto ve emtia varlıklarını sade bir arama deneyimiyle keşfedin.',
+      'BIST, Amerikan Borsası ve kripto varlıklarını sade bir arama deneyimiyle keşfedin.',
   },
   {
     icon: LineChart,
@@ -63,22 +62,15 @@ export function MarketsPage() {
             transition={{ duration: 0.6 }}
             className="mx-auto max-w-3xl text-center"
           >
-            <div className="badge badge-brand mx-auto mb-5 w-fit">
-              <Sparkles size={13} />
-              Fineria Piyasalar
-            </div>
+            <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: 'var(--brand-hover)' }}>
+              Piyasalar
+            </p>
             <h1
               className="text-responsive-hero font-extrabold leading-[1.05]"
               style={{ color: 'var(--ink-900)', letterSpacing: '-0.045em' }}
             >
               Piyasayı izlemek değil,
-              <span
-                className="block bg-clip-text text-transparent"
-                style={{
-                  backgroundImage:
-                    'linear-gradient(100deg, #4F46E5 5%, #7C3AED 55%, #A855F7 100%)',
-                }}
-              >
+              <span className="block" style={{ color: 'var(--brand-hover)' }}>
                 anlamak için tasarlandı.
               </span>
             </h1>
@@ -132,11 +124,7 @@ export function MarketsPage() {
                   Ürün önizlemesi
                 </div>
                 <p className="max-w-lg text-lg font-semibold leading-snug text-white sm:text-[1.6rem]">
-                  Veriden görünüme,
-                  <span className="bg-gradient-to-r from-violet-300 to-indigo-200 bg-clip-text text-transparent">
-                    {' '}
-                    görünümden içgörüye.
-                  </span>
+                  Veriden görünüme, görünümden içgörüye.
                 </p>
               </div>
 
@@ -148,7 +136,7 @@ export function MarketsPage() {
                   transition={{ duration: 0.7, delay: 0.3 }}
                   className="hidden w-[186px] translate-y-9 opacity-70 lg:block"
                 >
-                  <AppMockupImage src={gundemMockup} label="Fineria piyasa gündemi" width={186} />
+                  <AppMockupImage src={gundemMockup} label="Fineria Finance piyasa gündemi" width={186} />
                 </motion.div>
 
                 <motion.div
@@ -158,7 +146,7 @@ export function MarketsPage() {
                   transition={{ duration: 0.75, delay: 0.15 }}
                   className="relative z-10 w-full max-w-[210px] drop-shadow-[0_30px_50px_rgba(0,0,0,0.7)] sm:max-w-[236px]"
                 >
-                  <AppMockupImage src={piyasalarMockup} label="Fineria piyasalar ekranı" width={236} />
+                  <AppMockupImage src={piyasalarMockup} label="Fineria Finance piyasalar ekranı" width={236} />
                 </motion.div>
 
                 <motion.div
@@ -168,7 +156,7 @@ export function MarketsPage() {
                   transition={{ duration: 0.7, delay: 0.3 }}
                   className="hidden w-[186px] translate-y-9 opacity-70 lg:block"
                 >
-                  <AppMockupImage src={anaSayfaMockup} label="Fineria ana ekranı" width={186} />
+                  <AppMockupImage src={anaSayfaMockup} label="Fineria Finance ana ekranı" width={186} />
                 </motion.div>
               </div>
 
@@ -209,7 +197,7 @@ export function MarketsPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.08, duration: 0.5 }}
-                  className="group rounded-2xl border border-[var(--border-subtle)] bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-950/5"
+                  className="shine-hover group rounded-2xl border border-[var(--border-subtle)] bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[var(--border-strong)]"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--brand-tint)]">
@@ -236,7 +224,9 @@ export function MarketsPage() {
         <div className="mx-auto max-w-6xl px-5 sm:px-6">
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
             <div>
-              <div className="badge badge-brand mb-5 w-fit">Fineria akışı</div>
+              <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: 'var(--brand-hover)' }}>
+                Fineria Finance akışı
+              </p>
               <h2
                 className="text-responsive-section font-bold"
                 style={{ color: 'var(--ink-900)' }}
@@ -293,7 +283,7 @@ export function MarketsPage() {
               <div className="relative flex justify-center rounded-[1.5rem] border border-[var(--border-subtle)] bg-[var(--bg-subtle)] p-5 shadow-xl shadow-slate-900/5 sm:rounded-[2rem] sm:p-8">
                 <AppMockupImage
                   src={gundemMockup}
-                  label="Fineria kişisel piyasa akışı"
+                  label="Fineria Finance kişisel piyasa akışı"
                   width={285}
                 />
               </div>
@@ -302,7 +292,7 @@ export function MarketsPage() {
 
           <div className="mt-16 rounded-[1.5rem] bg-[#0a0910] px-6 py-10 text-center sm:mt-24 sm:rounded-[2rem] sm:px-12 sm:py-14">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-300">
-              Yakında Fineria'da
+              Yakında Fineria Finance'te
             </p>
             <h2 className="mx-auto mt-3 max-w-xl text-xl font-bold text-white sm:text-3xl">
               Piyasa takibini daha sakin, daha kişisel ve daha anlaşılır hâle getirin.

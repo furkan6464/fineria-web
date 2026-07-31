@@ -1,39 +1,49 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useInView } from 'framer-motion';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { allStocks, formatPercent, formatPrice, getMarketDashboard } from '@/lib/market';
 
 const MAX_ITEMS = 16;
 
 export function TickerBar() {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '120px' });
+
   const { data, isLoading } = useQuery({
     queryKey: ['market-dashboard', 'borsa'],
     queryFn: () => getMarketDashboard('borsa'),
-    staleTime: 45_000,
-    refetchInterval: 60_000,
+    staleTime: 60_000,
+    refetchInterval: inView ? 90_000 : false,
+    enabled: inView,
   });
 
   const items = useMemo(() => allStocks(data).slice(0, MAX_ITEMS), [data]);
 
-  if (isLoading && items.length === 0) {
+  if (!inView || (isLoading && items.length === 0)) {
     return (
-      <div className="border-y py-3 bg-[var(--bg-subtle)]" style={{ borderColor: 'var(--border-subtle)' }}>
+      <div
+        ref={ref}
+        className="border-y bg-[var(--bg-subtle)] py-3"
+        style={{ borderColor: 'var(--border-subtle)' }}
+      >
         <div className="flex justify-center gap-8 px-6">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-4 w-28 rounded animate-pulse bg-[var(--border-subtle)]" />
+            <div key={i} className="h-4 w-28 animate-pulse rounded bg-[var(--border-subtle)]" />
           ))}
         </div>
       </div>
     );
   }
 
-  if (items.length === 0) return null;
+  if (items.length === 0) return <div ref={ref} />;
 
   const doubled = [...items, ...items];
 
   return (
     <div
-      className="ticker-wrap border-y py-3 bg-[var(--bg-subtle)]"
+      ref={ref}
+      className="ticker-wrap border-y bg-[var(--bg-subtle)] py-3"
       style={{ borderColor: 'var(--border-subtle)' }}
       aria-label="Canlı piyasa şeridi"
     >

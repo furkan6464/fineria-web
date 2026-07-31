@@ -3,8 +3,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import {
-  Sparkles, TrendingUp, TrendingDown, Minus, AlertCircle, RefreshCw,
-  Lock, Activity, BrainCircuit, Gauge, ArrowRight,
+  AlertCircle,
+  Activity,
+  ArrowRight,
+  BrainCircuit,
+  Database,
+  Gauge,
+  Lock,
+  MessageCircle,
+  Minus,
+  Newspaper,
+  RefreshCw,
+  Sparkles,
+  TrendingDown,
+  TrendingUp,
 } from 'lucide-react';
 import { AppMockupImage } from '@/components/AppMockupImage';
 import tahminlemeMockup from '@/assets/app-mockups/tahminleme.svg';
@@ -17,6 +29,83 @@ import {
   DEFAULT_PREDICTION_SYMBOL,
   type AiPrediction,
 } from '@/lib/prediction';
+
+const SIGNAL_CARDS = [
+  {
+    key: 'al',
+    label: 'AL',
+    subtitle: 'Yükseliş görünümü',
+    desc: 'Model, fiyatın yukarı yönlü hareket ihtimalini daha yüksek görür. Güven skoru ve göstergelerle birlikte okuyun.',
+    icon: TrendingUp,
+    color: '#059669',
+    bg: '#ECFDF5',
+    border: '#A7F3D0',
+    bar: '78%',
+  },
+  {
+    key: 'tut',
+    label: 'TUT',
+    subtitle: 'Yatay / nötr',
+    desc: 'Belirgin bir yön baskın değil. Beklemek veya mevcut pozisyonu korumak için daha dengeli bir çıktı.',
+    icon: Minus,
+    color: '#64748B',
+    bg: '#F8FAFC',
+    border: '#E2E8F0',
+    bar: '50%',
+  },
+  {
+    key: 'sat',
+    label: 'SAT',
+    subtitle: 'Düşüş görünümü',
+    desc: 'Model, aşağı yön ihtimalini öne çıkarır. Bu bir tavsiye değil; veriye dayalı bir yön sinyalidir.',
+    icon: TrendingDown,
+    color: '#DC2626',
+    bg: '#FEF2F2',
+    border: '#FECACA',
+    bar: '72%',
+  },
+] as const;
+
+const DATA_INPUTS = [
+  {
+    icon: Database,
+    title: 'Fiyat & hacim',
+    text: 'Geçmiş fiyat serisi ve işlem hacmi modelin temel girdisidir.',
+  },
+  {
+    icon: Activity,
+    title: 'Teknik göstergeler',
+    text: 'RSI, MACD ve benzeri göstergeler bağlam katmanı sağlar.',
+  },
+  {
+    icon: Newspaper,
+    title: 'Haber verileri',
+    text: 'Şirket ve piyasa haberleri duyarlılık sinyali olarak modele girer.',
+  },
+  {
+    icon: MessageCircle,
+    title: 'Sosyal akış',
+    text: 'Topluluk ve sosyal tartışma nabzı yön görünümünü destekler.',
+  },
+] as const;
+
+const PIPELINE = [
+  {
+    icon: Database,
+    title: 'Çok katmanlı girdi',
+    text: 'Fiyat, teknik, haber ve sosyal akış bir araya gelir.',
+  },
+  {
+    icon: BrainCircuit,
+    title: 'Attention-LSTM',
+    text: 'Model zaman içindeki kalıpları öğrenir ve skor üretir.',
+  },
+  {
+    icon: Sparkles,
+    title: 'Al · Sat · Tut',
+    text: 'Çıktı net bir yön görünümüne dönüşür.',
+  },
+];
 
 const RISK_QUESTIONS = [
   { q: 'Yatırım deneyiminiz nedir?', opts: ['Hiç yok', '1-3 yıl', '3-7 yıl', '7+ yıl'] },
@@ -37,6 +126,153 @@ function trendTone(prediction: AiPrediction) {
   if (t.includes('yüksel') || t.includes('up') || t.includes('al')) return 'up' as const;
   if (t.includes('düş') || t.includes('down') || t.includes('sat')) return 'down' as const;
   return 'flat' as const;
+}
+
+function HowItWorks() {
+  return (
+    <section className="mb-12 sm:mb-16">
+      <div className="mb-8 max-w-2xl sm:mb-10">
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: 'var(--brand-hover)' }}>
+          Mantık
+        </p>
+        <h2 className="text-responsive-section font-bold" style={{ color: 'var(--ink-900)' }}>
+          Tahminleme nasıl çalışır?
+        </h2>
+        <p className="mt-3 text-base leading-relaxed" style={{ color: 'var(--ink-500)' }}>
+          Motor yalnızca fiyatı okumaz. Geçmiş veri, teknik göstergeler, haber
+          duyarlılığı ve sosyal akış birlikte işlenerek Al / Sat / Tut görünümü
+          üretilir. Aşağıdaki kartlar örnek çıktı dilidir — canlı sonuç
+          hesabınıza bağlı çalışır.
+        </p>
+      </div>
+
+      <div className="mb-8 grid gap-4 sm:mb-10 sm:grid-cols-3">
+        {SIGNAL_CARDS.map((card, i) => (
+          <motion.article
+            key={card.key}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ delay: i * 0.08, duration: 0.5 }}
+            className="relative overflow-hidden rounded-3xl border p-6"
+            style={{ background: card.bg, borderColor: card.border }}
+          >
+            <div className="mb-5 flex items-center justify-between">
+              <div
+                className="flex h-12 w-12 items-center justify-center rounded-2xl"
+                style={{ background: 'white', color: card.color, boxShadow: '0 1px 0 rgba(0,0,0,0.04)' }}
+              >
+                <card.icon size={22} strokeWidth={2} />
+              </div>
+              <span className="font-mono text-[11px] font-semibold uppercase tracking-wider" style={{ color: card.color }}>
+                sinyal
+              </span>
+            </div>
+
+            <div className="text-3xl font-extrabold tracking-tight" style={{ color: card.color }}>
+              {card.label}
+            </div>
+            <div className="mt-1 text-sm font-medium" style={{ color: 'var(--ink-700)' }}>
+              {card.subtitle}
+            </div>
+            <p className="mt-3 text-sm leading-relaxed" style={{ color: 'var(--ink-500)' }}>
+              {card.desc}
+            </p>
+
+            <div className="mt-5">
+              <div className="mb-1.5 flex justify-between text-[10px] font-medium uppercase tracking-wide" style={{ color: 'var(--ink-400)' }}>
+                <span>Örnek güven</span>
+                <span style={{ color: card.color }}>{card.bar}</span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-black/[0.06]">
+                <motion.div
+                  className="h-full rounded-full"
+                  style={{ background: card.color }}
+                  initial={{ width: 0 }}
+                  whileInView={{ width: card.bar }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.9, delay: 0.2 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                />
+              </div>
+            </div>
+          </motion.article>
+        ))}
+      </div>
+
+      <div className="mb-5 sm:mb-6">
+        <h3 className="mb-1 text-sm font-semibold" style={{ color: 'var(--ink-900)' }}>
+          Modele giren veriler
+        </h3>
+        <p className="text-sm" style={{ color: 'var(--ink-500)' }}>
+          Tahminleme dört veri katmanını birleştirir.
+        </p>
+      </div>
+      <div className="mb-8 grid gap-3 sm:mb-10 sm:grid-cols-2 lg:grid-cols-4">
+        {DATA_INPUTS.map((item, i) => (
+          <motion.div
+            key={item.title}
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.06, duration: 0.4 }}
+            className="rounded-2xl border border-[var(--border-subtle)] bg-white p-5"
+          >
+            <div
+              className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl"
+              style={{ background: 'var(--brand-tint)', color: 'var(--brand-hover)' }}
+            >
+              <item.icon size={18} />
+            </div>
+            <div className="text-sm font-semibold" style={{ color: 'var(--ink-900)' }}>{item.title}</div>
+            <p className="mt-1.5 text-xs leading-relaxed" style={{ color: 'var(--ink-500)' }}>{item.text}</p>
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="rounded-[1.75rem] border border-[var(--border-subtle)] bg-[var(--bg-subtle)] p-5 sm:p-8">
+        <h3 className="mb-6 text-sm font-semibold sm:mb-8" style={{ color: 'var(--ink-900)' }}>
+          Veriden sinyale
+        </h3>
+        <div className="grid gap-4 sm:grid-cols-3 lg:gap-3">
+          {PIPELINE.map((step, i) => (
+            <motion.div
+              key={step.title}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.07, duration: 0.4 }}
+              className="relative rounded-2xl bg-white p-4 ring-1 ring-[var(--border-subtle)]"
+            >
+              <div className="mb-3 flex items-center gap-3">
+                <div
+                  className="flex h-9 w-9 items-center justify-center rounded-xl"
+                  style={{ background: 'var(--brand-tint)', color: 'var(--brand-hover)' }}
+                >
+                  <step.icon size={16} />
+                </div>
+                <span className="font-mono text-[10px] font-semibold" style={{ color: 'var(--ink-400)' }}>
+                  0{i + 1}
+                </span>
+              </div>
+              <div className="text-sm font-semibold" style={{ color: 'var(--ink-900)' }}>{step.title}</div>
+              <p className="mt-1 text-xs leading-relaxed" style={{ color: 'var(--ink-500)' }}>{step.text}</p>
+              {i < PIPELINE.length - 1 && (
+                <ArrowRight
+                  size={14}
+                  className="absolute -right-2 top-1/2 hidden -translate-y-1/2 text-[var(--ink-400)] sm:block"
+                  aria-hidden
+                />
+              )}
+            </motion.div>
+          ))}
+        </div>
+        <p className="mt-5 flex items-start gap-2 text-xs leading-relaxed sm:mt-6" style={{ color: 'var(--amber)' }}>
+          <AlertCircle size={13} className="mt-0.5 flex-shrink-0" />
+          Model çıktısı bilgilendirme amaçlıdır; yatırım tavsiyesi değildir. Karar her zaman size aittir.
+        </p>
+      </div>
+    </section>
+  );
 }
 
 function RiskProfileCard() {
@@ -64,18 +300,18 @@ function RiskProfileCard() {
 
   return (
     <div className="card p-6">
-      <div className="flex items-center gap-2 mb-1">
+      <div className="mb-1 flex items-center gap-2">
         <Gauge size={16} style={{ color: 'var(--brand-hover)' }} />
-        <h3 className="font-bold text-base" style={{ color: 'var(--ink-900)' }}>Risk profiliniz</h3>
+        <h3 className="text-base font-bold" style={{ color: 'var(--ink-900)' }}>Risk profiliniz</h3>
       </div>
-      <p className="text-sm mb-6" style={{ color: 'var(--ink-500)' }}>
+      <p className="mb-6 text-sm" style={{ color: 'var(--ink-500)' }}>
         Yanıtlarınız yalnızca bu ekranda hesaplanır, hiçbir yere gönderilmez.
       </p>
 
       <AnimatePresence mode="wait">
         {!profile ? (
           <motion.div key={step} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.25 }}>
-            <div className="flex gap-2 mb-6">
+            <div className="mb-6 flex gap-2">
               {RISK_QUESTIONS.map((_, i) => (
                 <div
                   key={i}
@@ -84,14 +320,14 @@ function RiskProfileCard() {
                 />
               ))}
             </div>
-            <p className="text-base font-medium mb-5" style={{ color: 'var(--ink-900)' }}>{RISK_QUESTIONS[step].q}</p>
+            <p className="mb-5 text-base font-medium" style={{ color: 'var(--ink-900)' }}>{RISK_QUESTIONS[step].q}</p>
             <div className="flex flex-col gap-2.5">
               {RISK_QUESTIONS[step].opts.map((opt, i) => (
                 <button
                   key={opt}
                   type="button"
                   onClick={() => handleAnswer(i)}
-                  className="text-left px-4 py-3 rounded-xl text-sm font-medium transition-all border border-[var(--border-subtle)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-subtle)]"
+                  className="rounded-xl border border-[var(--border-subtle)] px-4 py-3 text-left text-sm font-medium transition-all hover:border-[var(--border-strong)] hover:bg-[var(--bg-subtle)]"
                   style={{ color: 'var(--ink-700)' }}
                 >
                   {opt}
@@ -102,14 +338,14 @@ function RiskProfileCard() {
         ) : (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35 }} className="text-center">
             <div
-              className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-4 text-3xl font-bold"
+              className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-3xl text-3xl font-bold"
               style={{ background: 'var(--brand-tint)', color: 'var(--brand-hover)' }}
             >
               {profile.type[0]}
             </div>
-            <div className="text-xl font-bold mb-2" style={{ color: 'var(--ink-900)' }}>{profile.type}</div>
-            <p className="text-sm mb-5" style={{ color: 'var(--ink-500)' }}>{profile.desc}</p>
-            <button type="button" onClick={reset} className="text-sm flex items-center gap-2 mx-auto font-medium" style={{ color: 'var(--brand-hover)' }}>
+            <div className="mb-2 text-xl font-bold" style={{ color: 'var(--ink-900)' }}>{profile.type}</div>
+            <p className="mb-5 text-sm" style={{ color: 'var(--ink-500)' }}>{profile.desc}</p>
+            <button type="button" onClick={reset} className="mx-auto flex items-center gap-2 text-sm font-medium" style={{ color: 'var(--brand-hover)' }}>
               <RefreshCw size={14} /> Tekrar dene
             </button>
           </motion.div>
@@ -134,18 +370,18 @@ function PredictionPanel({ symbol }: { symbol: string }) {
   if (!isAuthenticated) {
     return (
       <div className="card p-10 text-center">
-        <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5" style={{ background: 'var(--brand-tint)' }}>
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl" style={{ background: 'var(--brand-tint)' }}>
           <Lock size={24} style={{ color: 'var(--brand-hover)' }} />
         </div>
-        <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--ink-900)' }}>
+        <h3 className="mb-2 text-lg font-bold" style={{ color: 'var(--ink-900)' }}>
           Canlı tahmin için giriş yapın
         </h3>
-        <p className="text-sm mb-6 max-w-sm mx-auto" style={{ color: 'var(--ink-500)' }}>
+        <p className="mx-auto mb-6 max-w-sm text-sm" style={{ color: 'var(--ink-500)' }}>
           Tahminleme motoru hesabınıza bağlı çalışır. Ücretsiz hesap açarak
           desteklenen semboller için model çıktısını görebilirsiniz.
         </p>
-        <div className="flex items-center justify-center gap-3 flex-wrap">
-          <Link to="/kayit" className="btn-primary text-sm inline-flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Link to="/kayit" className="btn-primary inline-flex items-center gap-2 text-sm">
             Ücretsiz Hesap Aç
             <ArrowRight size={15} />
           </Link>
@@ -157,10 +393,10 @@ function PredictionPanel({ symbol }: { symbol: string }) {
 
   if (isLoading) {
     return (
-      <div className="card p-10 flex flex-col items-center gap-5">
-        <div className="relative w-16 h-16">
-          <div className="absolute inset-0 rounded-full border-4 animate-spin" style={{ borderColor: 'var(--brand) transparent transparent transparent' }} />
-          <div className="absolute inset-3 rounded-full flex items-center justify-center" style={{ background: 'var(--brand-tint)' }}>
+      <div className="card flex flex-col items-center gap-5 p-10">
+        <div className="relative h-16 w-16">
+          <div className="absolute inset-0 animate-spin rounded-full border-4" style={{ borderColor: 'var(--brand) transparent transparent transparent' }} />
+          <div className="absolute inset-3 flex items-center justify-center rounded-full" style={{ background: 'var(--brand-tint)' }}>
             <Sparkles size={18} style={{ color: 'var(--brand-hover)' }} />
           </div>
         </div>
@@ -173,8 +409,8 @@ function PredictionPanel({ symbol }: { symbol: string }) {
     return (
       <div className="card p-10 text-center">
         <AlertCircle size={24} className="mx-auto mb-3" style={{ color: 'var(--amber)' }} />
-        <p className="text-sm font-semibold mb-1" style={{ color: 'var(--ink-900)' }}>Tahmin alınamadı</p>
-        <p className="text-sm mb-5" style={{ color: 'var(--ink-500)' }}>
+        <p className="mb-1 text-sm font-semibold" style={{ color: 'var(--ink-900)' }}>Tahmin alınamadı</p>
+        <p className="mb-5 text-sm" style={{ color: 'var(--ink-500)' }}>
           Tahminleme servisi şu an yanıt vermiyor. Kısa süre sonra tekrar deneyin.
         </p>
         <button type="button" onClick={() => refetch()} className="btn-secondary text-sm">Tekrar dene</button>
@@ -186,7 +422,7 @@ function PredictionPanel({ symbol }: { symbol: string }) {
     return (
       <div className="card p-10 text-center">
         <AlertCircle size={24} className="mx-auto mb-3" style={{ color: 'var(--amber)' }} />
-        <p className="text-sm font-semibold mb-1" style={{ color: 'var(--ink-900)' }}>Model bulunamadı</p>
+        <p className="mb-1 text-sm font-semibold" style={{ color: 'var(--ink-900)' }}>Model bulunamadı</p>
         <p className="text-sm" style={{ color: 'var(--ink-500)' }}>
           {data.message ?? `${symbol} için eğitilmiş bir model bulunmuyor.`}
         </p>
@@ -222,7 +458,7 @@ function PredictionPanel({ symbol }: { symbol: string }) {
           type="button"
           onClick={() => refetch()}
           disabled={isFetching}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium disabled:opacity-60"
+          className="flex items-center gap-2 rounded-xl px-3.5 py-2 text-sm font-medium disabled:opacity-60"
           style={{ background: 'var(--brand-tint)', color: 'var(--brand-hover)' }}
         >
           <RefreshCw size={14} className={isFetching ? 'animate-spin' : ''} />
@@ -237,7 +473,7 @@ function PredictionPanel({ symbol }: { symbol: string }) {
             <span className="font-mono font-semibold" style={{ color: 'var(--ink-900)' }}>%{probPct} yükseliş</span>
             <span>Yükseliş</span>
           </div>
-          <div className="h-2.5 rounded-full overflow-hidden bg-[var(--bg-subtle)]">
+          <div className="h-2.5 overflow-hidden rounded-full bg-[var(--bg-subtle)]">
             <motion.div
               className="h-full rounded-full"
               style={{ background: toneColor }}
@@ -249,28 +485,28 @@ function PredictionPanel({ symbol }: { symbol: string }) {
         </div>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {([
           ['Güven', confidencePct !== null ? `%${confidencePct}` : '—'],
           ['Fiyat', data.currentPrice !== null ? data.currentPrice.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) : '—'],
           ['RSI', data.rsi !== null ? data.rsi.toFixed(1) : '—'],
           ['MACD', data.macd ?? '—'],
         ] as const).map(([label, value]) => (
-          <div key={label} className="rounded-xl p-3 text-center bg-[var(--bg-subtle)]">
-            <div className="text-[11px] mb-1" style={{ color: 'var(--ink-500)' }}>{label}</div>
+          <div key={label} className="rounded-xl bg-[var(--bg-subtle)] p-3 text-center">
+            <div className="mb-1 text-[11px]" style={{ color: 'var(--ink-500)' }}>{label}</div>
             <div className="font-mono text-sm font-bold" style={{ color: 'var(--ink-900)' }}>{value}</div>
           </div>
         ))}
       </div>
 
       {data.explanation && (
-        <p className="text-sm leading-relaxed mb-5" style={{ color: 'var(--ink-700)' }}>
+        <p className="mb-5 text-sm leading-relaxed" style={{ color: 'var(--ink-700)' }}>
           {data.explanation}
         </p>
       )}
 
-      <div className="flex items-start gap-2 p-3 rounded-xl text-xs bg-[#FFFBEB]" style={{ color: 'var(--amber)' }}>
-        <AlertCircle size={14} className="flex-shrink-0 mt-0.5" />
+      <div className="flex items-start gap-2 rounded-xl bg-[#FFFBEB] p-3 text-xs" style={{ color: 'var(--amber)' }}>
+        <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
         {data.disclaimer ?? PREDICTION_DISCLAIMER}
       </div>
     </div>
@@ -287,17 +523,17 @@ export function PredictionPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-8 pt-6 sm:mb-10 sm:pt-8"
+          className="mb-10 pt-6 sm:mb-12 sm:pt-8"
         >
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: 'var(--brand-hover)' }}>
-            Fineria Tahminleme
+            Fineria Finance Tahminleme
           </p>
           <h1 className="mt-2 text-responsive-section font-extrabold" style={{ color: 'var(--ink-900)' }}>
             Fiyat yönünü veriyle okuyun
           </h1>
           <p className="mt-3 max-w-2xl text-base sm:text-lg" style={{ color: 'var(--ink-500)' }}>
-            Derin öğrenme modelleri geçmiş fiyat hareketlerini ve teknik göstergeleri
-            değerlendirerek net bir yön görünümü üretir.
+            Model fiyat, teknik göstergeler, haber duyarlılığı ve sosyal akışı
+            birlikte okuyarak Al, Sat veya Tut görünümü üretir.
           </p>
 
           <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] sm:text-sm" style={{ color: 'var(--ink-500)' }}>
@@ -306,11 +542,26 @@ export function PredictionPage() {
               Attention-LSTM mimarisi
             </span>
             <span className="flex items-center gap-1.5">
+              <Newspaper size={15} style={{ color: 'var(--brand-hover)' }} />
+              Haber + sosyal girdi
+            </span>
+            <span className="flex items-center gap-1.5">
               <Activity size={15} style={{ color: 'var(--brand-hover)' }} />
               {SUPPORTED_PREDICTION_SYMBOLS.length} sembol için eğitilmiş model
             </span>
           </div>
         </motion.header>
+
+        <HowItWorks />
+
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-xl font-bold sm:text-2xl" style={{ color: 'var(--ink-900)' }}>
+            Canlı deneyin
+          </h2>
+          <p className="mt-2 text-sm sm:text-base" style={{ color: 'var(--ink-500)' }}>
+            Sembol seçin, model çıktısını görün. Giriş yaptıktan sonra aktif olur.
+          </p>
+        </div>
 
         <div className="grid items-start gap-5 sm:gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
           <div className="flex flex-col gap-5 sm:gap-6">
@@ -324,7 +575,7 @@ export function PredictionPage() {
                       key={s}
                       type="button"
                       onClick={() => setSymbol(s)}
-                      className="px-2.5 py-2 rounded-lg font-mono text-xs font-semibold transition-all border"
+                      className="rounded-lg border px-2.5 py-2 font-mono text-xs font-semibold transition-all"
                       style={{
                         background: active ? 'var(--brand-tint)' : 'white',
                         borderColor: active ? '#C7D2FE' : 'var(--border-subtle)',

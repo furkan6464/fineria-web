@@ -1,25 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --brand: #6366F1;
-  --brand-hover: #4F46E5;
+  --brand: #4F46E5;
+  --brand-hover: #4338CA;
   --brand-tint: #EEF2FF;
 
   --bg-page: #FFFFFF;
-  --bg-subtle: #F8FAFC;
+  --bg-subtle: #F7F8FC;
   --bg-surface: #FFFFFF;
 
-  --border-subtle: #E7E9F3;
-  --border-strong: #D8DCEC;
+  --border-subtle: #E8EAF2;
+  --border-strong: #D4D8E8;
 
-  --ink-900: #0F172A;
-  --ink-700: #334155;
-  --ink-500: #64748B;
-  --ink-400: #94A3B8;
+  --ink-900: #0B1220;
+  --ink-700: #2A3447;
+  --ink-500: #5B667A;
+  --ink-400: #8B95A8;
 
   --success: #059669;
   --success-tint: #ECFDF5;
@@ -39,7 +37,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
   background-color: var(--bg-page);
   color: var(--ink-700);
   -webkit-font-smoothing: antialiased;
@@ -56,6 +54,17 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+.font-brand {
+  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.content-visibility-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 480px;
+}
+
 /* Card surface */
 .card {
   background: var(--bg-surface);
@@ -64,16 +73,19 @@ body {
 }
 
 .card-hover {
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, border-color 0.25s ease;
 }
 
 .card-hover:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   border-color: var(--border-strong);
+  box-shadow: 0 18px 40px -28px rgba(15, 23, 42, 0.28);
 }
 
 /* Buttons */
 .btn-primary {
+  position: relative;
+  overflow: hidden;
   background: var(--brand);
   color: white;
   padding: 13px 28px;
@@ -82,15 +94,41 @@ body {
   font-size: 15px;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.25s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  isolation: isolate;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.28) 48%,
+    transparent 62%
+  );
+  transform: translateX(-130%);
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .btn-primary:hover {
   background: var(--brand-hover);
-  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+  box-shadow: 0 12px 28px -10px rgba(79, 70, 229, 0.45);
+}
+
+.btn-primary:hover::after {
+  transform: translateX(130%);
+}
+
+.btn-primary > * {
+  position: relative;
+  z-index: 2;
 }
 
 .btn-secondary {
@@ -169,6 +207,113 @@ body {
   100% { transform: translateX(-50%); }
 }
 
+/* ── Light sweep / shine (Portfoy-inspired) ─────────────────────────── */
+.light-sweep {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.light-sweep::before {
+  content: '';
+  position: absolute;
+  inset: -20% -40%;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.14) 48%,
+    rgba(255, 255, 255, 0.28) 50%,
+    rgba(255, 255, 255, 0.14) 52%,
+    transparent 62%
+  );
+  transform: translateX(-55%) rotate(8deg);
+  animation: light-sweep 5.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.light-sweep-soft::before {
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.08) 49%,
+    rgba(255, 255, 255, 0.18) 50.5%,
+    rgba(255, 255, 255, 0.08) 52%,
+    transparent 62%
+  );
+  animation-duration: 7s;
+}
+
+.light-sweep-dark::before {
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(165, 180, 252, 0.08) 48%,
+    rgba(255, 255, 255, 0.16) 50%,
+    rgba(165, 180, 252, 0.08) 52%,
+    transparent 62%
+  );
+}
+
+@keyframes light-sweep {
+  0%,
+  18% {
+    transform: translateX(-55%) rotate(8deg);
+    opacity: 0;
+  }
+  28% {
+    opacity: 1;
+  }
+  55% {
+    transform: translateX(55%) rotate(8deg);
+    opacity: 1;
+  }
+  65%,
+  100% {
+    transform: translateX(55%) rotate(8deg);
+    opacity: 0;
+  }
+}
+
+.shine-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.35) 48%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.shine-hover:hover::after {
+  transform: translateX(120%);
+}
+
+/* Ambient mesh for heroes / dark panels */
+.ambient-mesh {
+  background:
+    radial-gradient(ellipse 55% 45% at 85% 15%, rgba(99, 102, 241, 0.12), transparent 60%),
+    radial-gradient(ellipse 40% 35% at 10% 80%, rgba(129, 140, 248, 0.08), transparent 55%),
+    linear-gradient(180deg, #ffffff 0%, #f7f8fc 100%);
+}
+
+.ambient-mesh-dark {
+  background:
+    radial-gradient(ellipse 50% 40% at 20% 20%, rgba(99, 102, 241, 0.28), transparent 55%),
+    radial-gradient(ellipse 45% 35% at 85% 70%, rgba(67, 56, 202, 0.22), transparent 50%),
+    linear-gradient(145deg, #0a0c14 0%, #12162a 55%, #1a1840 100%);
+}
+
 /* Fade in up on scroll */
 .fade-in-up {
   opacity: 0;
@@ -219,15 +364,15 @@ body {
 
 /* Responsive typography */
 .text-responsive-hero {
-  font-size: clamp(2.1rem, 5.4vw, 4.25rem);
-  line-height: 1.08;
-  letter-spacing: -0.03em;
+  font-size: clamp(2.15rem, 5.6vw, 4.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
 }
 
 .text-responsive-section {
-  font-size: clamp(1.6rem, 3.4vw, 2.75rem);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.65rem, 3.5vw, 2.85rem);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
 }
 
 /* Yatay taşmaya karşı genel koruma */
@@ -271,6 +416,16 @@ canvas {
   button {
     -webkit-tap-highlight-color: transparent;
   }
+
+  .btn-primary::after,
+  .shine-hover::after {
+    display: none;
+  }
+
+  .light-sweep::before {
+    animation: none;
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -278,7 +433,13 @@ canvas {
     scroll-behavior: auto;
   }
 
-  .ticker-content {
+  .ticker-content,
+  .light-sweep::before {
     animation: none;
+  }
+
+  .btn-primary::after,
+  .shine-hover::after {
+    display: none;
   }
 }

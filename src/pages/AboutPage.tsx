@@ -45,7 +45,7 @@ export function AboutPage() {
                 Finansal araçları erişilebilir kılıyoruz
               </h1>
               <p className="text-lg leading-relaxed sm:text-xl" style={{ color: 'var(--ink-500)' }}>
-                Fineria, bireysel yatırımcıların portföyünü net ve sade bir deneyimle
+                Fineria Finance, bireysel yatırımcıların portföyünü net ve sade bir deneyimle
                 takip edebilmesini sağlayan bir finansal teknoloji girişimidir.
               </p>
             </motion.div>
@@ -62,7 +62,7 @@ export function AboutPage() {
               />
               <img
                 src={cozyPhoto}
-                alt="Fineria uygulamasını kullanan bir yatırımcı"
+                alt="Fineria Finance uygulamasını kullanan bir yatırımcı"
                 className="w-full rounded-3xl shadow-soft-xl object-cover"
                 style={{ aspectRatio: '4/3', objectPosition: '58% 50%' }}
               />

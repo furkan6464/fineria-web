@@ -1,18 +1,59 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import {
-  BrainCircuit, LineChart, ShieldCheck, BellRing, Smartphone, Headset, Globe2,
-  ChevronLeft, ChevronRight,
+  Activity,
+  BellRing,
+  BrainCircuit,
+  CandlestickChart,
+  Gauge,
+  Globe2,
+  Newspaper,
+  ShieldCheck,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
 const features = [
-  { icon: BrainCircuit, title: 'Veri Destekli Tahminleme', desc: 'Karmaşık verileri değil, net sonuçları görün. Yapay zeka modelleri piyasayı sizin için okur.' },
-  { icon: LineChart, title: 'Gerçek Zamanlı Piyasa Verisi', desc: 'Tüm piyasaları tek ekrandan, gecikmesiz izleyin.' },
-  { icon: ShieldCheck, title: 'Modern Güvenlik', desc: 'Şifreli iletişim ve iki faktörlü kimlik doğrulama.' },
-  { icon: BellRing, title: 'Akıllı Bildirimler', desc: 'Piyasayı takip etmeyin, size haber versin.' },
-  { icon: Smartphone, title: 'Mobil Öncelikli Deneyim', desc: 'Portföyünüzü dilediğiniz yerden yönetin.' },
-  { icon: Headset, title: '7/24 Türkçe Destek', desc: 'Sorularınıza her zaman anında yanıt.' },
-  { icon: Globe2, title: 'Geniş Piyasa Erişimi', desc: 'BIST, döviz ve kripto — tek hesapta.' },
+  {
+    icon: BrainCircuit,
+    title: 'Akıllı Tahminleme',
+    desc: 'Seçtiğiniz sembol için fiyat, haber ve sosyal akışı birleştirerek yön görünümü alın: yükseliş, düşüş veya yatay.',
+  },
+  {
+    icon: CandlestickChart,
+    title: 'Canlı piyasa paneli',
+    desc: 'BIST, Amerikan Borsası ve kripto fiyatlarını tek ekranda izleyin. Anlık değişim, trend ve takip listeniz aynı akışta.',
+  },
+  {
+    icon: Activity,
+    title: 'Sembol bazlı analiz',
+    desc: 'Tahminleme motoru desteklenen hisselerde çalışır. Bir sembol seçin; model geçmiş veriyi okuyup size yön odaklı bir görünüm sunar.',
+  },
+  {
+    icon: Gauge,
+    title: 'Risk profili',
+    desc: 'Kısa bir değerlendirme ile risk toleransınızı görün. Tahminleri kendi profilinize göre daha bilinçli okuyun — yatırım tavsiyesi değildir.',
+  },
+  {
+    icon: Newspaper,
+    title: 'Piyasa gündemi',
+    desc: 'Fiyat hareketini haber ve gündemle birlikte takip edin. Portföyünüzü ilgilendiren gelişmeleri tek yerde toplayın.',
+  },
+  {
+    icon: Globe2,
+    title: 'Üç piyasa, tek hesap',
+    desc: 'Yerli borsa, ABD piyasaları ve kripto. Dağınık uygulamalar yerine Fineria Finance’te birleşik bir finans deneyimi.',
+  },
+  {
+    icon: BellRing,
+    title: 'Akıllı bildirimler',
+    desc: 'Takip ettiğiniz varlıklar ve önemli hareketler için uyarı alın. Piyasayı sürekli izlemek zorunda kalmayın.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Güvenli temel',
+    desc: 'Şifreli iletişim, modern oturum koruması ve hesabınıza özel tahminleme erişimi.',
+  },
 ];
 
 const MAX_CARD_WIDTH = 340;
@@ -89,10 +130,11 @@ export function Features() {
             className="font-extrabold mb-4 tracking-tight leading-[1.05] bg-clip-text text-transparent bg-gradient-to-r from-gray-600 via-gray-400 to-gray-200"
             style={{ fontSize: 'clamp(2.1rem, 4vw, 3.1rem)' }}
           >
-            Yatırım kararlarınızı destekleyen araçlar
+            Finans ve tahminleme, tek yerde
           </h2>
           <p className="mx-auto max-w-2xl text-base font-light text-gray-400 sm:text-lg">
-            Yatırım kararlarınızı kolaylaştıran araçlar.
+            Canlı piyasa takibi, tahminleme ve risk görünümü —
+            yatırım kararlarınızı destekleyen araçlar Fineria Finance’te.
           </p>
         </motion.div>
 
@@ -117,7 +159,7 @@ export function Features() {
 
           <div
             ref={containerRef}
-            className="relative flex h-[400px] w-full items-center justify-center"
+            className="relative flex h-[420px] w-full items-center justify-center"
             style={{ perspective: 1200 }}
           >
             {features.map((feature, i) => {
@@ -135,9 +177,9 @@ export function Features() {
                   className="absolute flex flex-col rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl [-webkit-backdrop-filter:blur(24px)] sm:p-8"
                   style={{
                     width: cardWidth,
-                    height: 360,
+                    height: 380,
                     marginLeft: -cardWidth / 2,
-                    marginTop: -180,
+                    marginTop: -190,
                     left: '50%',
                     top: '50%',
                     boxShadow: isActive
@@ -155,12 +197,12 @@ export function Features() {
                   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                   onClick={() => !isActive && setActive(i)}
                 >
-                  <feature.icon size={26} strokeWidth={1.25} className="text-white/40 mb-6" />
+                  <feature.icon size={26} strokeWidth={1.25} className="mb-5 text-white/40 sm:mb-6" />
 
-                  <h3 className="font-semibold text-xl mb-3 tracking-tight text-white">
+                  <h3 className="mb-3 text-xl font-semibold tracking-tight text-white">
                     {feature.title}
                   </h3>
-                  <p className="text-sm leading-relaxed text-gray-400 font-light">
+                  <p className="text-sm font-light leading-relaxed text-gray-400">
                     {feature.desc}
                   </p>
                 </motion.div>

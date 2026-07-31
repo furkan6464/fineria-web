@@ -9,10 +9,10 @@ interface LogoProps {
 
 export function Logo({ size = 36, showText = true, className = '', textColor = 'var(--ink-900)' }: LogoProps) {
   return (
-    <div className={`flex items-center gap-2.5 ${className}`}>
+    <div className={`flex items-center gap-2 ${className}`}>
       <img
         src={logoMark}
-        alt="Fineria"
+        alt="Fineria Finance"
         width={size}
         height={size}
         style={{ width: size, height: size }}
@@ -20,10 +20,13 @@ export function Logo({ size = 36, showText = true, className = '', textColor = '
       />
       {showText && (
         <span
-          className="font-extrabold tracking-tight"
-          style={{ fontSize: size * 0.52, color: textColor, letterSpacing: '-0.02em' }}
+          className="font-brand leading-none"
+          style={{
+            fontSize: Math.max(14, size * 0.52),
+            color: textColor,
+          }}
         >
-          Fineria
+          Fineria Finance
         </span>
       )}
     </div>
