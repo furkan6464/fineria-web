@@ -1,42 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-
-const DARK = '#05060a';
-const LIGHT = '#FFFFFF';
-
-function applyChrome(dark: boolean) {
-  const color = dark ? DARK : LIGHT;
-
-  document.documentElement.style.backgroundColor = color;
-  document.body.style.backgroundColor = color;
-
-  let meta = document.querySelector('meta[name="theme-color"]');
-  if (!meta) {
-    meta = document.createElement('meta');
-    meta.setAttribute('name', 'theme-color');
-    document.head.appendChild(meta);
-  }
-  meta.setAttribute('content', color);
-
-  let apple = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
-  if (!apple) {
-    apple = document.createElement('meta');
-    apple.setAttribute('name', 'apple-mobile-web-app-status-bar-style');
-    document.head.appendChild(apple);
-  }
-  apple.setAttribute('content', dark ? 'black-translucent' : 'default');
-}
-
-/** Dark band still covers the strip under the status / nav area. */
-function isDarkUnderStatusBar() {
-  const probeY = 56; // roughly under the clock / top of content
-  const sections = document.querySelectorAll<HTMLElement>('[data-chrome="dark"]');
-  for (const section of sections) {
-    const r = section.getBoundingClientRect();
-    if (r.top <= probeY && r.bottom > probeY) return true;
-  }
-  return false;
-}
+import { applyThemeChrome, isDarkUnderStatusBar } from '@/lib/themeChrome';
 
 /**
  * Syncs mobile status-bar color with the section under the clock.
@@ -54,7 +18,7 @@ export function ThemeChrome() {
       const dark = isDarkUnderStatusBar();
       if (dark === lastDark) return;
       lastDark = dark;
-      applyChrome(dark);
+      applyThemeChrome(dark);
     };
 
     const onScrollOrResize = () => {
@@ -62,10 +26,12 @@ export function ThemeChrome() {
       frame = window.requestAnimationFrame(sync);
     };
 
-    applyChrome(pathname === '/' || pathname === '/ozellikler');
-    lastDark = pathname === '/' || pathname === '/ozellikler';
+    // Assume dark for known landings until first measure
+    const assumeDark = pathname === '/' || pathname === '/ozellikler';
+    applyThemeChrome(assumeDark);
+    lastDark = assumeDark;
 
-    const boot = window.setTimeout(sync, 80);
+    const boot = window.setTimeout(sync, 40);
 
     window.addEventListener('scroll', onScrollOrResize, { passive: true });
     window.addEventListener('resize', onScrollOrResize);
@@ -75,7 +41,7 @@ export function ThemeChrome() {
       if (frame) window.cancelAnimationFrame(frame);
       window.removeEventListener('scroll', onScrollOrResize);
       window.removeEventListener('resize', onScrollOrResize);
-      applyChrome(false);
+      applyThemeChrome(false);
     };
   }, [pathname]);
 

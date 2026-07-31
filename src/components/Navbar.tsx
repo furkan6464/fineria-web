@@ -4,6 +4,7 @@ import { Menu, X, ArrowRight, LogOut } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from './Logo';
 import { useAuthStore } from '@/stores/authStore';
+import { isDarkUnderStatusBar } from '@/lib/themeChrome';
 
 const navItems = [
   { label: 'Ana Sayfa', href: '/' },
@@ -33,6 +34,7 @@ export function Navbar() {
   useEffect(() => {
     window.scrollTo(0, 0);
     setMobileOpen(false);
+    setScrolled(false);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -57,28 +59,49 @@ export function Navbar() {
     }
   };
 
-  const isHome = location.pathname === '/';
-  const isDarkLanding = isHome || location.pathname === '/ozellikler';
-  const onDarkHero = isDarkLanding && !scrolled && !mobileOpen;
-  const ink = onDarkHero ? 'rgba(255,255,255,0.78)' : 'var(--ink-700)';
-  const inkStrong = onDarkHero ? '#fff' : 'var(--ink-900)';
-  const active = onDarkHero ? '#A5B4FC' : 'var(--brand-hover)';
+  // Match ThemeChrome: sample whether a dark band is under the status strip
+  const [overDark, setOverDark] = useState(
+    () => location.pathname === '/' || location.pathname === '/ozellikler',
+  );
+
+  useEffect(() => {
+    let frame = 0;
+    const sync = () => {
+      frame = 0;
+      setOverDark(isDarkUnderStatusBar());
+    };
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(sync);
+    };
+    sync();
+    const boot = window.setTimeout(sync, 40);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.clearTimeout(boot);
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, [location.pathname]);
+
+  const solidNav = scrolled || mobileOpen || !overDark;
+  // Text/icons follow the nav surface, not the page band under it
+  const lightInk = !solidNav;
+  const ink = lightInk ? 'rgba(255,255,255,0.78)' : 'var(--ink-700)';
+  const inkStrong = lightInk ? '#fff' : 'var(--ink-900)';
+  const active = lightInk ? '#A5B4FC' : 'var(--brand-hover)';
 
   return (
     <>
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled || mobileOpen
+          solidNav
             ? 'border-b border-[var(--border-subtle)] bg-white/95 py-3 backdrop-blur-md'
             : 'border-b border-transparent bg-transparent py-4 sm:py-5'
         }`}
-        style={
-          onDarkHero
-            ? { paddingTop: 'max(0px, env(safe-area-inset-top))' }
-            : scrolled || mobileOpen
-              ? { paddingTop: 'env(safe-area-inset-top)' }
-              : undefined
-        }
+        style={{ paddingTop: 'env(safe-area-inset-top)' }}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-6">
           <Link to="/" onClick={() => setMobileOpen(false)}>
@@ -101,7 +124,7 @@ export function Navbar() {
                     <motion.div
                       layoutId="nav-indicator"
                       className="absolute bottom-0 left-4 right-4 h-0.5 rounded-full"
-                      style={{ background: onDarkHero ? '#A5B4FC' : 'var(--brand)' }}
+                      style={{ background: lightInk ? '#A5B4FC' : 'var(--brand)' }}
                       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                     />
                   )}
@@ -119,7 +142,7 @@ export function Navbar() {
                 <Link
                   to="/hesabim"
                   className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
-                    onDarkHero
+                    lightInk
                       ? 'border border-white/15 hover:bg-white/10'
                       : 'border border-[var(--border-subtle)] hover:bg-[var(--bg-subtle)]'
                   }`}
@@ -132,7 +155,7 @@ export function Navbar() {
                   onClick={handleLogout}
                   disabled={loggingOut}
                   className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-70 ${
-                    onDarkHero
+                    lightInk
                       ? 'border border-white/15 hover:bg-white/10'
                       : 'border border-[var(--border-subtle)] hover:bg-[var(--bg-subtle)]'
                   }`}
@@ -158,7 +181,7 @@ export function Navbar() {
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className={`rounded-lg p-2 lg:hidden ${
-              onDarkHero
+              lightInk
                 ? 'border border-white/15 text-white'
                 : 'border border-[var(--border-subtle)] text-[var(--ink-900)]'
             }`}

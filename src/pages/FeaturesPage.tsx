@@ -121,9 +121,12 @@ export function FeaturesPage() {
   const isHeroInView = useInView(heroRef, { once: true });
 
   return (
-    <div className="overflow-hidden pt-24">
-      {/* Hero */}
-      <section data-chrome="dark" className="relative bg-[#05060a] pb-16 pt-[calc(3.5rem+env(safe-area-inset-top))] sm:pb-20 sm:pt-20">
+    <div className="overflow-hidden">
+      {/* Hero — full-bleed under navbar (no white gap) */}
+      <section
+        data-chrome="dark"
+        className="relative bg-[#05060a] pb-16 pt-[calc(6.5rem+env(safe-area-inset-top))] sm:pb-20 sm:pt-28"
+      >
         <div
           className="pointer-events-none absolute inset-0"
           style={{
