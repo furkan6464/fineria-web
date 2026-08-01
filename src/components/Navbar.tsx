@@ -4,7 +4,7 @@ import { Menu, X, ArrowRight, LogOut } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from './Logo';
 import { useAuthStore } from '@/stores/authStore';
-import { isDarkUnderStatusBar } from '@/lib/themeChrome';
+import { isDarkTopRoute } from '@/lib/themeChrome';
 
 const navItems = [
   { label: 'Ana Sayfa', href: '/' },
@@ -25,16 +25,26 @@ export function Navbar() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 12);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const darkTop = isDarkTopRoute(location.pathname);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     setMobileOpen(false);
     setScrolled(false);
+
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // scrollTo is async relative to layout — re-check after paint
+    const id = window.requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+      setScrolled(window.scrollY > 12);
+    });
+
+    return () => {
+      window.cancelAnimationFrame(id);
+      window.removeEventListener('scroll', onScroll);
+    };
   }, [location.pathname]);
 
   useEffect(() => {
@@ -59,35 +69,8 @@ export function Navbar() {
     }
   };
 
-  // Match ThemeChrome: sample whether a dark band is under the status strip
-  const [overDark, setOverDark] = useState(
-    () => location.pathname === '/' || location.pathname === '/ozellikler',
-  );
-
-  useEffect(() => {
-    let frame = 0;
-    const sync = () => {
-      frame = 0;
-      setOverDark(isDarkUnderStatusBar());
-    };
-    const onScroll = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(sync);
-    };
-    sync();
-    const boot = window.setTimeout(sync, 40);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => {
-      window.clearTimeout(boot);
-      if (frame) window.cancelAnimationFrame(frame);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-    };
-  }, [location.pathname]);
-
-  const solidNav = scrolled || mobileOpen || !overDark;
-  // Text/icons follow the nav surface, not the page band under it
+  // Dark hero pages: transparent until scroll. Everywhere else: solid white.
+  const solidNav = scrolled || mobileOpen || !darkTop;
   const lightInk = !solidNav;
   const ink = lightInk ? 'rgba(255,255,255,0.78)' : 'var(--ink-700)';
   const inkStrong = lightInk ? '#fff' : 'var(--ink-900)';
@@ -96,44 +79,53 @@ export function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed inset-x-0 top-0 z-50 w-full ${
           solidNav
-            ? 'border-b border-[var(--border-subtle)] bg-white/95 py-3 backdrop-blur-md'
-            : 'border-b border-transparent bg-transparent py-4 sm:py-5'
+            ? 'border-b border-[var(--border-subtle)] bg-white pb-3'
+            : 'border-b border-transparent bg-transparent pb-4 sm:pb-5'
         }`}
-        style={{ paddingTop: 'env(safe-area-inset-top)' }}
+        style={{
+          paddingTop: solidNav
+            ? 'calc(env(safe-area-inset-top, 0px) + 0.75rem)'
+            : 'calc(env(safe-area-inset-top, 0px) + 1.25rem)',
+        }}
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-6">
-          <Link to="/" onClick={() => setMobileOpen(false)}>
+        <div className="relative mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-6">
+          <Link to="/" onClick={() => setMobileOpen(false)} className="relative z-10">
             <Logo size={30} showText={true} className="sm:hidden" textColor={inkStrong} />
             <Logo size={34} showText={true} className="hidden sm:flex" textColor={inkStrong} />
           </Link>
 
-          <div className="hidden items-center gap-1 lg:flex">
-            {navItems.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className="relative px-4 py-2 text-sm font-medium transition-colors duration-200"
-                  style={{ color: isActive ? active : ink }}
-                >
-                  {item.label}
-                  {isActive && (
-                    <motion.div
-                      layoutId="nav-indicator"
-                      className="absolute bottom-0 left-4 right-4 h-0.5 rounded-full"
-                      style={{ background: lightInk ? '#A5B4FC' : 'var(--brand)' }}
-                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                    />
-                  )}
-                </Link>
-              );
-            })}
+          {/* Viewport-centered links (independent of logo / CTA widths) */}
+          <div className="pointer-events-none absolute inset-y-0 left-1/2 z-[5] hidden -translate-x-1/2 items-center lg:flex">
+            <div className="pointer-events-auto flex items-center gap-1">
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className="relative px-3 py-2 text-sm font-medium transition-colors duration-200"
+                    style={{ color: isActive ? active : ink }}
+                  >
+                    <span className="relative inline-block pb-1">
+                      {item.label}
+                      {isActive && (
+                        <motion.span
+                          layoutId="nav-indicator"
+                          className="absolute inset-x-0 bottom-0 h-0.5 rounded-full"
+                          style={{ background: lightInk ? '#A5B4FC' : 'var(--brand)' }}
+                          transition={{ type: 'spring', stiffness: 480, damping: 34 }}
+                        />
+                      )}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="hidden items-center gap-3 lg:flex">
+          <div className="relative z-10 hidden items-center gap-3 lg:flex">
             {isAuthenticated && user ? (
               <>
                 <span className="px-2 text-sm font-semibold" style={{ color: inkStrong }}>
@@ -180,7 +172,7 @@ export function Navbar() {
 
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className={`rounded-lg p-2 lg:hidden ${
+            className={`relative z-10 rounded-lg p-2 lg:hidden ${
               lightInk
                 ? 'border border-white/15 text-white'
                 : 'border border-[var(--border-subtle)] text-[var(--ink-900)]'

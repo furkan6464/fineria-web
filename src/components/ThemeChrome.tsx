@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { applyThemeChrome, isDarkUnderStatusBar } from '@/lib/themeChrome';
+import { applyThemeChrome, shouldUseDarkChrome } from '@/lib/themeChrome';
 
 /**
- * Syncs mobile status-bar color with the section under the clock.
- * Dark hero → black; white content → white.
+ * Syncs mobile status-bar / overscroll with hero state.
+ * Transparent dark hero → black; solid white nav → white everywhere.
  */
 export function ThemeChrome() {
   const { pathname } = useLocation();
@@ -15,7 +15,7 @@ export function ThemeChrome() {
 
     const sync = () => {
       frame = 0;
-      const dark = isDarkUnderStatusBar();
+      const dark = shouldUseDarkChrome(pathname);
       if (dark === lastDark) return;
       lastDark = dark;
       applyThemeChrome(dark);
@@ -26,18 +26,12 @@ export function ThemeChrome() {
       frame = window.requestAnimationFrame(sync);
     };
 
-    // Assume dark for known landings until first measure
-    const assumeDark = pathname === '/' || pathname === '/ozellikler';
-    applyThemeChrome(assumeDark);
-    lastDark = assumeDark;
-
-    const boot = window.setTimeout(sync, 40);
+    sync();
 
     window.addEventListener('scroll', onScrollOrResize, { passive: true });
     window.addEventListener('resize', onScrollOrResize);
 
     return () => {
-      window.clearTimeout(boot);
       if (frame) window.cancelAnimationFrame(frame);
       window.removeEventListener('scroll', onScrollOrResize);
       window.removeEventListener('resize', onScrollOrResize);

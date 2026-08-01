@@ -8,6 +8,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { GuestRoute } from './components/GuestRoute';
 import { ThemeChrome } from './components/ThemeChrome';
 import { useAuthStore } from './stores/authStore';
+import { isDarkTopRoute, THEME_CHROME_DARK } from './lib/themeChrome';
 
 const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })));
 const FeaturesPage = lazy(() => import('./pages/FeaturesPage').then((m) => ({ default: m.FeaturesPage })));
@@ -70,9 +71,13 @@ function AuthBootstrap({ children }: { children: ReactNode }) {
 function Layout() {
   const location = useLocation();
   const isAuth = authRoutes.includes(location.pathname);
+  const darkTop = isDarkTopRoute(location.pathname);
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--bg-page)' }}>
+    <div
+      className="min-h-screen"
+      style={{ background: darkTop ? THEME_CHROME_DARK : 'var(--bg-page)' }}
+    >
       {!isAuth && <Navbar />}
       <main>
         <Suspense fallback={<PageFallback />}>
