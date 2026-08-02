@@ -14,23 +14,57 @@ interface Person {
 }
 
 const founders: Person[] = [
-  { name: 'Ad Soyad', role: 'Kurucu Ortak · CEO', focus: 'Vizyon & Strateji' },
-  { name: 'Ad Soyad', role: 'Kurucu Ortak · CTO', focus: 'Teknoloji & Altyapı' },
-  { name: 'Ad Soyad', role: 'Kurucu Ortak', focus: 'Yapay Zekâ & Veri' },
-  { name: 'Ad Soyad', role: 'Kurucu Ortak', focus: 'Ürün & Deneyim' },
-  { name: 'Ad Soyad', role: 'Kurucu Ortak', focus: 'Büyüme & İş Geliştirme' },
+  {
+    name: 'Furkan Közkaya',
+    role: 'Kurucu Ortak · CEO',
+    focus: 'Vizyon & Strateji',
+    photo: '/team/furkan-kozkaya.jpg',
+    linkedin: 'https://www.linkedin.com/in/furkanközkaya/',
+  },
+  {
+    name: 'Abdulkadir Kasım Teke',
+    role: 'Kurucu Ortak · CTO',
+    focus: 'Teknoloji & Altyapı',
+    photo: '/team/abdulkadir-kasim-teke.jpg',
+    linkedin: 'https://www.linkedin.com/in/kasimteke/',
+  },
+  {
+    name: 'Azra İrem Derin',
+    role: 'Kurucu Ortak · COO',
+    focus: 'Operasyon & Yönetim',
+    photo: '/team/azra-irem-derin.jpg',
+    linkedin: 'https://www.linkedin.com/in/azraderin/',
+  },
+  {
+    name: 'Nisan Çelik',
+    role: 'Kurucu Ortak · CFO',
+    focus: 'Finans & Yatırım',
+    photo: '/team/nisan-celik.jpg',
+    linkedin: 'https://www.linkedin.com/in/nisan-çelik-4a493a342/',
+  },
+  {
+    name: 'Kübra Kaya',
+    role: 'Kurucu Ortak · CMO',
+    focus: 'Pazarlama & Marka',
+    photo: '/team/kubra-kaya.jpg',
+    linkedin: 'https://www.linkedin.com/in/kübra-kaya-8439a8372/',
+  },
 ];
 
 const academicAdvisor: Person = {
-  name: 'Ad Soyad',
+  name: 'Dr. Öğr. Üyesi Oğuz Demirel',
   role: 'Akademik Danışman',
-  focus: 'Finansal modelleme ve veri bilimi alanında akademik yönlendirme.',
+  focus: 'Ürün gelişimi hakkında akademik yönlendirme.',
+  photo: '/team/oguz-demirel.jpg',
+  linkedin: 'https://www.linkedin.com/in/oğuz-demirel-phd/',
 };
 
 const mentor: Person = {
-  name: 'Ad Soyad',
+  name: 'Sevinç Şardan Çelik',
   role: 'Mentör',
   focus: 'Girişimcilik, ürün stratejisi ve yatırım süreçlerinde rehberlik.',
+  photo: '/team/sevinc-cardan-celik.jpg',
+  linkedin: 'https://www.linkedin.com/in/sevincsardancelik/',
 };
 
 const PORTRAIT_GRADIENTS = [
