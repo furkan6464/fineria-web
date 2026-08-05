@@ -13,12 +13,9 @@ export function getDictionary(locale: Locale): Dictionary {
 export function useTranslation() {
   const locale = useLocaleStore((s) => s.locale);
   const setLocale = useLocaleStore((s) => s.setLocale);
-  return {
-    locale,
-    setLocale,
-    t: getDictionary(locale),
-    numberLocale: locale === 'en' ? 'en-US' : 'tr-TR',
-  };
+  const t = getDictionary(locale);
+  const numberLocale = locale === 'en' ? 'en-US' : 'tr-TR';
+  return { locale, setLocale, t, numberLocale };
 }
 
 /** Simple `{name}` interpolation for dynamic strings. */

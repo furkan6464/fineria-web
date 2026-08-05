@@ -115,14 +115,14 @@ function PricingCard({
         </div>
 
         <div className="flex flex-col gap-3 flex-1 mb-8">
-          {tier.features.map((feat) => (
-            <div key={feat} className="flex items-center gap-2.5">
+          {tier.features.map((feat, i) => (
+            <div key={`tier-feat-${i}`} className="flex items-center gap-2.5">
               <CheckCircle2 size={15} className="flex-shrink-0" style={{ color: 'var(--success)' }} />
               <span className="text-sm" style={{ color: 'var(--ink-700)' }}>{feat}</span>
             </div>
           ))}
-          {tier.excluded?.map((feat) => (
-            <div key={feat} className="flex items-center gap-2.5 opacity-45">
+          {tier.excluded?.map((feat, i) => (
+            <div key={`tier-feat-${i}`} className="flex items-center gap-2.5 opacity-45">
               <X size={15} className="flex-shrink-0" style={{ color: 'var(--ink-400)' }} />
               <span className="text-sm line-through" style={{ color: 'var(--ink-400)' }}>{feat}</span>
             </div>
@@ -283,7 +283,7 @@ export function PricingPage() {
                 </thead>
                 <tbody>
                   {tableRows.map((row, i) => (
-                    <tr key={row.feat} className={i < tableRows.length - 1 ? 'border-b border-[var(--border-subtle)]' : ''}>
+                    <tr key={`cmp-${i}`} className={i < tableRows.length - 1 ? 'border-b border-[var(--border-subtle)]' : ''}>
                       <td className="px-6 py-3.5 text-sm" style={{ color: 'var(--ink-500)' }}>{row.feat}</td>
                       {row.vals.map((val, vi) => (
                         <td key={vi} className="px-4 py-3.5 text-center" style={{ background: vi === 1 ? 'var(--brand-tint)' : 'transparent' }}>
@@ -314,7 +314,7 @@ export function PricingPage() {
           <div className="flex flex-col gap-3">
             {p.faq.items.map((faq, i) => (
               <motion.div
-                key={faq.q}
+                key={`faq-${i}`}
                 initial={{ opacity: 0, y: 16 }}
                 animate={isFaqInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: i * 0.06, duration: 0.4 }}

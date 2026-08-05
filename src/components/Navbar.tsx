@@ -218,9 +218,6 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="mt-4 flex flex-col gap-3 border-t border-[var(--border-subtle)] pt-4">
-                <div className="px-1">
-                  <LanguageToggle variant="light" layoutId="nav-lang-mobile" />
-                </div>
                 {isAuthenticated && user ? (
                   <>
                     <div className="px-1 text-sm font-semibold" style={{ color: 'var(--ink-900)' }}>

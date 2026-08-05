@@ -38,7 +38,7 @@ export function Security() {
         <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
           {securityFeatures.map((feat, i) => (
             <motion.div
-              key={feat.title}
+              key={`security-${i}`}
               initial={{ opacity: 0, y: 16 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.08 + i * 0.05, duration: 0.45 }}

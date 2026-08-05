@@ -68,7 +68,7 @@ function HowItWorks() {
             tone === 'up' ? 'var(--success)' : tone === 'down' ? 'var(--danger)' : 'var(--ink-500)';
           return (
             <motion.article
-              key={card.label}
+              key={`signal-${i}`}
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-40px' }}
@@ -109,7 +109,7 @@ function HowItWorks() {
           const Icon = INPUT_ICONS[i];
           return (
             <motion.div
-              key={item.title}
+              key={`input-${i}`}
               initial={{ opacity: 0, y: 14 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -138,7 +138,7 @@ function HowItWorks() {
             const Icon = PIPELINE_ICONS[i];
             return (
               <motion.div
-                key={step.title}
+                key={`pipeline-${i}`}
                 initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}

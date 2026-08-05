@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
-import { useTranslation } from '@/i18n';
+import { useLocaleStore, getDictionary } from '@/i18n';
 
 /** Keeps <html lang> and document meta tags in sync with the active locale. */
 export function DocumentLang() {
-  const { locale, t } = useTranslation();
+  const locale = useLocaleStore((s) => s.locale);
 
   useEffect(() => {
+    const t = getDictionary(locale);
     document.documentElement.lang = locale;
     document.title = t.meta.documentTitle;
 
@@ -17,7 +18,7 @@ export function DocumentLang() {
     setMeta('meta[name="description"]', 'content', t.meta.description);
     setMeta('meta[property="og:title"]', 'content', t.meta.ogTitle);
     setMeta('meta[property="og:description"]', 'content', t.meta.ogDescription);
-  }, [locale, t]);
+  }, [locale]);
 
   return null;
 }

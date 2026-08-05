@@ -73,7 +73,7 @@ export function PlatformShowcase() {
             <div className="grid gap-4 sm:grid-cols-2">
               {capabilities.map((item, i) => (
                 <motion.div
-                  key={item.title}
+                  key={`capability-${i}`}
                   initial={{ opacity: 0, y: 12 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: 0.2 + i * 0.07, duration: 0.45 }}

@@ -78,8 +78,8 @@ export function AboutPage() {
                 {t.about.mission.title}
               </h2>
               <div className="flex flex-col gap-5">
-                {t.about.mission.problems.map((item) => (
-                  <div key={item.title} className="flex gap-4">
+                {t.about.mission.problems.map((item, i) => (
+                  <div key={`about-item-${i}`} className="flex gap-4">
                     <div className="w-1 flex-shrink-0 rounded-full" style={{ background: 'var(--brand)' }} />
                     <div>
                       <div className="text-sm font-semibold mb-1" style={{ color: 'var(--ink-900)' }}>{item.title}</div>
@@ -99,10 +99,10 @@ export function AboutPage() {
               <h3 className="font-semibold mb-6 text-xl" style={{ color: 'var(--ink-900)' }}>
                 {t.about.workingOn.title}
               </h3>
-              {t.about.workingOn.items.map((item, index) => (
-                <div key={item.title} className="flex gap-5 pb-6 mb-6 border-b border-[var(--border-subtle)] last:border-0 last:pb-0 last:mb-0">
+              {t.about.workingOn.items.map((item, i) => (
+                <div key={`about-item-${i}`} className="flex gap-5 pb-6 mb-6 border-b border-[var(--border-subtle)] last:border-0 last:pb-0 last:mb-0">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0" style={{ background: 'var(--brand-tint)', color: 'var(--brand-hover)' }}>
-                    {String(index + 1).padStart(2, '0')}
+                    {String(i + 1).padStart(2, '0')}
                   </div>
                   <div>
                     <div className="text-sm font-semibold mb-1" style={{ color: 'var(--ink-900)' }}>{item.title}</div>
@@ -133,7 +133,7 @@ export function AboutPage() {
               const Icon = VALUE_ICONS[i];
               return (
                 <motion.div
-                  key={v.title}
+                  key={`value-${i}`}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.08, duration: 0.5 }}
@@ -169,7 +169,7 @@ export function AboutPage() {
                 const done = ROADMAP_DONE[i];
                 return (
                   <motion.div
-                    key={item.phase}
+                    key={`phase-${i}`}
                     initial={{ opacity: 0, x: 24 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.08, duration: 0.5 }}

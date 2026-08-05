@@ -103,7 +103,7 @@ export function FeaturesPage() {
             const meta = PILLAR_META[i];
             return (
               <motion.article
-                key={pillar.title}
+                key={`pillar-${i}`}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
@@ -163,7 +163,7 @@ export function FeaturesPage() {
               const Icon = GRID_ICONS[i];
               return (
                 <motion.div
-                  key={feat.title}
+                  key={`grid-${i}`}
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-30px' }}
@@ -198,7 +198,7 @@ export function FeaturesPage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {t.featuresPage.flow.steps.map((item, i) => (
               <motion.div
-                key={item.title}
+                key={`flow-${i}`}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}

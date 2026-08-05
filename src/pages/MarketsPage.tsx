@@ -168,7 +168,7 @@ export function MarketsPage() {
                 const Icon = CAPABILITY_ICONS[index];
                 return (
                   <motion.article
-                    key={item.title}
+                    key={`markets-item-${index}`}
                     initial={{ opacity: 0, y: 18 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -216,7 +216,7 @@ export function MarketsPage() {
               <div className="mt-8 flex flex-col gap-6 sm:mt-9 sm:gap-7">
                 {t.marketsPage.flow.steps.map((item, index) => (
                   <motion.div
-                    key={item.title}
+                    key={`markets-item-${index}`}
                     initial={{ opacity: 0, x: -16 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}

@@ -147,7 +147,7 @@ export function Features() {
 
               return (
                 <motion.div
-                  key={feature.title}
+                  key={`feature-${i}`}
                   className="absolute flex flex-col rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl [-webkit-backdrop-filter:blur(24px)] sm:p-8"
                   style={{
                     width: cardWidth,
@@ -200,7 +200,7 @@ export function Features() {
         <div className="flex items-center justify-center gap-2 mt-10">
           {features.map((feature, i) => (
             <button
-              key={feature.title}
+              key={`feature-dot-${i}`}
               type="button"
               onClick={() => setActive(i)}
               aria-label={interpolate(t.features.show, { title: feature.title })}
