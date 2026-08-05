@@ -1,35 +1,16 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { ArrowRight, LineChart, SlidersHorizontal, TrendingUp, UserPlus } from 'lucide-react';
+import { useTranslation } from '@/i18n';
 
-const steps = [
-  {
-    icon: UserPlus,
-    title: 'Hesabını aç',
-    description: 'Birkaç adımda ücretsiz hesabını oluştur.',
-    detail: 'Dakikalar',
-  },
-  {
-    icon: SlidersHorizontal,
-    title: 'Profilini belirle',
-    description: 'Hedefine uygun bir risk görünümü çıkar.',
-    detail: 'Kısa anket',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Varlıklarını ekle',
-    description: 'Takip etmek istediğin sembolleri seç.',
-    detail: 'Tek ekran',
-  },
-  {
-    icon: LineChart,
-    title: 'Akışı izle',
-    description: 'Piyasa ve portföyü aynı yerden oku.',
-    detail: 'Web · yakında mobil',
-  },
-];
+const STEP_ICONS = [UserPlus, SlidersHorizontal, TrendingUp, LineChart] as const;
 
 export function HowItWorks() {
+  const { t } = useTranslation();
+  const steps = t.howItWorks.steps.map((step, i) => ({
+    ...step,
+    icon: STEP_ICONS[i],
+  }));
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
@@ -44,13 +25,13 @@ export function HowItWorks() {
           className="mb-12 max-w-2xl sm:mb-16"
         >
           <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: 'var(--brand-hover)' }}>
-            Nasıl çalışır
+            {t.howItWorks.badge}
           </p>
           <h2 className="text-responsive-section font-bold" style={{ color: 'var(--ink-900)' }}>
-            Dört adım. Karmaşa yok.
+            {t.howItWorks.title}
           </h2>
           <p className="mt-4 text-base leading-relaxed sm:text-lg" style={{ color: 'var(--ink-500)' }}>
-            Hesaptan ilk takibe kadar sade bir akış.
+            {t.howItWorks.subtitle}
           </p>
         </motion.div>
 
@@ -88,7 +69,7 @@ export function HowItWorks() {
           className="mt-12 flex justify-start sm:mt-14"
         >
           <a href="/kayit" className="btn-primary flex items-center gap-2 text-base">
-            <span>Ücretsiz Hesap Aç</span>
+            <span>{t.howItWorks.cta}</span>
             <ArrowRight size={18} />
           </a>
         </motion.div>

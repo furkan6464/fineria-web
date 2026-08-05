@@ -1,4 +1,6 @@
 import { apiFetch } from './api';
+import { getDictionary } from '@/i18n';
+import { useLocaleStore } from '@/i18n/localeStore';
 
 /**
  * Stock AI tarafından desteklenen günlük semboller.
@@ -47,6 +49,10 @@ function toUpstreamSymbol(symbol: string): string {
   return `${s}.IS`;
 }
 
+export function getPredictionDisclaimer(): string {
+  return getDictionary(useLocaleStore.getState().locale).predictionLib.disclaimer;
+}
+
 /** GET /api/ai/predict/{symbol} — oturum açık kullanıcılar için. */
 export async function getPrediction(symbol: string, token: string): Promise<AiPrediction> {
   const raw = await apiFetch<Record<string, unknown>>(
@@ -74,6 +80,3 @@ export async function getPrediction(symbol: string, token: string): Promise<AiPr
     timeframe: strOrNull(r.timeframe),
   };
 }
-
-export const PREDICTION_DISCLAIMER =
-  'Bu çıktı yatırım tavsiyesi değildir; model tahminidir.';

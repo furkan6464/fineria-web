@@ -3,6 +3,7 @@ import { AppMockupImage } from './AppMockupImage';
 import macbookMockup from '@/assets/app-mockups/macbook-transparent.webp';
 import piyasalarMockup from '@/assets/app-mockups/piyasalar.svg';
 import tahminlemeMockup from '@/assets/app-mockups/tahminleme.svg';
+import { useTranslation } from '@/i18n';
 
 interface DeviceShowcaseProps {
   eyebrow?: string;
@@ -12,11 +13,15 @@ interface DeviceShowcaseProps {
 }
 
 export function DeviceShowcase({
-  eyebrow = 'Çok yakında',
-  title = 'Fineria Finance masaüstünde ve mobilde',
-  description = 'Web uygulaması yayına hazırlanıyor, iOS ve Android sürümleri çok yakında.',
+  eyebrow,
+  title,
+  description,
   className = '',
 }: DeviceShowcaseProps) {
+  const { t } = useTranslation();
+  const resolvedEyebrow = eyebrow ?? t.deviceShowcase.badge;
+  const resolvedTitle = title ?? t.deviceShowcase.title;
+  const resolvedDescription = description ?? t.deviceShowcase.description;
   return (
     <div className={`relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-[#050508] px-8 py-16 ${className}`}>
       <div
@@ -39,7 +44,7 @@ export function DeviceShowcase({
           style={{ bottom: '-6%' }}
         >
           <div className="overflow-hidden rounded-[1.6rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.9)] ring-1 ring-white/10">
-            <AppMockupImage src={piyasalarMockup} label="Fineria Finance piyasalar ekranı" width={148} />
+            <AppMockupImage src={piyasalarMockup} label={t.deviceShowcase.altMarkets} width={148} />
           </div>
         </motion.div>
 
@@ -51,7 +56,7 @@ export function DeviceShowcase({
           style={{ bottom: '-6%' }}
         >
           <div className="overflow-hidden rounded-[1.6rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.9)] ring-1 ring-white/10">
-            <AppMockupImage src={tahminlemeMockup} label="Fineria Finance tahminleme ekranı" width={148} />
+            <AppMockupImage src={tahminlemeMockup} label={t.deviceShowcase.altPredictions} width={148} />
           </div>
         </motion.div>
 
@@ -63,7 +68,7 @@ export function DeviceShowcase({
         >
           <img
             src={macbookMockup}
-            alt="Fineria Finance masaüstü uygulaması"
+            alt={t.deviceShowcase.altDesktop}
             className="block h-auto w-full"
             style={{ filter: 'drop-shadow(0 30px 40px rgba(0,0,0,0.75))' }}
           />
@@ -86,12 +91,12 @@ export function DeviceShowcase({
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75" />
             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-indigo-400" />
           </span>
-          {eyebrow}
+          {resolvedEyebrow}
         </span>
         <h2 className="mt-5 bg-gradient-to-r from-gray-500 via-gray-300 to-gray-100 bg-clip-text text-2xl font-bold leading-tight tracking-tight text-transparent">
-          {title}
+          {resolvedTitle}
         </h2>
-        <p className="mt-3 text-sm leading-relaxed text-gray-400">{description}</p>
+        <p className="mt-3 text-sm leading-relaxed text-gray-400">{resolvedDescription}</p>
       </motion.div>
     </div>
   );

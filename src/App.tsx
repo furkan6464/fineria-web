@@ -7,7 +7,9 @@ import { Footer } from './components/Footer';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { GuestRoute } from './components/GuestRoute';
 import { ThemeChrome } from './components/ThemeChrome';
+import { DocumentLang } from './components/DocumentLang';
 import { useAuthStore } from './stores/authStore';
+import { useLocaleStore } from './i18n';
 import { isDarkTopRoute, THEME_CHROME_DARK } from './lib/themeChrome';
 
 const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })));
@@ -36,6 +38,11 @@ function PageFallback() {
 function AuthBootstrap({ children }: { children: ReactNode }) {
   const hydrate = useAuthStore((s) => s.hydrate);
   const reconcileFromStorage = useAuthStore((s) => s.reconcileFromStorage);
+  const hydrateLocale = useLocaleStore((s) => s.hydrate);
+
+  useEffect(() => {
+    hydrateLocale();
+  }, [hydrateLocale]);
 
   useEffect(() => {
     // Don't block first paint — hydrate after idle
@@ -139,6 +146,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AuthBootstrap>
+          <DocumentLang />
           <ThemeChrome />
           <Layout />
         </AuthBootstrap>

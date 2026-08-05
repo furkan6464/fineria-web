@@ -118,9 +118,9 @@ export function computeBreadth(stocks: StockSummary[]): MarketBreadth {
   };
 }
 
-export function formatPrice(value: number, marketType: MarketType): string {
+export function formatPrice(value: number, marketType: MarketType, locale = 'tr-TR'): string {
   const digits = marketType === 'kripto' && value < 10 ? 4 : 2;
-  return value.toLocaleString('tr-TR', {
+  return value.toLocaleString(locale, {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   });

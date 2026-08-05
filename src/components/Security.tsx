@@ -1,17 +1,16 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Eye, Fingerprint, KeyRound, Lock, ServerCog, ShieldCheck } from 'lucide-react';
+import { useTranslation } from '@/i18n';
 
-const securityFeatures = [
-  { icon: Lock, title: 'Şifreli iletişim', desc: 'Verileriniz güvenli kanallar üzerinden iletilir.' },
-  { icon: Fingerprint, title: 'Biyometrik doğrulama', desc: 'Parmak izi ve yüz tanıma desteği (mobilde).' },
-  { icon: KeyRound, title: 'İki faktörlü giriş', desc: 'Her oturumda ekstra bir doğrulama adımı.' },
-  { icon: Eye, title: 'Aktivite takibi', desc: 'Hesap hareketlerini izle, anında haberdar ol.' },
-  { icon: ServerCog, title: 'Yedekli altyapı', desc: 'Kesintisiz erişim için tasarlandı.' },
-  { icon: ShieldCheck, title: 'Hesap koruması', desc: 'Şüpheli girişlerde ek doğrulama.' },
-];
+const SECURITY_ICONS = [Lock, Fingerprint, KeyRound, Eye, ServerCog, ShieldCheck] as const;
 
 export function Security() {
+  const { t } = useTranslation();
+  const securityFeatures = t.security.items.map((item, i) => ({
+    ...item,
+    icon: SECURITY_ICONS[i],
+  }));
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
@@ -26,13 +25,13 @@ export function Security() {
           className="mx-auto mb-10 max-w-2xl text-center sm:mb-14"
         >
           <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: 'var(--brand-hover)' }}>
-            Güvenlik
+            {t.security.badge}
           </p>
           <h2 className="text-responsive-section mb-4 font-bold" style={{ color: 'var(--ink-900)' }}>
-            Güvenlik en baştan tasarlandı
+            {t.security.title}
           </h2>
           <p className="text-base sm:text-lg" style={{ color: 'var(--ink-500)' }}>
-            Hesabını ve verilerini korumak için modern güvenlik uygulamaları.
+            {t.security.subtitle}
           </p>
         </motion.div>
 

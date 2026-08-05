@@ -8,41 +8,17 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AppMockupImage } from '@/components/AppMockupImage';
+import { useTranslation } from '@/i18n';
 import piyasalarMockup from '@/assets/app-mockups/piyasalar.svg';
 import gundemMockup from '@/assets/app-mockups/gundem.svg';
 import anaSayfaMockup from '@/assets/app-mockups/ana-sayfa.svg';
 
-const capabilities = [
-  {
-    icon: Search,
-    number: '01',
-    title: 'Aradığınızı anında bulun',
-    description:
-      'BIST, Amerikan Borsası ve kripto varlıklarını sade bir arama deneyimiyle keşfedin.',
-  },
-  {
-    icon: LineChart,
-    number: '02',
-    title: 'Hareketi tek bakışta okuyun',
-    description:
-      'Fiyat, değişim ve trend bilgisini kalabalık ekranlar arasında kaybolmadan görün.',
-  },
-  {
-    icon: BellRing,
-    number: '03',
-    title: 'Önemli anları kaçırmayın',
-    description:
-      'Takip ettiğiniz varlıklar ve gündem için kişisel bir piyasa akışı oluşturun.',
-  },
-];
-
-const flow = [
-  { title: 'Keşfet', text: 'Piyasayı ve öne çıkan varlıkları tarayın.' },
-  { title: 'Takip et', text: 'İlgilendiğiniz sembolleri tek yerde toplayın.' },
-  { title: 'Anlamlandır', text: 'Fiyat hareketini gündem ve analizle birlikte okuyun.' },
-];
+const CAPABILITY_ICONS = [Search, LineChart, BellRing] as const;
+const CAPABILITY_NUMBERS = ['01', '02', '03'] as const;
 
 export function MarketsPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="overflow-hidden bg-white pt-24">
       <section className="relative pb-16 pt-10 sm:pt-14 lg:pb-28 lg:pt-20">
@@ -63,31 +39,30 @@ export function MarketsPage() {
             className="mx-auto max-w-3xl text-center"
           >
             <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: 'var(--brand-hover)' }}>
-              Piyasalar
+              {t.marketsPage.hero.eyebrow}
             </p>
             <h1
               className="text-responsive-hero font-extrabold leading-[1.05]"
               style={{ color: 'var(--ink-900)', letterSpacing: '-0.045em' }}
             >
-              Piyasayı izlemek değil,
+              {t.marketsPage.hero.titleLine1}
               <span className="block" style={{ color: 'var(--brand-hover)' }}>
-                anlamak için tasarlandı.
+                {t.marketsPage.hero.titleLine2}
               </span>
             </h1>
             <p
               className="mx-auto mt-5 max-w-2xl text-base leading-relaxed sm:mt-6 sm:text-lg"
               style={{ color: 'var(--ink-500)' }}
             >
-              Fiyatları, trendleri ve piyasa gündemini tek bir akışta bir araya
-              getiriyoruz. Daha az gürültü, daha net bir bakış.
+              {t.marketsPage.hero.subtitle}
             </p>
             <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
               <Link to="/kayit" className="btn-primary inline-flex items-center gap-2">
-                Erken erişime katıl
+                {t.marketsPage.hero.ctaPrimary}
                 <ArrowRight size={16} />
               </Link>
               <a href="#deneyim" className="btn-secondary inline-flex items-center gap-2">
-                Deneyimi keşfet
+                {t.marketsPage.hero.ctaSecondary}
               </a>
             </div>
           </motion.div>
@@ -121,10 +96,10 @@ export function MarketsPage() {
               <div className="relative z-20 flex flex-col items-center gap-4 px-5 pt-8 text-center sm:px-10 sm:pt-12">
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.16em] text-white/50">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                  Ürün önizlemesi
+                  {t.marketsPage.preview.badge}
                 </div>
                 <p className="max-w-lg text-lg font-semibold leading-snug text-white sm:text-[1.6rem]">
-                  Veriden görünüme, görünümden içgörüye.
+                  {t.marketsPage.preview.headline}
                 </p>
               </div>
 
@@ -136,7 +111,7 @@ export function MarketsPage() {
                   transition={{ duration: 0.7, delay: 0.3 }}
                   className="hidden w-[186px] translate-y-9 opacity-70 lg:block"
                 >
-                  <AppMockupImage src={gundemMockup} label="Fineria Finance piyasa gündemi" width={186} />
+                  <AppMockupImage src={gundemMockup} label={t.marketsPage.preview.altAgenda} width={186} />
                 </motion.div>
 
                 <motion.div
@@ -146,7 +121,7 @@ export function MarketsPage() {
                   transition={{ duration: 0.75, delay: 0.15 }}
                   className="relative z-10 w-full max-w-[210px] drop-shadow-[0_30px_50px_rgba(0,0,0,0.7)] sm:max-w-[236px]"
                 >
-                  <AppMockupImage src={piyasalarMockup} label="Fineria Finance piyasalar ekranı" width={236} />
+                  <AppMockupImage src={piyasalarMockup} label={t.marketsPage.preview.altMarkets} width={236} />
                 </motion.div>
 
                 <motion.div
@@ -156,7 +131,7 @@ export function MarketsPage() {
                   transition={{ duration: 0.7, delay: 0.3 }}
                   className="hidden w-[186px] translate-y-9 opacity-70 lg:block"
                 >
-                  <AppMockupImage src={anaSayfaMockup} label="Fineria Finance ana ekranı" width={186} />
+                  <AppMockupImage src={anaSayfaMockup} label={t.marketsPage.preview.altHome} width={186} />
                 </motion.div>
               </div>
 
@@ -181,40 +156,42 @@ export function MarketsPage() {
                 className="text-responsive-section font-bold"
                 style={{ color: 'var(--ink-900)' }}
               >
-                Her şey yerli yerinde.
+                {t.marketsPage.experience.title}
               </h2>
               <p className="mt-4 max-w-md text-[15px] leading-relaxed sm:text-base" style={{ color: 'var(--ink-500)' }}>
-                Piyasa ekranını bir veri duvarı olmaktan çıkarıp, yatırımcının
-                günlük akışına uyum sağlayan bir ürüne dönüştürüyoruz.
+                {t.marketsPage.experience.subtitle}
               </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-              {capabilities.map((item, index) => (
-                <motion.article
-                  key={item.title}
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.08, duration: 0.5 }}
-                  className="shine-hover group rounded-2xl border border-[var(--border-subtle)] bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[var(--border-strong)]"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--brand-tint)]">
-                      <item.icon size={18} style={{ color: 'var(--brand-hover)' }} />
+              {t.marketsPage.experience.capabilities.map((item, index) => {
+                const Icon = CAPABILITY_ICONS[index];
+                return (
+                  <motion.article
+                    key={item.title}
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.08, duration: 0.5 }}
+                    className="shine-hover group rounded-2xl border border-[var(--border-subtle)] bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[var(--border-strong)]"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--brand-tint)]">
+                        <Icon size={18} style={{ color: 'var(--brand-hover)' }} />
+                      </div>
+                      <span className="font-mono text-[11px]" style={{ color: 'var(--ink-400)' }}>
+                        {CAPABILITY_NUMBERS[index]}
+                      </span>
                     </div>
-                    <span className="font-mono text-[11px]" style={{ color: 'var(--ink-400)' }}>
-                      {item.number}
-                    </span>
-                  </div>
-                  <h3 className="mt-6 font-semibold" style={{ color: 'var(--ink-900)' }}>
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed" style={{ color: 'var(--ink-500)' }}>
-                    {item.description}
-                  </p>
-                </motion.article>
-              ))}
+                    <h3 className="mt-6 font-semibold" style={{ color: 'var(--ink-900)' }}>
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed" style={{ color: 'var(--ink-500)' }}>
+                      {item.description}
+                    </p>
+                  </motion.article>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -225,19 +202,19 @@ export function MarketsPage() {
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
             <div>
               <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: 'var(--brand-hover)' }}>
-                Fineria Finance akışı
+                {t.marketsPage.flow.eyebrow}
               </p>
               <h2
                 className="text-responsive-section font-bold"
                 style={{ color: 'var(--ink-900)' }}
               >
-                Piyasanın tamamı değil,
+                {t.marketsPage.flow.titleLine1}
                 <span className="block" style={{ color: 'var(--brand-hover)' }}>
-                  sizin için önemli olan.
+                  {t.marketsPage.flow.titleLine2}
                 </span>
               </h2>
               <div className="mt-8 flex flex-col gap-6 sm:mt-9 sm:gap-7">
-                {flow.map((item, index) => (
+                {t.marketsPage.flow.steps.map((item, index) => (
                   <motion.div
                     key={item.title}
                     initial={{ opacity: 0, x: -16 }}
@@ -283,7 +260,7 @@ export function MarketsPage() {
               <div className="relative flex justify-center rounded-[1.5rem] border border-[var(--border-subtle)] bg-[var(--bg-subtle)] p-5 shadow-xl shadow-slate-900/5 sm:rounded-[2rem] sm:p-8">
                 <AppMockupImage
                   src={gundemMockup}
-                  label="Fineria Finance kişisel piyasa akışı"
+                  label={t.marketsPage.flow.mockupAlt}
                   width={285}
                 />
               </div>
@@ -292,16 +269,16 @@ export function MarketsPage() {
 
           <div className="mt-16 rounded-[1.5rem] bg-[#0a0910] px-6 py-10 text-center sm:mt-24 sm:rounded-[2rem] sm:px-12 sm:py-14">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-300">
-              Yakında Fineria Finance'te
+              {t.marketsPage.ctaBand.eyebrow}
             </p>
             <h2 className="mx-auto mt-3 max-w-xl text-xl font-bold text-white sm:text-3xl">
-              Piyasa takibini daha sakin, daha kişisel ve daha anlaşılır hâle getirin.
+              {t.marketsPage.ctaBand.title}
             </h2>
             <Link
               to="/kayit"
               className="mt-7 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-[#111018] transition-transform hover:scale-[1.02]"
             >
-              Erken erişime katıl
+              {t.marketsPage.ctaBand.cta}
               <ArrowRight size={16} />
             </Link>
           </div>

@@ -1,4 +1,5 @@
 ﻿import { HeroPhonesDesktop } from '@/components/HeroPhonesDesktop';
+import { useTranslation } from '@/i18n';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -14,6 +15,8 @@ const itemVariants = {
 } as const;
 
 export function Hero() {
+  const { t } = useTranslation();
+
   return (
     <section
       data-chrome="dark"
@@ -47,7 +50,7 @@ export function Hero() {
             variants={itemVariants}
             className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-indigo-300/80 sm:text-[11px] sm:tracking-[0.22em]"
           >
-            Fineria Finance
+            {t.hero.brand}
           </motion.p>
 
           <motion.div variants={itemVariants} className="flex flex-col gap-3.5 sm:gap-5">
@@ -59,13 +62,12 @@ export function Hero() {
                 letterSpacing: '-0.045em',
               }}
             >
-              Piyasayı
+              {t.hero.titleLine1}
               <br />
-              tek ekrandan yönet.
+              {t.hero.titleLine2}
             </h1>
             <p className="mx-auto max-w-[20rem] text-[0.95rem] leading-relaxed text-white/50 sm:max-w-md sm:text-base lg:mx-0 lg:text-lg">
-              BIST, Amerikan Borsası ve kripto. Gürültüsüz arayüz, net veri —
-              ihtiyacın olan bilgi, doğru anda.
+              {t.hero.subtitle}
             </p>
           </motion.div>
 
@@ -77,14 +79,14 @@ export function Hero() {
               to="/kayit"
               className="group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-white px-6 py-3 text-[13.5px] font-semibold tracking-tight text-[#05060a] transition-opacity hover:opacity-90 sm:w-auto sm:px-7 sm:text-[14px]"
             >
-              Ücretsiz Hesap Aç
+              {t.hero.ctaPrimary}
               <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5" />
             </Link>
             <a
               href="#nasil-calisir"
               className="inline-flex w-full items-center justify-center rounded-full border border-white/20 bg-transparent px-6 py-3 text-[13.5px] font-medium tracking-tight text-white/80 transition-colors hover:border-white/35 hover:text-white sm:w-auto sm:px-7 sm:text-[14px]"
             >
-              Nasıl Çalışır?
+              {t.hero.ctaSecondary}
             </a>
           </motion.div>
 
@@ -92,11 +94,11 @@ export function Hero() {
             variants={itemVariants}
             className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 font-mono text-[10px] tracking-wide text-white/35 sm:gap-x-3 sm:text-[11px] lg:justify-start"
           >
-            <span>BIST</span>
+            <span>{t.hero.chipBist}</span>
             <span className="text-white/20">/</span>
-            <span>Amerikan Borsası</span>
+            <span>{t.hero.chipUs}</span>
             <span className="text-white/20">/</span>
-            <span>Kripto</span>
+            <span>{t.hero.chipCrypto}</span>
           </motion.div>
         </motion.div>
 

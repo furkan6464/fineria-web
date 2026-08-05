@@ -1,6 +1,9 @@
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from '@/i18n';
 
 export function AuthLoadingScreen() {
+  const { t } = useTranslation();
+
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center gap-3 px-6"
@@ -16,7 +19,7 @@ export function AuthLoadingScreen() {
         aria-hidden
       />
       <p className="text-sm font-medium" style={{ color: 'var(--ink-500)' }}>
-        Oturum kontrol ediliyor...
+        {t.authLoading.message}
       </p>
     </div>
   );

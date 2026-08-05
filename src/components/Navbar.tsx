@@ -3,17 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight, LogOut } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from './Logo';
+import { LanguageToggle } from './LanguageToggle';
 import { useAuthStore } from '@/stores/authStore';
+import { useTranslation } from '@/i18n';
 import { isDarkTopRoute } from '@/lib/themeChrome';
-
-const navItems = [
-  { label: 'Ana Sayfa', href: '/' },
-  { label: 'Özellikler', href: '/ozellikler' },
-  { label: 'Piyasalar', href: '/piyasalar' },
-  { label: 'Tahminleme', href: '/tahminleme' },
-  { label: 'Fiyatlandırma', href: '/fiyatlar' },
-  { label: 'Hakkımızda', href: '/hakkimizda' },
-];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -24,6 +17,16 @@ export function Navbar() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
+  const { t } = useTranslation();
+
+  const navItems = [
+    { label: t.nav.home, href: '/' },
+    { label: t.nav.features, href: '/ozellikler' },
+    { label: t.nav.markets, href: '/piyasalar' },
+    { label: t.nav.predictions, href: '/tahminleme' },
+    { label: t.nav.pricing, href: '/fiyatlar' },
+    { label: t.nav.about, href: '/hakkimizda' },
+  ];
 
   const darkTop = isDarkTopRoute(location.pathname);
 
@@ -35,7 +38,6 @@ export function Navbar() {
     const onScroll = () => setScrolled(window.scrollY > 12);
     window.addEventListener('scroll', onScroll, { passive: true });
 
-    // scrollTo is async relative to layout — re-check after paint
     const id = window.requestAnimationFrame(() => {
       window.scrollTo(0, 0);
       setScrolled(window.scrollY > 12);
@@ -69,12 +71,12 @@ export function Navbar() {
     }
   };
 
-  // Dark hero pages: transparent until scroll. Everywhere else: solid white.
   const solidNav = scrolled || mobileOpen || !darkTop;
   const lightInk = !solidNav;
   const ink = lightInk ? 'rgba(255,255,255,0.78)' : 'var(--ink-700)';
   const inkStrong = lightInk ? '#fff' : 'var(--ink-900)';
   const active = lightInk ? '#A5B4FC' : 'var(--brand-hover)';
+  const langVariant = lightInk ? 'dark' : 'light';
 
   return (
     <>
@@ -90,22 +92,21 @@ export function Navbar() {
             : 'calc(env(safe-area-inset-top, 0px) + 1.25rem)',
         }}
       >
-        <div className="relative mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-6">
-          <Link to="/" onClick={() => setMobileOpen(false)} className="relative z-10">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 px-5 sm:gap-4 sm:px-6">
+          <Link to="/" onClick={() => setMobileOpen(false)} className="relative z-10 shrink-0">
             <Logo size={30} showText={true} className="sm:hidden" textColor={inkStrong} />
             <Logo size={34} showText={true} className="hidden sm:flex" textColor={inkStrong} />
           </Link>
 
-          {/* Viewport-centered links (independent of logo / CTA widths) */}
-          <div className="pointer-events-none absolute inset-y-0 left-1/2 z-[5] hidden -translate-x-1/2 items-center lg:flex">
-            <div className="pointer-events-auto flex items-center gap-1">
+          <div className="hidden min-w-0 flex-1 items-center justify-center lg:flex">
+            <div className="flex items-center gap-0 xl:gap-0.5">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.href;
                 return (
                   <Link
                     key={item.href}
                     to={item.href}
-                    className="relative px-3 py-2 text-sm font-medium transition-colors duration-200"
+                    className="relative whitespace-nowrap px-2 py-2 text-[13px] font-medium transition-colors duration-200 xl:px-2.5 xl:text-sm"
                     style={{ color: isActive ? active : ink }}
                   >
                     <span className="relative inline-block pb-1">
@@ -125,28 +126,29 @@ export function Navbar() {
             </div>
           </div>
 
-          <div className="relative z-10 hidden items-center gap-3 lg:flex">
+          <div className="relative z-10 hidden shrink-0 items-center gap-2 xl:gap-3 lg:flex">
+            <LanguageToggle variant={langVariant} layoutId="nav-lang" />
             {isAuthenticated && user ? (
               <>
-                <span className="px-2 text-sm font-semibold" style={{ color: inkStrong }}>
+                <span className="hidden px-2 text-sm font-semibold 2xl:inline" style={{ color: inkStrong }}>
                   @{user.handle}
                 </span>
                 <Link
                   to="/hesabim"
-                  className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+                  className={`rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors xl:px-4 ${
                     lightInk
                       ? 'border border-white/15 hover:bg-white/10'
                       : 'border border-[var(--border-subtle)] hover:bg-[var(--bg-subtle)]'
                   }`}
                   style={{ color: location.pathname === '/hesabim' ? active : inkStrong }}
                 >
-                  Hesabım
+                  {t.nav.account}
                 </Link>
                 <button
                   type="button"
                   onClick={handleLogout}
                   disabled={loggingOut}
-                  className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-70 ${
+                  className={`flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors disabled:opacity-70 xl:px-4 ${
                     lightInk
                       ? 'border border-white/15 hover:bg-white/10'
                       : 'border border-[var(--border-subtle)] hover:bg-[var(--bg-subtle)]'
@@ -154,33 +156,43 @@ export function Navbar() {
                   style={{ color: inkStrong }}
                 >
                   <LogOut size={15} />
-                  {loggingOut ? 'Çıkış...' : 'Çıkış Yap'}
+                  {loggingOut ? t.nav.loggingOut : t.nav.logout}
                 </button>
               </>
             ) : (
               <>
-                <Link to="/giris" className="px-4 py-2.5 text-sm font-semibold" style={{ color: inkStrong }}>
-                  Giriş Yap
+                <Link
+                  to="/giris"
+                  className="whitespace-nowrap px-2.5 py-2.5 text-sm font-semibold xl:px-3"
+                  style={{ color: inkStrong }}
+                >
+                  {t.nav.login}
                 </Link>
-                <Link to="/kayit" className="btn-primary flex items-center gap-2 !px-5 !py-2.5 text-sm">
-                  Hesap Aç
+                <Link
+                  to="/kayit"
+                  className="btn-primary flex items-center gap-2 !px-4 !py-2.5 text-sm xl:!px-5"
+                >
+                  {t.nav.signup}
                   <ArrowRight size={16} />
                 </Link>
               </>
             )}
           </div>
 
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className={`relative z-10 rounded-lg p-2 lg:hidden ${
-              lightInk
-                ? 'border border-white/15 text-white'
-                : 'border border-[var(--border-subtle)] text-[var(--ink-900)]'
-            }`}
-            aria-label="Menü"
-          >
-            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+          <div className="relative z-10 ml-auto flex items-center gap-2 lg:hidden">
+            <LanguageToggle variant={langVariant} compact layoutId="nav-lang-mobile-top" />
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className={`rounded-lg p-2 ${
+                lightInk
+                  ? 'border border-white/15 text-white'
+                  : 'border border-[var(--border-subtle)] text-[var(--ink-900)]'
+              }`}
+              aria-label={t.nav.menu}
+            >
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -206,6 +218,9 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="mt-4 flex flex-col gap-3 border-t border-[var(--border-subtle)] pt-4">
+                <div className="px-1">
+                  <LanguageToggle variant="light" layoutId="nav-lang-mobile" />
+                </div>
                 {isAuthenticated && user ? (
                   <>
                     <div className="px-1 text-sm font-semibold" style={{ color: 'var(--ink-900)' }}>
@@ -217,7 +232,7 @@ export function Navbar() {
                       className="btn-secondary text-center text-sm"
                       style={{ color: location.pathname === '/hesabim' ? 'var(--brand-hover)' : undefined }}
                     >
-                      Hesabım
+                      {t.nav.account}
                     </Link>
                     <button
                       type="button"
@@ -225,16 +240,16 @@ export function Navbar() {
                       disabled={loggingOut}
                       className="btn-secondary text-center text-sm disabled:opacity-70"
                     >
-                      {loggingOut ? 'Çıkış...' : 'Çıkış Yap'}
+                      {loggingOut ? t.nav.loggingOut : t.nav.logout}
                     </button>
                   </>
                 ) : (
                   <>
                     <Link to="/giris" onClick={() => setMobileOpen(false)} className="btn-secondary text-center text-sm">
-                      Giriş Yap
+                      {t.nav.login}
                     </Link>
                     <Link to="/kayit" onClick={() => setMobileOpen(false)} className="btn-primary text-center text-sm">
-                      Hesap Aç
+                      {t.nav.signup}
                     </Link>
                   </>
                 )}

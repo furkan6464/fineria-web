@@ -6,6 +6,7 @@ import {
   Building2, ArrowRight, X,
 } from 'lucide-react';
 import { CTA } from '@/components/CTA';
+import { useTranslation } from '@/i18n';
 
 interface PricingTier {
   id: string;
@@ -20,84 +21,18 @@ interface PricingTier {
   cta: string;
 }
 
-const tiers: PricingTier[] = [
-  {
-    id: 'free',
-    name: 'Başlangıç',
-    icon: <Zap size={20} />,
-    price: 0,
-    description: 'Finansal okuryazarlığa ilk adım',
-    features: [
-      'Gelir-gider takibi',
-      'Temel portföy yönetimi',
-      '10 hisse senedi takibi',
-      'Temel sosyal etkileşim',
-      '7/24 bildirimler',
-      'Mobil uygulama erişimi',
-    ],
-    excluded: ['Tahminleme motoru', 'Davranışsal risk profili', 'API erişimi'],
-    cta: 'Ücretsiz Başla',
-  },
-  {
-    id: 'pro',
-    name: 'Pro Yatırımcı',
-    icon: <Rocket size={20} />,
-    price: 149,
-    period: '/ay',
-    description: 'Aktif yatırımcı için tam güç',
-    popular: true,
-    features: [
-      'Tahminleme motoru',
-      'Piyasa duyarlılığı analizi',
-      'Sınırsız portföy takibi',
-      'Risk profiline özel öneriler',
-      'Gelişmiş teknik göstergeler',
-      'Gerçek zamanlı veriler',
-      'API erişimi',
-      'Öncelikli destek',
-    ],
-    cta: "Pro'ya Geçin",
-  },
-  {
-    id: 'enterprise',
-    name: 'Kurumsal',
-    icon: <Crown size={20} />,
-    price: 'Özel',
-    description: 'Kurumlar ve aracı kurumlar için',
-    features: [
-      'B2B API entegrasyonu',
-      'Özel entegrasyon desteği',
-      'Çoklu hesap yönetimi',
-      'Kurumsal raporlama',
-      'Hizmet seviyesi garantisi',
-      'Risk profil modülü',
-      'Kişisel teknik destek',
-      'Vergi optimizasyonu',
-    ],
-    cta: 'Teklif Alın',
-  },
-];
-
-const tableRows = [
-  { feat: 'Gelir-Gider Takibi', vals: [true, true, true] },
-  { feat: 'Portföy Yönetimi', vals: ['Temel', 'Sınırsız', 'Sınırsız'] },
-  { feat: 'Tahminleme Motoru', vals: [false, true, true] },
-  { feat: 'Piyasa Duyarlılığı Analizi', vals: [false, true, true] },
-  { feat: 'Kişiye Özel Risk Profili', vals: [false, true, true] },
-  { feat: 'Gelişmiş Teknik Göstergeler', vals: [false, true, true] },
-  { feat: 'Sosyal Ağ', vals: ['Temel', 'Tam', 'Tam'] },
-  { feat: 'API Erişimi', vals: [false, true, 'Özel'] },
-  { feat: 'Kurumsal Raporlama', vals: [false, false, true] },
-  { feat: 'Hizmet Seviyesi Garantisi', vals: [false, false, '%99.9'] },
-  { feat: 'Destek', vals: ['E-posta', 'Öncelikli', 'Kişisel'] },
-];
-
-const faqs = [
-  { q: 'Ücretsiz plan ne kadar süre geçerli?', a: 'Temel özellikler erken erişim döneminde ücretsiz sunulur.' },
-  { q: 'Tahminleme motoru nasıl çalışır?', a: 'Fiyat geçmişi, teknik göstergeler, haber verileri ve sosyal akış birlikte işlenerek olası fiyat yönüne dair bir görünüm sunar. Yatırım tavsiyesi değildir.' },
-  { q: 'Verilerim güvende mi?', a: 'Şifreli iletişim ve hesap koruma adımları kullanıyoruz. Ürün geliştirme sürecinde güvenlik uygulamalarını sürekli güçlendiriyoruz.' },
-  { q: 'Mobil uygulama ne zaman gelecek?', a: 'App Store ve Google Play sürümleri yakında yayınlanacak.' },
-  { q: 'Planı istediğim zaman iptal edebilir miyim?', a: 'Evet. Ücretli planlarda istediğiniz zaman iptal edebilirsiniz.' },
+const COMPARISON_VALS: (boolean | 'basic' | 'unlimited' | 'full' | 'custom' | 'email' | 'priority' | 'dedicated' | 'sla')[][] = [
+  [true, true, true],
+  ['basic', 'unlimited', 'unlimited'],
+  [false, true, true],
+  [false, true, true],
+  [false, true, true],
+  [false, true, true],
+  ['basic', 'full', 'full'],
+  [false, true, 'custom'],
+  [false, false, true],
+  [false, false, 'sla'],
+  ['email', 'priority', 'dedicated'],
 ];
 
 function TableCell({ val }: { val: boolean | string }) {
@@ -106,8 +41,23 @@ function TableCell({ val }: { val: boolean | string }) {
   return <span className="text-xs font-semibold" style={{ color: 'var(--brand-hover)' }}>{val}</span>;
 }
 
-function PricingCard({ tier, i }: { tier: PricingTier; i: number }) {
+function PricingCard({
+  tier,
+  i,
+  popularLabel,
+  freeLabel,
+  trialLabel,
+  locale,
+}: {
+  tier: PricingTier;
+  i: number;
+  popularLabel: string;
+  freeLabel: string;
+  trialLabel: string;
+  locale: string;
+}) {
   const isPopular = tier.popular === true;
+  const currencyPrefix = locale === 'en' ? '$' : '₺';
 
   return (
     <motion.div
@@ -128,7 +78,7 @@ function PricingCard({ tier, i }: { tier: PricingTier; i: number }) {
           className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 text-xs font-bold tracking-wider uppercase text-white rounded-full"
           style={{ background: 'var(--brand)', letterSpacing: '0.06em' }}
         >
-          En Popüler
+          {popularLabel}
         </div>
       )}
 
@@ -149,10 +99,10 @@ function PricingCard({ tier, i }: { tier: PricingTier; i: number }) {
         <div className="mb-7">
           {typeof tier.price === 'number' ? (
             tier.price === 0 ? (
-              <div className="text-4xl font-extrabold" style={{ color: 'var(--ink-900)' }}>Ücretsiz</div>
+              <div className="text-4xl font-extrabold" style={{ color: 'var(--ink-900)' }}>{freeLabel}</div>
             ) : (
               <div className="flex items-end gap-1">
-                <span className="text-4xl font-extrabold" style={{ color: 'var(--ink-900)' }}>₺{tier.price}</span>
+                <span className="text-4xl font-extrabold" style={{ color: 'var(--ink-900)' }}>{currencyPrefix}{tier.price}</span>
                 <span className="text-base pb-1" style={{ color: 'var(--ink-500)' }}>{tier.period}</span>
               </div>
             )
@@ -160,7 +110,7 @@ function PricingCard({ tier, i }: { tier: PricingTier; i: number }) {
             <div className="text-4xl font-extrabold" style={{ color: 'var(--ink-900)' }}>{tier.price}</div>
           )}
           {typeof tier.price === 'number' && tier.price > 0 && (
-            <div className="text-xs mt-1" style={{ color: 'var(--ink-500)' }}>30 gün ücretsiz dene</div>
+            <div className="text-xs mt-1" style={{ color: 'var(--ink-500)' }}>{trialLabel}</div>
           )}
         </div>
 
@@ -192,14 +142,58 @@ function PricingCard({ tier, i }: { tier: PricingTier; i: number }) {
 }
 
 export function PricingPage() {
+  const { t, locale } = useTranslation();
   const heroRef = useRef(null);
   const isHeroInView = useInView(heroRef, { once: true });
   const faqRef = useRef(null);
   const isFaqInView = useInView(faqRef, { once: true });
 
+  const p = t.pricing;
+  const cv = p.comparison.values;
+
+  const tiers: PricingTier[] = [
+    {
+      id: 'free',
+      name: p.tiers.starter.name,
+      icon: <Zap size={20} />,
+      price: 0,
+      description: p.tiers.starter.description,
+      features: [...p.tiers.starter.features],
+      excluded: [...p.tiers.starter.excluded],
+      cta: p.tiers.starter.cta,
+    },
+    {
+      id: 'pro',
+      name: p.tiers.pro.name,
+      icon: <Rocket size={20} />,
+      price: 5,
+      period: p.period,
+      description: p.tiers.pro.description,
+      popular: true,
+      features: [...p.tiers.pro.features],
+      cta: p.tiers.pro.cta,
+    },
+    {
+      id: 'enterprise',
+      name: p.tiers.enterprise.name,
+      icon: <Crown size={20} />,
+      price: p.tiers.enterprise.price,
+      description: p.tiers.enterprise.description,
+      features: [...p.tiers.enterprise.features],
+      cta: p.tiers.enterprise.cta,
+    },
+  ];
+
+  const tableRows = p.comparison.rows.map((feat, i) => ({
+    feat,
+    vals: COMPARISON_VALS[i].map((val) => {
+      if (typeof val === 'boolean') return val;
+      return cv[val as keyof typeof cv];
+    }),
+  }));
+
   return (
     <div className="pt-24">
-      {/* Hero */}
       <section className="py-14 sm:py-20 relative bg-white">
         <div className="max-w-7xl mx-auto px-5 sm:px-6">
           <motion.div
@@ -211,24 +205,31 @@ export function PricingPage() {
           >
             <div className="badge badge-brand mb-5 mx-auto w-fit">
               <Zap size={13} />
-              Fiyatlandırma
+              {p.hero.badge}
             </div>
             <h1 className="text-responsive-hero font-extrabold mb-5" style={{ color: 'var(--ink-900)' }}>
-              Hedeflerinize uygun esnek planlar
+              {p.hero.title}
             </h1>
             <p className="text-lg leading-relaxed sm:text-xl" style={{ color: 'var(--ink-500)' }}>
-              Gizli ücret yok · Erken erişim açık · Mobil uygulama yakında
+              {p.hero.subtitle}
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Pricing cards */}
       <section className="py-16 relative bg-white">
         <div className="max-w-6xl mx-auto px-5 sm:px-6">
           <div className="grid md:grid-cols-3 gap-6 items-stretch">
             {tiers.map((tier, i) => (
-              <PricingCard key={tier.id} tier={tier} i={i} />
+              <PricingCard
+                key={tier.id}
+                tier={tier}
+                i={i}
+                popularLabel={p.popular}
+                freeLabel={p.free}
+                trialLabel={p.trial}
+                locale={locale}
+              />
             ))}
           </div>
 
@@ -244,25 +245,24 @@ export function PricingPage() {
                 <Building2 size={22} style={{ color: 'var(--amber)' }} />
               </div>
               <div>
-                <div className="font-semibold mb-1" style={{ color: 'var(--ink-900)' }}>Kurumsal API Ortaklığı</div>
+                <div className="font-semibold mb-1" style={{ color: 'var(--ink-900)' }}>{p.enterpriseBanner.title}</div>
                 <div className="text-sm" style={{ color: 'var(--ink-500)' }}>
-                  Bankalar ve aracı kurumlar için özel B2B entegrasyon çözümleri
+                  {p.enterpriseBanner.desc}
                 </div>
               </div>
             </div>
             <a href="#" className="btn-secondary flex items-center gap-2 whitespace-nowrap text-sm">
-              Teklif Al
+              {p.enterpriseBanner.cta}
               <ArrowRight size={15} />
             </a>
           </motion.div>
         </div>
       </section>
 
-      {/* Comparison table */}
       <section className="py-14 sm:py-20 relative bg-[var(--bg-subtle)]">
         <div className="max-w-5xl mx-auto px-5 sm:px-6">
           <div className="text-center mb-12">
-            <h2 className="text-responsive-section font-bold" style={{ color: 'var(--ink-900)' }}>Plan karşılaştırması</h2>
+            <h2 className="text-responsive-section font-bold" style={{ color: 'var(--ink-900)' }}>{p.comparison.title}</h2>
           </div>
 
           <div className="card overflow-hidden">
@@ -271,12 +271,12 @@ export function PricingPage() {
                 <thead>
                   <tr className="border-b border-[var(--border-subtle)]">
                     <th className="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--ink-500)', width: '40%' }}>
-                      Özellik
+                      {p.comparison.feature}
                     </th>
-                    {tiers.map((t) => (
-                      <th key={t.id} className="px-4 py-4 text-center" style={{ background: t.popular ? 'var(--brand-tint)' : 'transparent' }}>
-                        <div className="text-sm font-semibold" style={{ color: 'var(--ink-900)' }}>{t.name}</div>
-                        {t.popular && <div className="text-xs mt-1 font-medium" style={{ color: 'var(--brand-hover)' }}>En Popüler</div>}
+                    {tiers.map((tier) => (
+                      <th key={tier.id} className="px-4 py-4 text-center" style={{ background: tier.popular ? 'var(--brand-tint)' : 'transparent' }}>
+                        <div className="text-sm font-semibold" style={{ color: 'var(--ink-900)' }}>{tier.name}</div>
+                        {tier.popular && <div className="text-xs mt-1 font-medium" style={{ color: 'var(--brand-hover)' }}>{p.popular}</div>}
                       </th>
                     ))}
                   </tr>
@@ -299,7 +299,6 @@ export function PricingPage() {
         </div>
       </section>
 
-      {/* FAQ */}
       <section className="py-14 sm:py-20 relative bg-white">
         <div className="max-w-3xl mx-auto px-5 sm:px-6">
           <motion.div
@@ -309,11 +308,11 @@ export function PricingPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-responsive-section font-bold" style={{ color: 'var(--ink-900)' }}>Sık sorulan sorular</h2>
+            <h2 className="text-responsive-section font-bold" style={{ color: 'var(--ink-900)' }}>{p.faq.title}</h2>
           </motion.div>
 
           <div className="flex flex-col gap-3">
-            {faqs.map((faq, i) => (
+            {p.faq.items.map((faq, i) => (
               <motion.div
                 key={faq.q}
                 initial={{ opacity: 0, y: 16 }}

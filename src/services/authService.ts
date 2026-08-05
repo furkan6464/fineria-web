@@ -1,4 +1,6 @@
 import { apiFetch } from '@/lib/api';
+import { getDictionary } from '@/i18n';
+import { useLocaleStore } from '@/i18n/localeStore';
 import type {
   LoginRequest,
   LoginResponse,
@@ -11,47 +13,56 @@ const HANDLE_REGEX = /^[A-Za-z0-9_]{2,64}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*\d).{8,128}$/;
 
+function authValidation() {
+  return getDictionary(useLocaleStore.getState().locale).authValidation;
+}
+
 export function validateHandle(handle: string): string | null {
+  const v = authValidation();
   const value = handle.trim();
-  if (!value) return 'Kullanıcı adı zorunludur.';
+  if (!value) return v.handleRequired;
   if (value.length < 2 || value.length > 64) {
-    return 'Kullanıcı adı 2-64 karakter arasında olmalıdır.';
+    return v.handleLength;
   }
   if (!HANDLE_REGEX.test(value)) {
-    return 'Kullanıcı adı yalnızca harf, rakam ve alt çizgi içerebilir.';
+    return v.handleChars;
   }
   return null;
 }
 
 export function validateEmail(email: string): string | null {
+  const v = authValidation();
   const value = email.trim();
-  if (!value) return 'E-posta zorunludur.';
-  if (value.length > 256) return 'E-posta en fazla 256 karakter olabilir.';
-  if (!EMAIL_REGEX.test(value)) return 'Geçerli bir e-posta adresi girin.';
+  if (!value) return v.emailRequired;
+  if (value.length > 256) return v.emailMax;
+  if (!EMAIL_REGEX.test(value)) return v.emailInvalid;
   return null;
 }
 
 export function validatePassword(password: string): string | null {
-  if (!password) return 'Şifre zorunludur.';
+  const v = authValidation();
+  if (!password) return v.passwordRequired;
   if (password.length < 8 || password.length > 128) {
-    return 'Şifre 8-128 karakter arasında olmalıdır.';
+    return v.passwordLength;
   }
   if (!PASSWORD_REGEX.test(password)) {
-    return 'Şifre en az bir büyük harf ve bir rakam içermelidir.';
+    return v.passwordComplexity;
   }
   return null;
 }
 
 /** Login-only: require a non-empty password within backend max length. */
 export function validateLoginPassword(password: string): string | null {
-  if (!password) return 'Şifre zorunludur.';
-  if (password.length > 128) return 'Şifre en fazla 128 karakter olabilir.';
+  const v = authValidation();
+  if (!password) return v.passwordRequired;
+  if (password.length > 128) return v.passwordMaxLogin;
   return null;
 }
 
 export function validatePasswordConfirmation(password: string, confirm: string): string | null {
-  if (!confirm) return 'Şifre tekrarı zorunludur.';
-  if (password !== confirm) return 'Şifreler eşleşmiyor.';
+  const v = authValidation();
+  if (!confirm) return v.confirmRequired;
+  if (password !== confirm) return v.confirmMismatch;
   return null;
 }
 

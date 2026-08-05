@@ -2,8 +2,10 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import ctaHandMockup from '@/assets/app-mockups/cta-hand-mockup.webp';
+import { useTranslation } from '@/i18n';
 
 export function CTA() {
+  const { t } = useTranslation();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
@@ -25,7 +27,7 @@ export function CTA() {
             />
             <img
               src={ctaHandMockup}
-              alt="Fineria Finance uygulamasını kullanan bir yatırımcı"
+              alt={t.cta.imageAlt}
               className="relative -mb-8 h-auto w-[420px] xl:w-[480px]"
               style={{
                 filter:
@@ -36,31 +38,30 @@ export function CTA() {
 
           <div className="relative z-10 flex flex-col justify-center px-6 py-12 sm:px-8 sm:py-16 md:px-12">
             <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-indigo-300/80">
-              Başlamaya hazır mısın?
+              {t.cta.badge}
             </p>
             <h2
               className="mb-4 font-bold text-white"
               style={{ fontSize: 'clamp(1.75rem, 3.6vw, 2.75rem)', lineHeight: 1.12, letterSpacing: '-0.03em' }}
             >
-              Portföyünü
+              {t.cta.titleLine1}
               <br />
-              bugün netleştir.
+              {t.cta.titleLine2}
             </h2>
             <p className="mb-8 max-w-md text-base leading-relaxed sm:text-lg" style={{ color: '#A8B2C7' }}>
-              Web şimdi açık. Mobil uygulama App Store ve Google Play’de
-              çok yakında.
+              {t.cta.subtitle}
             </p>
 
             <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
               <a href="/kayit" className="btn-primary flex items-center gap-2 px-8 py-4 text-base">
-                <span>Ücretsiz Hesap Aç</span>
+                <span>{t.cta.primary}</span>
                 <ArrowRight size={20} />
               </a>
               <a
                 href="/giris"
                 className="rounded-xl border border-white/15 px-8 py-4 text-center text-base font-semibold text-white transition-colors hover:bg-white/5"
               >
-                Giriş Yap
+                {t.cta.secondary}
               </a>
             </div>
           </div>

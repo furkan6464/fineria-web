@@ -1,4 +1,5 @@
 import { Logo } from './Logo';
+import { useTranslation } from '@/i18n';
 
 import type { CSSProperties } from 'react';
 
@@ -36,23 +37,6 @@ function YoutubeIcon({ size = 16, style }: SocialIconProps) {
   );
 }
 
-const footerLinks = {
-  Ürün: [
-    { label: 'Özellikler', href: '/ozellikler' },
-    { label: 'Piyasalar', href: '/piyasalar' },
-    { label: 'Tahminleme', href: '/tahminleme' },
-    { label: 'Fiyatlandırma', href: '/fiyatlar' },
-  ],
-  Kurumsal: [
-    { label: 'Hakkımızda', href: '/hakkimizda' },
-    { label: 'İletişim', href: '#' },
-  ],
-  Yasal: [
-    { label: 'Gizlilik Politikası', href: '#' },
-    { label: 'Kullanım Koşulları', href: '#' },
-  ],
-};
-
 const socials = [
   { icon: LinkedinIcon, label: 'LinkedIn', href: '#' },
   { icon: InstagramIcon, label: 'Instagram', href: '#' },
@@ -60,6 +44,25 @@ const socials = [
 ];
 
 export function Footer() {
+  const { t } = useTranslation();
+
+  const footerLinks = {
+    [t.footer.product]: [
+      { label: t.footer.features, href: '/ozellikler' },
+      { label: t.footer.markets, href: '/piyasalar' },
+      { label: t.footer.predictions, href: '/tahminleme' },
+      { label: t.footer.pricing, href: '/fiyatlar' },
+    ],
+    [t.footer.company]: [
+      { label: t.footer.about, href: '/hakkimizda' },
+      { label: t.footer.contact, href: '#' },
+    ],
+    [t.footer.legal]: [
+      { label: t.footer.privacy, href: '#' },
+      { label: t.footer.terms, href: '#' },
+    ],
+  };
+
   return (
     <footer className="border-t border-[var(--border-subtle)] bg-[var(--bg-subtle)] pb-10 pt-14 sm:pt-20">
       <div className="max-w-7xl mx-auto px-5 sm:px-6">
@@ -67,8 +70,7 @@ export function Footer() {
           <div className="col-span-2 lg:col-span-2">
             <Logo size={34} showText={true} className="mb-4" />
             <p className="text-sm leading-relaxed mb-6 max-w-xs" style={{ color: 'var(--ink-500)' }}>
-              Fineria Finance, bireysel yatırımcıların portföylerini tek bir platformdan
-              takip etmesini sağlayan bir finansal teknoloji girişimidir.
+              {t.footer.blurb}
             </p>
             <div className="flex gap-2">
               {socials.map((s) => (
@@ -108,17 +110,15 @@ export function Footer() {
 
         <div className="flex flex-col items-center justify-between gap-3 text-center md:flex-row md:gap-4 md:text-left">
           <p className="text-sm" style={{ color: 'var(--ink-500)' }}>
-            © 2026 Fineria Finance. Tüm hakları saklıdır.
+            {t.footer.rights}
           </p>
           <p className="text-xs" style={{ color: 'var(--ink-400)' }}>
-            App Store ve Google Play · Yakında
+            {t.footer.stores}
           </p>
         </div>
 
         <p className="mx-auto mt-6 max-w-3xl text-center text-xs leading-relaxed" style={{ color: 'var(--ink-400)' }}>
-          Fineria Finance bir yatırım tavsiyesi platformu değildir. Platformda yer alan içerikler
-          bilgilendirme amaçlıdır; yatırım kararlarınızın sorumluluğu size aittir.
-          Geçmiş performans gelecekteki sonuçların garantisi değildir.
+          {t.footer.disclaimer}
         </p>
       </div>
     </footer>

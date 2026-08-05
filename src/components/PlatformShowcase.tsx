@@ -1,17 +1,13 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { LayoutDashboard, LineChart, Radar, ShieldCheck } from 'lucide-react';
+import { useTranslation } from '@/i18n';
 
 const PlatformVideo = lazy(() =>
   import('@/components/PlatformVideo').then((m) => ({ default: m.PlatformVideo })),
 );
 
-const capabilities = [
-  { icon: LayoutDashboard, title: 'Tek panel', desc: 'Piyasa ve portföy aynı yerde.' },
-  { icon: Radar, title: 'Canlı takip', desc: 'Hareketi gecikmeden gör.' },
-  { icon: LineChart, title: 'Net analiz', desc: 'Karmaşık veriyi anlaşılır sonuçlara çevir.' },
-  { icon: ShieldCheck, title: 'Güvenli temel', desc: 'Şifreli iletişim ve hesap koruması.' },
-];
+const CAPABILITY_ICONS = [LayoutDashboard, Radar, LineChart, ShieldCheck] as const;
 
 function useIsDesktopVideo() {
   const [enabled, setEnabled] = useState(false);
@@ -28,6 +24,11 @@ function useIsDesktopVideo() {
 }
 
 export function PlatformShowcase() {
+  const { t } = useTranslation();
+  const capabilities = t.platform.items.map((item, i) => ({
+    ...item,
+    icon: CAPABILITY_ICONS[i],
+  }));
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
   const showVideo = useIsDesktopVideo();
@@ -57,17 +58,16 @@ export function PlatformShowcase() {
             className={showVideo ? 'order-1 lg:order-2' : ''}
           >
             <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: 'var(--brand-hover)' }}>
-              Platform
+              {t.platform.badge}
             </p>
             <h2 className="text-responsive-section mb-5 font-bold" style={{ color: 'var(--ink-900)' }}>
-              Piyasayı izlemek değil,
+              {t.platform.titleLine1}
               <span className="block" style={{ color: 'var(--brand-hover)' }}>
-                anlamak için.
+                {t.platform.titleLine2}
               </span>
             </h2>
             <p className="mb-8 max-w-md text-base leading-relaxed sm:text-lg lg:mb-9" style={{ color: 'var(--ink-500)' }}>
-              Veriyi ekrana yığmak yerine, karar vermene yardımcı olacak
-              görünümler sunuyoruz.
+              {t.platform.subtitle}
             </p>
 
             <div className="grid gap-4 sm:grid-cols-2">

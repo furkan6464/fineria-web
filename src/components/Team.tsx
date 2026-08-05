@@ -1,68 +1,58 @@
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Compass, GraduationCap } from 'lucide-react';
+import { interpolate, useTranslation } from '@/i18n';
 
 /**
  * İsim, fotoğraf ve LinkedIn adreslerini buradan güncelleyin.
- * `photo` public klasöründeki bir yol veya dış URL olabilir.
+ * Rol / focus metinleri i18n sözlüğünden gelir.
  */
-interface Person {
+interface PersonBase {
   name: string;
-  role: string;
-  focus: string;
   linkedin?: string;
   photo?: string;
 }
 
-const founders: Person[] = [
+interface Person extends PersonBase {
+  role: string;
+  focus: string;
+}
+
+const founderBases: PersonBase[] = [
   {
     name: 'Furkan Közkaya',
-    role: 'Kurucu Ortak · CEO',
-    focus: 'Vizyon & Strateji',
     photo: '/team/furkan-kozkaya.jpg',
     linkedin: 'https://www.linkedin.com/in/furkanközkaya/',
   },
   {
     name: 'Abdulkadir Kasım Teke',
-    role: 'Kurucu Ortak · CTO',
-    focus: 'Teknoloji & Altyapı',
     photo: '/team/abdulkadir-kasim-teke.jpg',
     linkedin: 'https://www.linkedin.com/in/kasimteke/',
   },
   {
     name: 'Azra İrem Derin',
-    role: 'Kurucu Ortak · COO',
-    focus: 'Operasyon & Yönetim',
     photo: '/team/azra-irem-derin.jpg',
     linkedin: 'https://www.linkedin.com/in/azraderin/',
   },
   {
     name: 'Nisan Çelik',
-    role: 'Kurucu Ortak · CFO',
-    focus: 'Finans & Yatırım',
     photo: '/team/nisan-celik.jpg',
     linkedin: 'https://www.linkedin.com/in/nisan-çelik-4a493a342/',
   },
   {
     name: 'Kübra Kaya',
-    role: 'Kurucu Ortak · CMO',
-    focus: 'Pazarlama & Marka',
     photo: '/team/kubra-kaya.jpg',
     linkedin: 'https://www.linkedin.com/in/kübra-kaya-8439a8372/',
   },
 ];
 
-const academicAdvisor: Person = {
+const academicBase: PersonBase = {
   name: 'Dr. Öğr. Üyesi Oğuz Demirel',
-  role: 'Akademik Danışman',
-  focus: 'Ürün gelişimi hakkında akademik yönlendirme.',
   photo: '/team/oguz-demirel.jpg',
   linkedin: 'https://www.linkedin.com/in/oğuz-demirel-phd/',
 };
 
-const mentor: Person = {
+const mentorBase: PersonBase = {
   name: 'Sevinç Şardan Çelik',
-  role: 'Mentör',
-  focus: 'Girişimcilik, ürün stratejisi ve yatırım süreçlerinde rehberlik.',
   photo: '/team/sevinc-cardan-celik.jpg',
   linkedin: 'https://www.linkedin.com/in/sevincsardancelik/',
 };
@@ -103,7 +93,7 @@ function LinkedInGlyph({ size = 15 }: { size?: number }) {
   );
 }
 
-function LinkedInButton({ person, floating = false }: { person: Person; floating?: boolean }) {
+function LinkedInButton({ person, floating = false, soonLabel, ariaLabel }: { person: Person; floating?: boolean; soonLabel: string; ariaLabel: string }) {
   const base =
     'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[11px] font-medium transition-all duration-300';
   const idle = floating
@@ -122,7 +112,7 @@ function LinkedInButton({ person, floating = false }: { person: Person; floating
 
   if (!person.linkedin) {
     return (
-      <span className={`${base} ${idle} cursor-default opacity-45`} title="LinkedIn adresi yakında eklenecek">
+      <span className={`${base} ${idle} cursor-default opacity-45`} title={soonLabel}>
         {inner}
       </span>
     );
@@ -133,7 +123,7 @@ function LinkedInButton({ person, floating = false }: { person: Person; floating
       href={person.linkedin}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={`${person.name} LinkedIn profili`}
+      aria-label={ariaLabel}
       className={`group/li ${base} ${idle} ${hover}`}
     >
       {inner}
@@ -141,7 +131,17 @@ function LinkedInButton({ person, floating = false }: { person: Person; floating
   );
 }
 
-function FounderCard({ person, index }: { person: Person; index: number }) {
+function FounderCard({
+  person,
+  index,
+  soonLabel,
+  linkedinAria,
+}: {
+  person: Person;
+  index: number;
+  soonLabel: string;
+  linkedinAria: string;
+}) {
   return (
     <motion.article
       initial={{ opacity: 0, y: 30 }}
@@ -151,7 +151,6 @@ function FounderCard({ person, index }: { person: Person; index: number }) {
       whileHover={{ y: -8 }}
       className="group relative"
     >
-      {/* hover'da beliren gradyan çerçeve */}
       <div
         className="absolute -inset-px rounded-[1.6rem] opacity-0 transition-opacity duration-500 group-hover:opacity-100"
         style={{ background: 'linear-gradient(150deg, rgba(167,139,250,.7), rgba(99,102,241,.15) 45%, transparent 75%)' }}
@@ -177,16 +176,14 @@ function FounderCard({ person, index }: { person: Person; index: number }) {
           </div>
         )}
 
-        {/* okunabilirlik için alt karartma */}
         <div
           className="absolute inset-x-0 bottom-0 h-3/5"
           style={{ background: 'linear-gradient(to top, rgba(6,6,10,.96) 18%, rgba(6,6,10,.6) 55%, transparent)' }}
           aria-hidden
         />
 
-        {/* Dokunmatik cihazlarda hover yok — küçük ekranda sürekli görünür. */}
         <div className="absolute right-2.5 top-2.5 z-10 transition-all duration-300 sm:right-3 sm:top-3 lg:translate-y-1 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100">
-          <LinkedInButton person={person} floating />
+          <LinkedInButton person={person} floating soonLabel={soonLabel} ariaLabel={linkedinAria} />
         </div>
 
         <span className="absolute left-4 top-4 font-mono text-[10px] tracking-[0.2em] text-white/25">
@@ -213,11 +210,15 @@ function GuideCard({
   icon: Icon,
   label,
   delay,
+  soonLabel,
+  linkedinAria,
 }: {
   person: Person;
   icon: typeof GraduationCap;
   label: string;
   delay: number;
+  soonLabel: string;
+  linkedinAria: string;
 }) {
   return (
     <motion.article
@@ -256,7 +257,7 @@ function GuideCard({
           <h3 className="text-[1.05rem] font-semibold text-white">{person.name}</h3>
           <p className="mt-1.5 text-[13px] leading-relaxed text-white/45">{person.focus}</p>
           <div className="mt-4">
-            <LinkedInButton person={person} />
+            <LinkedInButton person={person} soonLabel={soonLabel} ariaLabel={linkedinAria} />
           </div>
         </div>
       </div>
@@ -265,6 +266,26 @@ function GuideCard({
 }
 
 export function Team() {
+  const { t } = useTranslation();
+
+  const founders: Person[] = founderBases.map((base, i) => ({
+    ...base,
+    role: t.team.founders[i].role,
+    focus: t.team.founders[i].focus,
+  }));
+
+  const academicAdvisor: Person = {
+    ...academicBase,
+    role: t.team.academic.role,
+    focus: t.team.academic.focus,
+  };
+
+  const mentor: Person = {
+    ...mentorBase,
+    role: t.team.mentor.role,
+    focus: t.team.mentor.focus,
+  };
+
   return (
     <section data-chrome="dark" className="relative overflow-hidden bg-[#07060b] py-16 sm:py-24 lg:py-32">
       <div
@@ -299,41 +320,61 @@ export function Team() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-70" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-violet-400" />
             </span>
-            Ekibimiz
+            {t.team.badge}
           </div>
 
           <h2 className="mx-auto mt-5 max-w-3xl text-[2rem] font-bold leading-[1.08] tracking-[-0.045em] text-white sm:mt-6 sm:text-[3.25rem]">
-            Fineria Finance'ın arkasındaki
+            {t.team.titleLine1}
             <span className="block bg-gradient-to-r from-violet-300 via-indigo-200 to-white bg-clip-text text-transparent">
-              ekip.
+              {t.team.titleLine2}
             </span>
           </h2>
 
           <p className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-white/45 sm:mt-6 sm:text-lg">
-            Finans, mühendislik ve tasarımı aynı masada buluşturan beş kurucu ortak;
-            akademik bakış ve girişimcilik deneyimiyle güçlenen tek bir ekip.
+            {t.team.subtitle}
           </p>
         </motion.div>
 
         <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-5">
           {founders.map((person, index) => (
-            <FounderCard key={`${person.role}-${index}`} person={person} index={index} />
+            <FounderCard
+              key={`${person.name}-${index}`}
+              person={person}
+              index={index}
+              soonLabel={t.team.linkedinSoon}
+              linkedinAria={interpolate(t.team.linkedinAria, { name: person.name })}
+            />
           ))}
         </div>
 
         <div className="my-10 flex items-center gap-4 sm:my-14 sm:gap-5">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/[0.09]" />
           <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/25">
-            Bize yön verenler
+            {t.team.guidesLabel}
           </span>
           <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/[0.09]" />
         </div>
 
         <div className="grid gap-5 lg:grid-cols-2">
-          <GuideCard person={academicAdvisor} icon={GraduationCap} label="Akademik Danışman" delay={0} />
-          <GuideCard person={mentor} icon={Compass} label="Mentör" delay={0.12} />
+          <GuideCard
+            person={academicAdvisor}
+            icon={GraduationCap}
+            label={t.team.academicLabel}
+            delay={0}
+            soonLabel={t.team.linkedinSoon}
+            linkedinAria={interpolate(t.team.linkedinAria, { name: academicAdvisor.name })}
+          />
+          <GuideCard
+            person={mentor}
+            icon={Compass}
+            label={t.team.mentorLabel}
+            delay={0.12}
+            soonLabel={t.team.linkedinSoon}
+            linkedinAria={interpolate(t.team.linkedinAria, { name: mentor.name })}
+          />
         </div>
       </div>
     </section>
   );
 }
+

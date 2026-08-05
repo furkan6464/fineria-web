@@ -4,6 +4,7 @@ import { Eye, EyeOff, Mail, Lock, User, CheckCircle2, Sparkles, Loader2 } from '
 import { Link, useNavigate } from 'react-router-dom';
 import { Logo } from '../components/Logo';
 import { DeviceShowcase } from '../components/DeviceShowcase';
+import { LanguageToggle } from '@/components/LanguageToggle';
 import { isApiError } from '@/lib/api';
 import {
   authService,
@@ -12,6 +13,7 @@ import {
   validatePassword,
   validatePasswordConfirmation,
 } from '@/services/authService';
+import { useTranslation } from '@/i18n';
 
 const AUTH_FORMS_ENABLED = false;
 
@@ -30,6 +32,7 @@ type FieldErrors = {
 };
 
 export function RegisterPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -64,7 +67,7 @@ export function RegisterPage() {
     const emailError = validateEmail(form.email);
     const passwordError = validatePassword(form.password);
     const confirmError = validatePasswordConfirmation(form.password, form.confirm);
-    const termsError = accepted ? null : 'Devam etmek için kullanım koşullarını kabul etmelisiniz.';
+    const termsError = accepted ? null : t.register.termsRequired;
 
     setFieldErrors({
       handle: handleError ?? undefined,
@@ -87,26 +90,26 @@ export function RegisterPage() {
         replace: true,
         state: {
           registered: true,
-          message: 'Kayıt başarılı. Giriş yapabilirsiniz.',
+          message: t.login.registeredSuccess,
         },
       });
     } catch (error) {
       if (isApiError(error)) {
         if (error.code === 'EMAIL_ALREADY_EXISTS') {
-          setFieldErrors((prev) => ({ ...prev, email: error.message || 'Bu e-posta zaten kayıtlı.' }));
+          setFieldErrors((prev) => ({ ...prev, email: error.message || t.register.errors.emailExists }));
         } else if (error.code === 'HANDLE_ALREADY_EXISTS') {
-          setFieldErrors((prev) => ({ ...prev, handle: error.message || 'Bu kullanıcı adı alınmış.' }));
+          setFieldErrors((prev) => ({ ...prev, handle: error.message || t.register.errors.handleExists }));
         } else if (error.code === 'TOO_MANY_REQUESTS' || error.status === 429) {
-          setFormError(error.message || 'Çok fazla deneme yapıldı. Lütfen sonra tekrar deneyin.');
+          setFormError(error.message || t.register.errors.tooManyRequests);
         } else if (error.code === 'VALIDATION_ERROR' || error.status === 400) {
-          setFormError(error.message || 'Girilen bilgiler geçersiz.');
+          setFormError(error.message || t.register.errors.validation);
         } else if (error.code === 'NETWORK_ERROR') {
           setFormError(error.message);
         } else {
-          setFormError(error.message || 'Kayıt tamamlanamadı. Lütfen tekrar deneyin.');
+          setFormError(error.message || t.register.errors.generic);
         }
       } else {
-        setFormError('Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.');
+        setFormError(t.register.errors.unexpected);
       }
     } finally {
       setLoading(false);
@@ -116,21 +119,22 @@ export function RegisterPage() {
   return (
     <div className="min-h-screen flex bg-[#050508]">
       <div className="relative z-10 flex w-full flex-col justify-center px-6 py-10 sm:px-8 sm:py-12 md:px-14 lg:w-[50%] xl:px-20">
-        <motion.div {...fadeUp(0)} className="mb-8">
+        <motion.div {...fadeUp(0)} className="mb-8 flex items-center justify-between gap-4">
           <Link to="/"><Logo size={34} showText textColor="#F8FAFC" /></Link>
+          <LanguageToggle variant="dark" layoutId="register-lang-pill" compact />
         </motion.div>
 
         <div className="w-full max-w-[400px]">
           <motion.div {...fadeUp(0.05)} className="mb-6">
             <div className="mb-3 inline-flex w-fit items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-indigo-300">
               <Sparkles size={12} />
-              Çok yakında
+              {t.register.badge}
             </div>
             <h1 className="font-extrabold mb-1.5 text-white" style={{ fontSize: '1.75rem', letterSpacing: '-0.02em' }}>
-              Hesap oluşturun
+              {t.register.title}
             </h1>
             <p className="text-sm text-gray-400">
-              Üyelik sistemi yayına hazırlanıyor.
+              {t.register.subtitle}
             </p>
           </motion.div>
 
@@ -143,9 +147,9 @@ export function RegisterPage() {
               <Lock size={14} />
             </div>
             <div>
-              <p className="text-sm font-semibold text-indigo-200">Kayıtlar yakında açılacak</p>
+              <p className="text-sm font-semibold text-indigo-200">{t.register.bannerTitle}</p>
               <p className="mt-0.5 text-xs leading-relaxed text-gray-400">
-                Form şu anda yalnızca önizleme amaçlıdır ve bilgi kabul etmez.
+                {t.register.bannerBody}
               </p>
             </div>
           </motion.div>
@@ -168,7 +172,7 @@ export function RegisterPage() {
             noValidate
           >
             <div>
-              <label className="block text-xs font-medium mb-1.5 text-gray-400">Kullanıcı Adı</label>
+              <label className="block text-xs font-medium mb-1.5 text-gray-400">{t.register.handle}</label>
               <div className="relative">
                 <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: focused === 'handle' ? '#A5B4FC' : '#64748B' }} />
                 <input
@@ -180,7 +184,7 @@ export function RegisterPage() {
                   }}
                   onFocus={() => setFocused('handle')}
                   onBlur={() => setFocused(null)}
-                  placeholder="kullanici_adi"
+                  placeholder={t.register.handlePlaceholder}
                   autoComplete="username"
                   disabled={!AUTH_FORMS_ENABLED || loading}
                   className="w-full pl-10 pr-4 py-3 rounded-xl text-sm outline-none transition-all duration-200 placeholder:text-gray-600"
@@ -193,7 +197,7 @@ export function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium mb-1.5 text-gray-400">E-posta</label>
+              <label className="block text-xs font-medium mb-1.5 text-gray-400">{t.register.email}</label>
               <div className="relative">
                 <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: focused === 'email' ? '#A5B4FC' : '#64748B' }} />
                 <input
@@ -205,7 +209,7 @@ export function RegisterPage() {
                   }}
                   onFocus={() => setFocused('email')}
                   onBlur={() => setFocused(null)}
-                  placeholder="ornek@fineria.com"
+                  placeholder={t.register.emailPlaceholder}
                   autoComplete="email"
                   disabled={!AUTH_FORMS_ENABLED || loading}
                   className="w-full pl-10 pr-4 py-3 rounded-xl text-sm outline-none transition-all duration-200 placeholder:text-gray-600"
@@ -219,7 +223,7 @@ export function RegisterPage() {
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
-                <label className="block text-xs font-medium mb-1.5 text-gray-400">Şifre</label>
+                <label className="block text-xs font-medium mb-1.5 text-gray-400">{t.register.password}</label>
                 <div className="relative">
                   <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: focused === 'password' ? '#A5B4FC' : '#64748B' }} />
                   <input
@@ -242,7 +246,7 @@ export function RegisterPage() {
                     disabled={!AUTH_FORMS_ENABLED}
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 cursor-not-allowed text-gray-500"
-                    aria-label={showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'}
+                    aria-label={showPassword ? t.register.hidePassword : t.register.showPassword}
                   >
                     {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
@@ -252,7 +256,7 @@ export function RegisterPage() {
                 )}
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5 text-gray-400">Tekrar</label>
+                <label className="block text-xs font-medium mb-1.5 text-gray-400">{t.register.confirm}</label>
                 <div className="relative">
                   <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: focused === 'confirm' ? '#A5B4FC' : '#64748B' }} />
                   <input
@@ -275,7 +279,7 @@ export function RegisterPage() {
                     disabled={!AUTH_FORMS_ENABLED}
                     onClick={() => setShowConfirm(!showConfirm)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 cursor-not-allowed text-gray-500"
-                    aria-label={showConfirm ? 'Şifreyi gizle' : 'Şifreyi göster'}
+                    aria-label={showConfirm ? t.register.hidePassword : t.register.showPassword}
                   >
                     {showConfirm ? <EyeOff size={14} /> : <Eye size={14} />}
                   </button>
@@ -306,8 +310,11 @@ export function RegisterPage() {
                 {accepted && <CheckCircle2 size={11} color="white" />}
               </div>
               <span className="text-xs leading-relaxed text-gray-400">
-                <span className="text-indigo-300">Kullanım Koşulları</span>'nı ve{' '}
-                <span className="text-indigo-300">Gizlilik Politikası</span>'nı okudum, kabul ediyorum.
+                {t.register.termsPrefix}
+                <span className="text-indigo-300">{t.register.termsOfUse}</span>
+                {t.register.termsMid}
+                <span className="text-indigo-300">{t.register.privacy}</span>
+                {t.register.termsSuffix}
               </span>
             </label>
             {fieldErrors.terms && (
@@ -322,11 +329,11 @@ export function RegisterPage() {
               {loading ? (
                 <>
                   <Loader2 size={17} className="animate-spin" />
-                  Kaydediliyor...
+                  {t.register.submitting}
                 </>
               ) : (
                 <>
-                  Üye Ol · Yakında
+                  {t.register.submit}
                   <Lock size={15} />
                 </>
               )}
@@ -334,16 +341,16 @@ export function RegisterPage() {
           </motion.form>
 
           <motion.p {...fadeUp(0.35)} className="text-center text-sm mt-5 text-gray-400">
-            Zaten hesabın var mı?{' '}
-            <Link to="/giris" className="font-semibold text-indigo-300">Giriş yap →</Link>
+            {t.register.hasAccount}{' '}
+            <Link to="/giris" className="font-semibold text-indigo-300">{t.register.signIn}</Link>
           </motion.p>
         </div>
       </div>
 
       <div className="hidden lg:flex flex-1 border-l border-white/10">
         <DeviceShowcase
-          title="Çok yakında her yerde"
-          description="Web sürümü aktif, App Store ve Google Play sürümleri yakında geliyor."
+          title={t.register.showcaseTitle}
+          description={t.register.showcaseDescription}
         />
       </div>
     </div>

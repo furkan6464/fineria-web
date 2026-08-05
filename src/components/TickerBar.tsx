@@ -3,10 +3,12 @@ import { useQuery } from '@tanstack/react-query';
 import { useInView } from 'framer-motion';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { allStocks, formatPercent, formatPrice, getMarketDashboard } from '@/lib/market';
+import { useTranslation } from '@/i18n';
 
 const MAX_ITEMS = 16;
 
 export function TickerBar() {
+  const { t, numberLocale } = useTranslation();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '120px' });
 
@@ -45,7 +47,7 @@ export function TickerBar() {
       ref={ref}
       className="ticker-wrap border-y bg-[var(--bg-subtle)] py-3"
       style={{ borderColor: 'var(--border-subtle)' }}
-      aria-label="Canlı piyasa şeridi"
+      aria-label={t.ticker.aria}
     >
       <div className="ticker-content">
         {doubled.map((item, i) => {
@@ -56,7 +58,7 @@ export function TickerBar() {
                 {item.symbol}
               </span>
               <span className="text-xs font-medium" style={{ color: 'var(--ink-700)' }}>
-                {formatPrice(item.currentPrice, 'borsa')}
+                {formatPrice(item.currentPrice, 'borsa', numberLocale)}
               </span>
               <span
                 className="flex items-center gap-0.5 text-xs font-semibold"

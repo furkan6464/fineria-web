@@ -12,52 +12,20 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
+import { interpolate, useTranslation } from '@/i18n';
 
-const features = [
-  {
-    icon: BrainCircuit,
-    title: 'Akıllı Tahminleme',
-    desc: 'Seçtiğiniz sembol için fiyat, haber ve sosyal akışı birleştirerek yön görünümü alın: yükseliş, düşüş veya yatay.',
-  },
-  {
-    icon: CandlestickChart,
-    title: 'Canlı piyasa paneli',
-    desc: 'BIST, Amerikan Borsası ve kripto fiyatlarını tek ekranda izleyin. Anlık değişim, trend ve takip listeniz aynı akışta.',
-  },
-  {
-    icon: Activity,
-    title: 'Sembol bazlı analiz',
-    desc: 'Tahminleme motoru desteklenen hisselerde çalışır. Bir sembol seçin; model geçmiş veriyi okuyup size yön odaklı bir görünüm sunar.',
-  },
-  {
-    icon: Gauge,
-    title: 'Risk profili',
-    desc: 'Kısa bir değerlendirme ile risk toleransınızı görün. Tahminleri kendi profilinize göre daha bilinçli okuyun — yatırım tavsiyesi değildir.',
-  },
-  {
-    icon: Newspaper,
-    title: 'Piyasa gündemi',
-    desc: 'Fiyat hareketini haber ve gündemle birlikte takip edin. Portföyünüzü ilgilendiren gelişmeleri tek yerde toplayın.',
-  },
-  {
-    icon: Globe2,
-    title: 'Üç piyasa, tek hesap',
-    desc: 'Yerli borsa, ABD piyasaları ve kripto. Dağınık uygulamalar yerine Fineria Finance’te birleşik bir finans deneyimi.',
-  },
-  {
-    icon: BellRing,
-    title: 'Akıllı bildirimler',
-    desc: 'Takip ettiğiniz varlıklar ve önemli hareketler için uyarı alın. Piyasayı sürekli izlemek zorunda kalmayın.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Güvenli temel',
-    desc: 'Şifreli iletişim, modern oturum koruması ve hesabınıza özel tahminleme erişimi.',
-  },
-];
+const FEATURE_ICONS = [
+  BrainCircuit,
+  CandlestickChart,
+  Activity,
+  Gauge,
+  Newspaper,
+  Globe2,
+  BellRing,
+  ShieldCheck,
+] as const;
 
 const MAX_CARD_WIDTH = 340;
-const COUNT = features.length;
 
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
@@ -88,6 +56,13 @@ function useCarouselMetrics() {
 }
 
 export function Features() {
+  const { t } = useTranslation();
+  const features = t.features.items.map((item, i) => ({
+    ...item,
+    icon: FEATURE_ICONS[i],
+  }));
+  const COUNT = features.length;
+
   const titleRef = useRef(null);
   const isTitleInView = useInView(titleRef, { once: true });
   const sectionRef = useRef(null);
@@ -96,8 +71,8 @@ export function Features() {
 
   const [active, setActive] = useState(0);
 
-  const goPrev = useCallback(() => setActive((a) => mod(a - 1, COUNT)), []);
-  const goNext = useCallback(() => setActive((a) => mod(a + 1, COUNT)), []);
+  const goPrev = useCallback(() => setActive((a) => mod(a - 1, COUNT)), [COUNT]);
+  const goNext = useCallback(() => setActive((a) => mod(a + 1, COUNT)), [COUNT]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -124,17 +99,16 @@ export function Features() {
             className="mb-4 mx-auto w-fit text-xs font-semibold px-3 py-1.5 rounded-full"
             style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#A5B4FC' }}
           >
-            Özellikler
+            {t.features.badge}
           </div>
           <h2
             className="font-extrabold mb-4 tracking-tight leading-[1.05] bg-clip-text text-transparent bg-gradient-to-r from-gray-600 via-gray-400 to-gray-200"
             style={{ fontSize: 'clamp(2.1rem, 4vw, 3.1rem)' }}
           >
-            Finans ve tahminleme, tek yerde
+            {t.features.title}
           </h2>
           <p className="mx-auto max-w-2xl text-base font-light text-gray-400 sm:text-lg">
-            Canlı piyasa takibi, tahminleme ve risk görünümü —
-            yatırım kararlarınızı destekleyen araçlar Fineria Finance’te.
+            {t.features.subtitle}
           </p>
         </motion.div>
 
@@ -148,7 +122,7 @@ export function Features() {
           <button
             type="button"
             onClick={goPrev}
-            aria-label="Önceki özellik"
+            aria-label={t.features.prev}
             className="absolute left-0 z-20 flex h-10 w-10 items-center justify-center rounded-full backdrop-blur-xl transition-colors duration-300 sm:h-12 sm:w-12 lg:-left-4"
             style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
             onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
@@ -213,7 +187,7 @@ export function Features() {
           <button
             type="button"
             onClick={goNext}
-            aria-label="Sonraki özellik"
+            aria-label={t.features.next}
             className="absolute right-0 z-20 flex h-10 w-10 items-center justify-center rounded-full backdrop-blur-xl transition-colors duration-300 sm:h-12 sm:w-12 lg:-right-4"
             style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
             onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
@@ -229,7 +203,7 @@ export function Features() {
               key={feature.title}
               type="button"
               onClick={() => setActive(i)}
-              aria-label={`${feature.title} göster`}
+              aria-label={interpolate(t.features.show, { title: feature.title })}
               className="h-1.5 rounded-full transition-all duration-300"
               style={{
                 width: i === active ? 22 : 6,
