@@ -166,7 +166,7 @@ export function PricingPage() {
       id: 'pro',
       name: p.tiers.pro.name,
       icon: <Rocket size={20} />,
-      price: 5,
+      price: locale === 'en' ? 4 : 150,
       period: p.period,
       description: p.tiers.pro.description,
       popular: true,
